@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+/* Import token warna utama IDDS */
+@import '@idds/styles/tailwind/css/idds.css';
+
+/* Import brand token PANRB (seperti yang abang pakai di log) */
+@import '@idds/styles/tailwind/css/panrb.css';
