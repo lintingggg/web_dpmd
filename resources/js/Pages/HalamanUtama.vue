@@ -34,7 +34,7 @@ import PageHeader from '@/Components/PageHeader.vue';
                 </p>
 
                 <div class="p-6 bg-blue-50 text-blue-800 rounded-lg border border-blue-100">
-                    Lanjut kerjain komponen lainnya su
+                    Lanjut kerjain komponen lainnya bangg
                 </div>
             </div>
 
