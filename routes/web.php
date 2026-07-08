@@ -24,4 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/halaman-utama', function () {
+    return Inertia::render('HalamanUtama');
+});
+
 require __DIR__.'/auth.php';
