@@ -17,7 +17,7 @@
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        stroke-width="2.5"
+        stroke-width="2"
       >
         <polyline points="6 9 12 15 18 9"/>
       </svg>
@@ -67,63 +67,74 @@ function toggle(){
 <style scoped>
 
 .accordion{
-    border-bottom: 1px solid #e3e5e7;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    border-bottom:1px solid #e5e7eb;
+
 }
 
 .accordion-header{
-    width: 100%;
-    padding: 18px 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    color: #0f172a;
-    letter-spacing: -0.2px;
-    transition: color 0.15s ease;
+
+    width:100%;
+
+    padding:18px 20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:white;
+
+    border:none;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
 }
 
 .accordion-header:hover{
-    color: #222a3d;
+
+    background:#f8fafc;
+
 }
 
 .icon{
-    transition: transform 0.25s ease;
-    color: #9499a3;
-    flex-shrink: 0;
+
+    transition:.3s;
+
 }
 
 .rotate{
-    transform: rotate(180deg);
+
+    transform:rotate(180deg);
+
 }
 
 .accordion-body{
-    padding: 0 4px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #646a79;
-    line-height: 1.75;
+
+    padding:0 20px 20px;
+
+    color:#4b5563;
+
+    line-height:1.8;
+
 }
 
 .accordion-enter-active,
 .accordion-leave-active{
-    transition: all 0.25s ease;
-    overflow: hidden;
+
+    transition:all .25s ease;
+
 }
 
 .accordion-enter-from,
 .accordion-leave-to{
-    opacity: 0;
-    max-height: 0;
-}
 
-.accordion-enter-to,
-.accordion-leave-from{
-    opacity: 1;
-    max-height: 500px;
+    opacity:0;
+
 }
 </style>
