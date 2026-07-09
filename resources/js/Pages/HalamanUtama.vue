@@ -42,7 +42,10 @@ import CardNews from '@/Components/CardNews.vue';
             <div class="p-6 bg-blue-50 text-blue-800 rounded-lg border border-blue-100">
                 Lanjut kerjain komponen lainnya bang!
             </div>
-        </div>
 
+        </main>
+
+        <!-- Footer -->
+        <Footer />
     </div>
 </template>

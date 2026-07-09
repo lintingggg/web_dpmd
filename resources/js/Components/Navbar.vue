@@ -1,76 +1,115 @@
-<script setup>
-import { ref, computed } from 'vue';
-import { Button, TextField, Avatar, BasicDropdown } from '@idds/vue';
-import { IconSearch, IconBell } from '@tabler/icons-vue';
+<template>
+  <nav class="hidden lg:flex gap-6 items-center">
+    <template v-for="item in items" :key="item.label">
+      <!-- Item dengan dropdown -->
+      <div
+        v-if="item.children"
+        class="relative"
+        @mouseenter="openDropdown = item.label"
+        @mouseleave="openDropdown = null"
+      >
+        <button
+          type="button"
+          class="flex items-center gap-1 text-neutral-900 text-sm py-2"
+          :aria-expanded="openDropdown === item.label"
+          @click="toggleDropdown(item.label)"
+        >
+          {{ item.label }}
+          <IconChevronDown
+            :size="14"
+            class="transition-transform duration-150"
+            :class="openDropdown === item.label ? 'rotate-180' : ''"
+          />
+        </button>
+        <transition name="fade">
+          <div
+            v-if="openDropdown === item.label"
+            class="absolute top-full left-0 pt-1 min-w-64 z-50"
+          >
+            <div class="bg-white border border-neutral-200 rounded-lg shadow-lg p-1.5">
+              <a
+                v-for="child in item.children"
+                :key="child.label"
+                :href="child.href"
+                class="block px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+                :class="{ 'bg-neutral-100 text-neutral-900 font-medium': child.href === currentPath }"
+              >
+                {{ child.label }}
+              </a>
+            </div>
+          </div>
+        </transition>
+      </div>
 
-// Data untuk contoh search bar
-const searchOptions = ['Dashboard', 'Data Desa', 'Proposal', 'Laporan', 'Pengaturan'];
-const value = ref('');
+      <!-- Item biasa (tanpa dropdown) -->
+      <a
+        v-else
+        :href="item.href"
+        class="text-sm py-2"
+        :class="item.href === currentPath ? 'text-blue-600 font-medium' : 'text-neutral-900'"
+      >
+        {{ item.label }}
+      </a>
+    </template>
+  </nav>
+</template>
 
-const filteredOptions = computed(() => {
-  return searchOptions.filter((opt) => opt.toLowerCase().includes(value.value.toLowerCase()));
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { IconChevronDown } from '@tabler/icons-vue';
+
+export interface NavChild {
+  label: string;
+  href: string;
+}
+export interface NavItem {
+  label: string;
+  href?: string;
+  children?: NavChild[];
+}
+
+interface Props {
+  items: NavItem[];
+  currentPath?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  currentPath: '',
+});
+
+const openDropdown = ref<string | null>(null);
+
+function toggleDropdown(label: string) {
+  openDropdown.value = openDropdown.value === label ? null : label;
+}
+
+function closeDropdown() {
+  openDropdown.value = null;
+}
+
+// Tutup dropdown saat klik di luar area nav (fallback selain hover, berguna untuk sentuh/tap)
+function handleClickOutside(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  if (!target.closest('nav')) {
+    closeDropdown();
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
 });
 </script>
 
-<template>
-  <nav class="flex flex-row items-center gap-2 justify-between rounded-lg border border-neutral-200 p-4 w-full bg-white shadow-sm">
-    
-    <!-- Logo (Sementara pakai teks biar ngga error) -->
-    <div class="font-bold text-xl text-blue-600 tracking-tight">
-      DPMD<span class="text-neutral-900">.</span>
-    </div>
-
-    <!-- Navigation -->
-    <div class="hidden md:flex gap-6 items-center">
-      <a href="#" class="text-neutral-900 text-sm font-medium hover:text-blue-600 transition"> Beranda </a>
-      <a href="#" class="text-neutral-900 text-sm font-medium hover:text-blue-600 transition"> Profil </a>
-      <a href="#" class="text-neutral-900 text-sm font-medium hover:text-blue-600 transition"> Layanan Desa </a>
-    </div>
-
-    <!-- Actions -->
-    <div class="flex items-center gap-2 justify-center h-fit">
-      
-      <!-- Search Dropdown -->
-      <div class="flex-1 flex items-center hidden md:flex">
-        <BasicDropdown class="w-full max-w-30">
-          <template #trigger>
-            <TextField
-              v-model="value"
-              placeholder="Cari..."
-              class="w-full max-w-30 h-[32px]!"
-              size="sm"
-            >
-              <template #prefixIcon>
-                <IconSearch :size="16" />
-              </template>
-            </TextField>
-          </template>
-          <template #content>
-            <div class="p-1 flex flex-col max-h-60 overflow-y-auto w-full space-y-2 cursor-pointer">
-              <template v-if="filteredOptions.length > 0">
-                <div v-for="opt in filteredOptions" :key="opt" @mousedown="value = opt" class="p-2 hover:bg-gray-50 rounded text-sm">
-                  {{ opt }}
-                </div>
-              </template>
-              <template v-else>
-                <div class="p-2 text-sm text-gray-500">Tidak ada hasil</div>
-              </template>
-            </div>
-          </template>
-        </BasicDropdown>
-      </div>
-
-      <!-- Buttons & Avatar -->
-      <Button hierarchy="primary" size="md" class="bg-blue-600 text-white">Buat Laporan</Button>
-      
-      <Button hierarchy="tertiary" size="md" class="text-gray-600">
-        <IconBell :size="20" />
-      </Button>
-      
-      <Button hierarchy="tertiary" size="md" class="p-0!">
-        <!-- Avatar tanpa import src statis biar aman -->
-        <Avatar alt="Admin DPMD" />
-      </Button>
-    </div>
-  </nav>
-</template>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
