@@ -28,4 +28,12 @@ Route::get('/halaman-utama', function () {
     return Inertia::render('HalamanUtama');
 });
 
+Route::get('/kode-etik-pelayanan', function () {
+    return Inertia::render('ProfilDinas/KodeEtikPelayanan');
+});
+
+Route::get('/maklumat-pelayanan', function () {
+    return Inertia::render('ProfilDinas/MaklumatPelayanan');
+});
+
 require __DIR__.'/auth.php';
