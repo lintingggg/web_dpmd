@@ -13,50 +13,54 @@ const profile = {
     title: "Kode Etik Pelayanan",
 
     subtitle:
-        "Pedoman perilaku aparatur Dinas Pemberdayaan Masyarakat dan Desa dalam memberikan pelayanan kepada masyarakat.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 
     image: "",
 
     content: `
         <p>
-            Dinas Pemberdayaan Masyarakat dan Desa (DPMD) berkomitmen untuk
-            memberikan pelayanan publik yang profesional, transparan,
-            akuntabel, dan berorientasi pada kepuasan masyarakat.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
         </p>
 
         <p>
-            Seluruh aparatur wajib menjunjung tinggi integritas, menaati
-            peraturan perundang-undangan, serta memberikan pelayanan yang adil
-            tanpa membedakan suku, agama, ras, golongan, maupun latar belakang
-            masyarakat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
         </p>
 
-        <h2>Tujuan Kode Etik</h2>
+        <h2>Lorem Ipsum Heading</h2>
 
         <p>
-            Kode Etik Pelayanan disusun sebagai pedoman bagi seluruh aparatur
-            dalam menjalankan tugas dan fungsi pelayanan kepada masyarakat
-            dengan menjunjung tinggi etika profesi serta nilai-nilai pelayanan
-            publik.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+            facilisis, risus nec fermentum faucibus, sapien libero bibendum
+            augue, sed gravida odio sapien vel magna. Pellentesque habitant
+            morbi tristique senectus et netus et malesuada fames ac turpis
+            egestas.
         </p>
 
-        <h2>Nilai-Nilai Kode Etik</h2>
+        <h2>Another Section</h2>
 
         <ul>
-            <li>Berintegritas dan bertanggung jawab.</li>
-            <li>Bersikap profesional dalam menjalankan tugas.</li>
-            <li>Memberikan pelayanan secara cepat, tepat, dan ramah.</li>
-            <li>Mengutamakan kepentingan masyarakat.</li>
-            <li>Menjaga kerahasiaan informasi sesuai ketentuan.</li>
-            <li>Menghindari konflik kepentingan dalam pelayanan.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Consectetur adipiscing elit.</li>
+            <li>Sed do eiusmod tempor incididunt.</li>
+            <li>Ut labore et dolore magna aliqua.</li>
+            <li>Ut enim ad minim veniam.</li>
+            <li>Quis nostrud exercitation ullamco.</li>
         </ul>
 
-        <h2>Komitmen Pelayanan</h2>
+        <h2>Final Section</h2>
 
         <p>
-            Seluruh aparatur DPMD berkomitmen untuk terus meningkatkan kualitas
-            pelayanan kepada masyarakat melalui sikap yang jujur, disiplin,
-            profesional, dan berorientasi pada pelayanan prima.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute
+            irure dolor in reprehenderit in voluptate velit esse cillum dolore
+            eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+            proident, sunt in culpa qui officia deserunt mollit anim id est
+            laborum.
         </p>
     `,
 };
@@ -67,11 +71,20 @@ const profile = {
 
     <Breadcrumb />
 
-    <section class="page-header">
+    <section class="hero-section">
+
         <div class="container">
+
+            <span class="hero-badge">
+                Profil Dinas
+            </span>
+
             <h1>{{ profile.title }}</h1>
+
             <p>{{ profile.subtitle }}</p>
+
         </div>
+
     </section>
 
     <main class="container">
@@ -88,11 +101,22 @@ const profile = {
                 v-else
                 class="image-placeholder"
             >
-                <div class="placeholder-icon">🖼</div>
 
-                <h4>IMAGE NOT FOUND</h4>
+                <div class="placeholder-icon">
 
-                <p>Gambar akan ditampilkan setelah diunggah.</p>
+                    🖼️
+
+                </div>
+
+                <h4>Image Not Available</h4>
+
+                <p>
+
+                    Gambar akan ditampilkan
+                    setelah diunggah oleh administrator.
+
+                </p>
+
             </div>
 
         </section>
@@ -121,39 +145,55 @@ const profile = {
 
 /* ========================= */
 
-.page-header{
+.hero-section{
 
-    padding:24px 0 20px;
+    background:linear-gradient(180deg,#F8FAFC 0%,#FFFFFF 100%);
+
+    padding:56px 0 48px;
+
+    margin-bottom:36px;
 
 }
 
-.page-header h1{
-
-    position:relative;
+.hero-badge{
 
     display:inline-block;
 
-    font-size:36px;
+    padding:8px 18px;
 
-    font-weight:700;
+    background:#E0F2FE;
 
-    color:#1e293b;
+    color:#0369A1;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    border-radius:999px;
 
     margin-bottom:20px;
 
 }
 
-.page-header p{
+.hero-section h1{
 
-    color:#64748b;
+    font-size:42px;
 
-    line-height:1.8;
+    font-weight:700;
 
-    max-width:700px;
+    color:#0F172A;
+
+    line-height:1.2;
+
+    margin-bottom:18px;
+
+    position:relative;
+
+    display:inline-block;
 
 }
-/*baru ditambahkan */
-.page-header h1::after{
+
+.hero-section h1::after{
 
     content:"";
 
@@ -163,13 +203,27 @@ const profile = {
 
     bottom:-10px;
 
-    width:70px;
+    width:90px;
 
     height:4px;
 
-    background:#0f4c81;
-
     border-radius:10px;
+
+    background:#2563EB;
+
+}
+
+.hero-section p{
+
+    margin-top:26px;
+
+    max-width:720px;
+
+    color:#64748B;
+
+    line-height:1.9;
+
+    font-size:17px;
 
 }
 
@@ -185,11 +239,11 @@ const profile = {
 
     width:100%;
 
-    height:240px;
+    height:260px;
 
     object-fit:cover;
 
-    border-radius:12px;
+    border-radius:18px;
 
     display:block;
 
@@ -199,13 +253,13 @@ const profile = {
 
     width:100%;
 
-    height:240px;
+    height:260px;
 
-    border:2px dashed #cbd5e1;
+    border:2px dashed #CBD5E1;
 
-    border-radius:12px;
+    border-radius:18px;
 
-    background:#f8fafc;
+    background:#F8FAFC;
 
     display:flex;
 
@@ -215,13 +269,15 @@ const profile = {
 
     align-items:center;
 
-    color:#64748b;
+    text-align:center;
 
 }
 
 .placeholder-icon{
 
-    font-size:56px;
+    font-size:60px;
+
+    margin-bottom:18px;
 
     opacity:.7;
 
@@ -229,23 +285,21 @@ const profile = {
 
 .image-placeholder h4{
 
-    margin-top:10px;
+    font-size:20px;
 
-    font-size:18px;
+    color:#1E293B;
 
-    font-weight:600;
-
-    letter-spacing:1px;
+    margin-bottom:10px;
 
 }
 
 .image-placeholder p{
 
-    margin-top:8px;
+    color:#64748B;
 
-    font-size:14px;
+    max-width:320px;
 
-    color:#64748b;
+    line-height:1.7;
 
 }
 
@@ -253,13 +307,13 @@ const profile = {
 
 .content-card{
 
-    background:white;
+    background:#FFF;
 
-    border-radius:12px;
+    border-radius:20px;
 
-    padding:32px;
+    padding:40px;
 
-    box-shadow:0 2px 12px rgba(0,0,0,.06);
+    box-shadow:0 10px 30px rgba(15,23,42,.06);
 
     margin-bottom:60px;
 
@@ -267,46 +321,52 @@ const profile = {
 
     line-height:2;
 
-    color:#374151;
-
 }
-
-
-/*baru ditambahkan */
 
 .content-card :deep(h2){
 
-    margin-top:34px;
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:42px;
 
     margin-bottom:18px;
 
-    padding-left:12px;
+    color:#0F172A;
 
-    border-left:5px solid #0f4c81;
+    font-size:24px;
 
-    color:#0f4c81;
+    font-weight:700;
+
+}
+
+.content-card :deep(h2)::before{
+
+    content:"📘";
 
     font-size:24px;
 
 }
+
 .content-card :deep(ul){
 
-    padding-left:24px;
+    padding-left:28px;
 
-    margin:18px 0;
-
-    list-style:disc;
+    margin:20px 0;
 
 }
 
 .content-card :deep(li){
 
-    margin-bottom:12px;
+    margin-bottom:14px;
 
-    display:list-item;
+    color:#374151;
 
 }
-/**/
+
 .content-card :deep(p){
 
     margin-bottom:16px;
@@ -317,9 +377,15 @@ const profile = {
 
 @media(max-width:768px){
 
-    .page-header h1{
+    .hero-section{
 
-        font-size:28px;
+        padding:42px 0;
+
+    }
+
+    .hero-section h1{
+
+        font-size:32px;
 
     }
 
@@ -331,7 +397,7 @@ const profile = {
 
     .content-card{
 
-        padding:20px;
+        padding:24px;
 
     }
 
