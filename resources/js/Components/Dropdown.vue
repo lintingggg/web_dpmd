@@ -59,21 +59,21 @@ const open = ref(false);
 
         <Transition
             enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
+            enter-from-class="opacity-0 scale-95 translate-y-1"
+            enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition ease-in duration-150"
+            leave-from-class="opacity-100 scale-100 translate-y-0"
+            leave-to-class="opacity-0 scale-95 translate-y-1"
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
+                class="absolute z-50 mt-2 rounded-2xl shadow-lg"
                 :class="[widthClass, alignmentClasses]"
-                style="display: none"
+                style="display: none; box-shadow: 0 8px 32px rgba(15,23,42,0.12); border: 1px solid #e3e5e7;"
                 @click="open = false"
             >
                 <div
-                    class="rounded-md ring-1 ring-black ring-opacity-5"
+                    class="rounded-2xl overflow-hidden bg-white"
                     :class="contentClasses"
                 >
                     <slot name="content" />

@@ -40,6 +40,9 @@ const radius = computed(() => {
         case "lg":
             return "12px";
 
+        case "xl":
+            return "16px";
+
         default:
             return "4px";
 
@@ -62,31 +65,27 @@ const styleObject = computed(() => ({
 
 .skeleton{
 
-    background:linear-gradient(
+    background: linear-gradient(
         90deg,
-        #eeeeee 25%,
-        #f5f5f5 50%,
-        #eeeeee 75%
+        #e3e5e7 25%,
+        #f8fafc 50%,
+        #e3e5e7 75%
     );
 
-    background-size:200% 100%;
+    background-size: 200% 100%;
 
-    animation:loading 1.4s infinite;
+    animation: loading 1.6s infinite ease-in-out;
 
 }
 
 @keyframes loading{
 
     0%{
-
-        background-position:200% 0;
-
+        background-position: 200% 0;
     }
 
     100%{
-
-        background-position:-200% 0;
-
+        background-position: -200% 0;
     }
 
 }

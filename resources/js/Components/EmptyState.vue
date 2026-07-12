@@ -1,26 +1,51 @@
 <template>
-  <div class="empty-state">
+  <div style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 48px 24px;
+    text-align: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  ">
     <img
       v-if="image"
       :src="image"
       :alt="title"
-      class="empty-image"
+      style="width: 200px; max-width: 100%; opacity: 0.7;"
     />
 
-    <div class="empty-content">
+    <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; max-width: 400px;">
 
-      <h2 class="empty-title">
+      <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px;">
         {{ title }}
       </h2>
 
-      <p class="empty-description">
+      <p style="font-size: 14px; font-weight: 500; color: #646a79; line-height: 1.7;">
         {{ description }}
       </p>
 
       <button
         v-if="buttonText"
-        class="empty-button"
+        style="
+          margin-top: 8px;
+          padding: 12px 24px;
+          background: #0f172a;
+          color: #ffffff;
+          border: none;
+          border-radius: 9999px;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          letter-spacing: -0.2px;
+          transition: background 0.2s ease;
+          box-shadow: 0 4px 16px rgba(15,23,42,0.18);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+        "
         @click="$emit('action')"
+        @mouseenter="$event.target.style.background = '#222a3d'"
+        @mouseleave="$event.target.style.background = '#0f172a'"
       >
         {{ buttonText }}
       </button>
@@ -60,95 +85,3 @@ defineEmits([
 ])
 
 </script>
-
-<style scoped>
-
-.empty-state{
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:24px;
-
-    padding:40px 20px;
-
-    text-align:center;
-
-}
-
-.empty-image{
-
-    width:260px;
-
-    max-width:100%;
-
-}
-
-.empty-content{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:12px;
-
-    align-items:center;
-
-}
-
-.empty-title{
-
-    font-size:24px;
-
-    font-weight:600;
-
-    color:#1f2937;
-
-}
-
-.empty-description{
-
-    color:#6b7280;
-
-    line-height:1.6;
-
-    max-width:420px;
-
-}
-
-.empty-button{
-
-    margin-top:10px;
-
-    padding:12px 24px;
-
-    border:none;
-
-    border-radius:8px;
-
-    background:#111827;
-
-    color:white;
-
-    cursor:pointer;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    transition:.2s;
-
-}
-
-.empty-button:hover{
-
-    background:#000;
-
-}
-
-</style>
