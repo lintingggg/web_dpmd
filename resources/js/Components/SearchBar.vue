@@ -1,7 +1,5 @@
 <script setup>
-import { computed } from 'vue';
-import { Button, BasicDropdown, TextField } from '@idds/vue';
-import { IconSearch } from '@tabler/icons-vue';
+import { computed, ref } from 'vue';
 
 const model = defineModel({ type: String, default: '' });
 
@@ -17,65 +15,119 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['onSearch']);
+const showDropdown = ref(false);
 
 const filteredOptions = computed(() => {
     if (!model.value) return [];
-    
     return props.options.filter((opt) =>
         opt.toLowerCase().includes(model.value.toLowerCase())
     );
 });
 
 const eksekusiPencarian = () => {
+    showDropdown.value = false;
     emit('onSearch', model.value);
 };
+
+const onFocus = () => { showDropdown.value = true; };
+const onBlur = () => { setTimeout(() => { showDropdown.value = false; }, 200); };
 </script>
 
 <template>
-  <div class="flex flex-row gap-4 lg:gap-6 w-full items-start justify-start">
-    
-    <BasicDropdown class="w-full">
-      
-      <template #trigger>
-        <TextField 
-            v-model="model" 
-            :placeholder="placeholder" 
-            class="w-full"
-            @keyup.enter="eksekusiPencarian"
-        >
-          <template #prefixIcon>
-            <IconSearch :size="16" />
-          </template>
-        </TextField>
-      </template>
+  <div class="flex flex-row gap-3 w-full items-start justify-start" style="font-family: 'Plus Jakarta Sans', sans-serif;">
 
-      <template #content>
-        <div class="p-4 flex flex-col max-h-64 overflow-y-auto w-full space-y-2">
-          <p class="text-[10px] sm:text-xs text-gray-500 mb-2">Saran Pencarian</p>
-          
-          <template v-if="filteredOptions.length > 0">
-            <div
-              v-for="opt in filteredOptions"
-              :key="opt"
-              class="cursor-pointer hover:bg-gray-50 p-2 rounded transition"
-              @mousedown="model = opt; eksekusiPencarian()"
-            >
-              <h3 class="text-sm md:text-md text-neutral-800">{{ opt }}</h3>
-            </div>
-          </template>
-          
-          <template v-else-if="model.length > 0">
-            <div class="p-2 text-xs md:text-sm text-gray-400">Tidak ada hasil</div>
-          </template>
-          
-        </div>
-      </template>
+    <!-- Search Input with dropdown -->
+    <div class="relative w-full">
+      <span class="material-symbols-outlined" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: #9499a3; pointer-events: none;">search</span>
+      <input
+        v-model="model"
+        :placeholder="placeholder"
+        type="text"
+        style="
+          width: 100%;
+          height: 44px;
+          padding-left: 44px;
+          padding-right: 16px;
+          background: #ffffff;
+          border: 1.5px solid #e3e5e7;
+          border-radius: 16px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #0f172a;
+          outline: none;
+          transition: border-color 0.2s ease;
+          box-shadow: 0 1px 3px rgba(15,23,42,0.06);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+        "
+        @keyup.enter="eksekusiPencarian"
+        @focus="onFocus"
+        @blur="onBlur"
+        @focus.native="$event.target.style.borderColor = '#0f172a'"
+        @blur.native="$event.target.style.borderColor = '#e3e5e7'"
+      />
 
-    </BasicDropdown>
+      <!-- Suggestions Dropdown -->
+      <div
+        v-if="showDropdown && (filteredOptions.length > 0 || model.length > 0)"
+        style="
+          position: absolute;
+          top: calc(100% + 6px);
+          left: 0;
+          right: 0;
+          background: #ffffff;
+          border: 1px solid #e3e5e7;
+          border-radius: 16px;
+          box-shadow: 0 8px 32px rgba(15,23,42,0.12);
+          padding: 8px;
+          z-index: 50;
+          max-height: 240px;
+          overflow-y: auto;
+        "
+      >
+        <p style="font-size: 10px; font-weight: 500; color: #9499a3; letter-spacing: 1.5px; padding: 4px 8px 8px; text-transform: uppercase;">Saran Pencarian</p>
 
-    <Button hierarchy="primary" class="bg-blue-600 text-white" @click="eksekusiPencarian"> 
-        Cari 
-    </Button>
+        <template v-if="filteredOptions.length > 0">
+          <div
+            v-for="opt in filteredOptions"
+            :key="opt"
+            style="padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; color: #373f50; transition: background 0.15s ease;"
+            @mousedown="model = opt; eksekusiPencarian()"
+            @mouseenter="$event.target.style.background = '#f8fafc'"
+            @mouseleave="$event.target.style.background = 'transparent'"
+          >
+            {{ opt }}
+          </div>
+        </template>
+
+        <template v-else-if="model.length > 0">
+          <div style="padding: 8px 12px; font-size: 13px; color: #9499a3;">Tidak ada hasil ditemukan</div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Search Button -->
+    <button
+      style="
+        height: 44px;
+        padding: 0 20px;
+        background: #0f172a;
+        color: #ffffff;
+        border: none;
+        border-radius: 9999px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s ease;
+        box-shadow: 0 4px 12px rgba(15,23,42,0.15);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      "
+      @click="eksekusiPencarian"
+      @mouseenter="$event.target.style.background = '#222a3d'"
+      @mouseleave="$event.target.style.background = '#0f172a'"
+    >
+      Cari
+    </button>
 
   </div>
 </template>

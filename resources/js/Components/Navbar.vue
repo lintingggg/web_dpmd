@@ -1,5 +1,5 @@
 <template>
-  <nav class="hidden lg:flex gap-6 items-center">
+  <nav class="hidden lg:flex gap-6 items-center" style="font-family: 'Plus Jakarta Sans', sans-serif;">
     <template v-for="item in items" :key="item.label">
       <!-- Item dengan dropdown -->
       <div
@@ -10,29 +10,32 @@
       >
         <button
           type="button"
-          class="flex items-center gap-1 text-neutral-900 text-sm py-2"
+          class="flex items-center gap-1.5 py-2 text-sm font-medium transition-colors duration-150"
+          :class="openDropdown === item.label ? 'text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'"
           :aria-expanded="openDropdown === item.label"
           @click="toggleDropdown(item.label)"
         >
           {{ item.label }}
           <IconChevronDown
             :size="14"
-            class="transition-transform duration-150"
+            class="transition-transform duration-200"
             :class="openDropdown === item.label ? 'rotate-180' : ''"
           />
         </button>
         <transition name="fade">
           <div
             v-if="openDropdown === item.label"
-            class="absolute top-full left-0 pt-1 min-w-64 z-50"
+            class="absolute top-full left-0 pt-2 min-w-64 z-50"
           >
-            <div class="bg-white border border-neutral-200 rounded-lg shadow-lg p-1.5">
+            <div style="background: #ffffff; border: 1px solid #e3e5e7; border-radius: 16px; box-shadow: 0 8px 32px rgba(15,23,42,0.12); padding: 6px;">
               <a
                 v-for="child in item.children"
                 :key="child.label"
                 :href="child.href"
-                class="block px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
-                :class="{ 'bg-neutral-100 text-neutral-900 font-medium': child.href === currentPath }"
+                class="nav-child-link block px-3 py-2.5 text-sm font-medium transition-colors duration-150"
+                :class="child.href === currentPath
+                  ? 'bg-slate-50 text-slate-900 font-bold nav-child-active'
+                  : 'text-slate-600'"
               >
                 {{ child.label }}
               </a>
@@ -45,8 +48,8 @@
       <a
         v-else
         :href="item.href"
-        class="text-sm py-2"
-        :class="item.href === currentPath ? 'text-blue-600 font-medium' : 'text-neutral-900'"
+        class="text-sm py-2 font-medium transition-colors duration-150"
+        :class="item.href === currentPath ? 'text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'"
       >
         {{ item.label }}
       </a>
@@ -87,7 +90,6 @@ function closeDropdown() {
   openDropdown.value = null;
 }
 
-// Tutup dropdown saat klik di luar area nav (fallback selain hover, berguna untuk sentuh/tap)
 function handleClickOutside(event: MouseEvent) {
   const target = event.target as HTMLElement;
   if (!target.closest('nav')) {
@@ -106,10 +108,21 @@ onBeforeUnmount(() => {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+  transform: translateY(-4px);
+}
+
+.nav-child-link {
+  border-radius: 10px;
+  display: block;
+}
+
+.nav-child-link:not(.nav-child-active):hover {
+  background: #f8fafc;
+  color: #0f172a;
 }
 </style>
