@@ -28,4 +28,8 @@ Route::get('/halaman-utama', function () {
     return Inertia::render('HalamanUtama');
 });
 
+Route::get('/struktur-organisasi', function () {
+    return Inertia::render('ProfilDinas/StrukturOrganisasi');
+});
+
 require __DIR__.'/auth.php';

@@ -104,7 +104,7 @@
 import { ref, watch, onBeforeUnmount } from 'vue';
 import { Button, TextField, Avatar } from '@idds/vue';
 import { IconSearch, IconBell, IconChevronDown, IconMenu2, IconX } from '@tabler/icons-vue';
-import type { NavItem } from './Navbar.vue';
+import type { NavItem } from './Navbar/Navbar.vue/index.js';
 
 interface Props {
   items: NavItem[];
