@@ -28,4 +28,19 @@ Route::get('/halaman-utama', function () {
     return Inertia::render('HalamanUtama');
 });
 
+Route::prefix('bidang-tugas')->group(function () {
+    Route::get('/sekretariat', function () {
+        return Inertia::render('BidangTugas/Sekretariat');
+    });
+    Route::get('/pemerintahan-desa', function () {
+        return Inertia::render('BidangTugas/BidangPemerintahanDesa');
+    });
+    Route::get('/pemberdayaan-desa', function () {
+        return Inertia::render('BidangTugas/BidangPemberdayaanDesa');
+    });
+    Route::get('/pemberdayaan-lembaga-kemasyarakatan', function () {
+        return Inertia::render('BidangTugas/BidangPemberdayaanLembagaKemasyarakatan');
+    });
+});
+
 require __DIR__.'/auth.php';

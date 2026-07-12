@@ -20,4 +20,3 @@ const items = ref([
   { label: 'Detail' },
 ]);
 </script>
-
