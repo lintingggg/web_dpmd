@@ -29,3 +29,14 @@ Route::get('/halaman-utama', function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+// mufid
+Route::get('/publikasi-dokumen', function () {
+    return Inertia::render('PublikasiDokumen'); // Sesuaikan dengan nama file .vue kamu
+});
+
+// Route untuk halaman Berita & Kegiatan (yang baru saja dibuat)
+Route::get('/berita-kegiatan', function () {
+    return Inertia::render('BeritaKegiatan'); // Nama file baru .vue di folder Pages
+});
