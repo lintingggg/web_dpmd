@@ -76,3 +76,8 @@ Route::get('/maklumat-pelayanan', function () {
 });
 
 require __DIR__.'/auth.php';
+Route::get('/struktur-organisasi', function () {
+    return Inertia::render('ProfilDinas/StrukturOrganisasi');
+});
+
+require __DIR__.'/auth.php';
