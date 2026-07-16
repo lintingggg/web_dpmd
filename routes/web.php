@@ -65,6 +65,8 @@ Route::prefix('bidang-tugas')->group(function () {
     Route::get('/pemberdayaan-lembaga-kemasyarakatan', function () {
         return Inertia::render('BidangTugas/BidangPemberdayaanLembagaKemasyarakatan');
     });
+});
+
 Route::get('/kode-etik-pelayanan', function () {
     return Inertia::render('ProfilDinas/KodeEtikPelayanan');
 });
