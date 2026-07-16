@@ -32,9 +32,13 @@ Route::get('/berita', function () {
     return Inertia::render('Berita');
 });
 
-Route::get('/admin/beranda', function () {
-    return Inertia::render('Admin/Beranda');
-})->middleware(['auth', 'verified'])->name('admin.beranda');
+Route::get('/admin/pengumuman', function () {
+    return Inertia::render('Admin/Pengumuman');
+})->middleware(['auth', 'verified'])->name('admin.pengumuman');
+
+Route::get('/admin/kontak-medsos', function () {
+    return Inertia::render('Admin/KontakMedsos');
+})->middleware(['auth', 'verified'])->name('admin.kontak-medsos');
 
 Route::get('/admin/profil-dinas/{section?}', function ($section = 'sambutan') {
     return Inertia::render('Admin/ProfilDinas', ['section' => $section]);

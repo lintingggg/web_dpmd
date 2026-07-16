@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 
 defineProps({
     status: {
@@ -195,14 +195,14 @@ const submit = () => {
                                 </div>
                                 <span style="font-size: 14px; font-weight: 500; color: #4d5464;">Ingat Saya</span>
                             </label>
-                            <a
-                                href="#"
+                            <Link
+                                :href="route('password.request')"
                                 style="font-size: 14px; font-weight: 700; color: #0f172a; text-decoration: none;"
                                 @mouseenter="$event.target.style.textDecoration = 'underline'"
                                 @mouseleave="$event.target.style.textDecoration = 'none'"
                             >
                                 Lupa kata sandi?
-                            </a>
+                            </Link>
                         </div>
 
                         <!-- Submit Button -->
