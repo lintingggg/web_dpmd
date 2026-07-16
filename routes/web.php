@@ -1,17 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\PengumumanController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('HalamanUtama');
 });
 
 Route::get('/dashboard', function () {
@@ -24,17 +20,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/halaman-utama', function () {
-    return Inertia::render('HalamanUtama');
-});
 
 Route::get('/berita', function () {
     return Inertia::render('Berita');
 });
 
-Route::get('/admin/pengumuman', function () {
-    return Inertia::render('Admin/Pengumuman');
-})->middleware(['auth', 'verified'])->name('admin.pengumuman');
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+    Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('admin.pengumuman.index');
+    Route::post('/pengumuman', [PengumumanController::class, 'store'])->name('admin.pengumuman.store');
+    Route::post('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('admin.pengumuman.update');
+    Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('admin.pengumuman.destroy');
+});
 
 Route::get('/admin/kontak-medsos', function () {
     return Inertia::render('Admin/KontakMedsos');
@@ -83,7 +79,6 @@ Route::get('/maklumat-pelayanan', function () {
     return Inertia::render('ProfilDinas/MaklumatPelayanan');
 });
 
-require __DIR__.'/auth.php';
 Route::get('/struktur-organisasi', function () {
     return Inertia::render('ProfilDinas/StrukturOrganisasi');
 });
