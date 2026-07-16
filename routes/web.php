@@ -28,6 +28,10 @@ Route::get('/halaman-utama', function () {
     return Inertia::render('HalamanUtama');
 });
 
+Route::get('/berita', function () {
+    return Inertia::render('Berita');
+});
+
 Route::get('/admin/beranda', function () {
     return Inertia::render('Admin/Beranda');
 })->middleware(['auth', 'verified'])->name('admin.beranda');
@@ -67,15 +71,20 @@ Route::prefix('bidang-tugas')->group(function () {
     });
 });
 
+Route::prefix('publikasi-dokumen')->group(function () {
+    Route::get('/dokumen-lainnya', function () {
+        return Inertia::render('PublikasiDokumen/DokumenLainnya');
+    });
+    
+    Route::get('/dokumen-perencanaan', function () {
+        return Inertia::render('PublikasiDokumen/DokumenPerencanaan'); 
+    });
+
+    Route::get('/produk-peraturan', function () {
+        return Inertia::render('PublikasiDokumen/ProdukPeraturan'); 
+    });
+
+});
+
+
 require __DIR__.'/auth.php';
-
-
-// mufid
-Route::get('/publikasi-dokumen', function () {
-    return Inertia::render('PublikasiDokumen'); // Sesuaikan dengan nama file .vue kamu
-});
-
-// Route untuk halaman Berita & Kegiatan (yang baru saja dibuat)
-Route::get('/berita-kegiatan', function () {
-    return Inertia::render('BeritaKegiatan'); // Nama file baru .vue di folder Pages
-});
