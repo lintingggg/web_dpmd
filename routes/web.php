@@ -28,6 +28,10 @@ Route::get('/halaman-utama', function () {
     return Inertia::render('HalamanUtama');
 });
 
+Route::get('/berita', function () {
+    return Inertia::render('Berita');
+});
+
 Route::get('/admin/beranda', function () {
     return Inertia::render('Admin/Beranda');
 })->middleware(['auth', 'verified'])->name('admin.beranda');
@@ -79,5 +83,20 @@ require __DIR__.'/auth.php';
 Route::get('/struktur-organisasi', function () {
     return Inertia::render('ProfilDinas/StrukturOrganisasi');
 });
+Route::prefix('publikasi-dokumen')->group(function () {
+    Route::get('/dokumen-lainnya', function () {
+        return Inertia::render('PublikasiDokumen/DokumenLainnya');
+    });
+    
+    Route::get('/dokumen-perencanaan', function () {
+        return Inertia::render('PublikasiDokumen/DokumenPerencanaan'); 
+    });
+
+    Route::get('/produk-peraturan', function () {
+        return Inertia::render('PublikasiDokumen/ProdukPeraturan'); 
+    });
+
+});
+
 
 require __DIR__.'/auth.php';
