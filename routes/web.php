@@ -30,11 +30,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/pengumuman', [PengumumanController::class, 'store'])->name('admin.pengumuman.store');
     Route::post('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('admin.pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('admin.pengumuman.destroy');
+
+    Route::get('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
+    Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
 });
 
-Route::get('/admin/kontak-medsos', function () {
-    return Inertia::render('Admin/KontakMedsos');
-})->middleware(['auth', 'verified'])->name('admin.kontak-medsos');
+
 
 Route::get('/admin/profil-dinas/{section?}', function ($section = 'sambutan') {
     return Inertia::render('Admin/ProfilDinas', ['section' => $section]);
