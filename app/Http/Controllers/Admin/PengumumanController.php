@@ -11,11 +11,27 @@ use Illuminate\Support\Facades\Storage;
 
 class PengumumanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengumuman = Pengumuman::latest()->paginate(10);
+        $query = Pengumuman::query();
+
+        if ($request->filled('search')) {
+            $query->where('judul', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'Aktif') {
+                $query->where('is_published', true);
+            } elseif ($request->status === 'Non-Aktif') {
+                $query->where('is_published', false);
+            }
+        }
+
+        $pengumuman = $query->latest()->paginate(10)->withQueryString();
+        
         return Inertia::render('Admin/Pengumuman', [
-            'pengumuman' => $pengumuman
+            'pengumuman' => $pengumuman,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
@@ -25,7 +41,6 @@ class PengumumanController extends Controller
             'judul' => 'required|string|max:255',
             'konten' => 'required|string',
             'file_lampiran' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:10240',
-            'is_published' => 'nullable|boolean'
         ]);
 
         if ($request->hasFile('file_lampiran')) {
@@ -33,9 +48,7 @@ class PengumumanController extends Controller
             $validated['file_lampiran'] = $path;
         }
 
-        if (!isset($validated['is_published'])) {
-            $validated['is_published'] = true;
-        }
+        $validated['is_published'] = $request->boolean('is_published', true);
 
         Pengumuman::create($validated);
 
@@ -48,7 +61,6 @@ class PengumumanController extends Controller
             'judul' => 'required|string|max:255',
             'konten' => 'required|string',
             'file_lampiran' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:10240',
-            'is_published' => 'nullable|boolean'
         ]);
 
         if ($request->hasFile('file_lampiran')) {
@@ -57,11 +69,14 @@ class PengumumanController extends Controller
             }
             $path = $request->file('file_lampiran')->store('pengumuman', 'public');
             $validated['file_lampiran'] = $path;
+        } elseif ($request->boolean('remove_lampiran')) {
+            if ($pengumuman->file_lampiran && Storage::disk('public')->exists($pengumuman->file_lampiran)) {
+                Storage::disk('public')->delete($pengumuman->file_lampiran);
+            }
+            $validated['file_lampiran'] = null;
         }
 
-        if (!isset($validated['is_published'])) {
-            $validated['is_published'] = $pengumuman->is_published;
-        }
+        $validated['is_published'] = $request->boolean('is_published');
 
         $pengumuman->update($validated);
 
