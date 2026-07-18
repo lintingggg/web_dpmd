@@ -33,13 +33,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     Route::get('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
     Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
+    Route::get('/profil-dinas/{section?}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'edit'])->name('admin.profil-dinas');
+    Route::post('/profil-dinas/{section}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'update'])->name('admin.profil-dinas.update');
 });
 
 
-
-Route::get('/admin/profil-dinas/{section?}', function ($section = 'sambutan') {
-    return Inertia::render('Admin/ProfilDinas', ['section' => $section]);
-})->middleware(['auth', 'verified'])->name('admin.profil-dinas');
 
 Route::get('/admin/bidang-tugas/{bidang?}', function ($bidang = 'pemdes') {
     return Inertia::render('Admin/BidangTugas', ['bidang' => $bidang]);

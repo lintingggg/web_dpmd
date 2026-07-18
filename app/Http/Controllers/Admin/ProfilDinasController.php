@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Models\ProfilDinas;
+use Illuminate\Support\Facades\Storage;
+use Mews\Purifier\Facades\Purifier;
+
+class ProfilDinasController extends Controller
+{
+    const VALID_SECTIONS = [
+        'sambutan', 
+        'visi-misi', 
+        'tupoksi', 
+        'struktur', 
+        'kode-etik', 
+        'maklumat', 
+        'motto'
+    ];
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(?string $section = null)
+    {
+        $section = $section ?? 'sambutan';
+        abort_unless(in_array($section, self::VALID_SECTIONS), 404);
+
+        $profil = ProfilDinas::firstOrCreate(['id' => 1]);
+        
+        return Inertia::render('Admin/ProfilDinas', [
+            'profil' => $profil,
+            'section' => $section
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $section)
+    {
+        abort_unless(in_array($section, self::VALID_SECTIONS), 404);
+        
+        $profil = ProfilDinas::firstOrCreate(['id' => 1]);
+
+        $rules = match($section) {
+            'sambutan'  => [
+                'kadis_nama'    => 'nullable|string|max:255',
+                'kadis_nip'     => 'nullable|string|max:50',
+                'sambutan_teks' => 'nullable|string',
+                'kadis_foto'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ],
+            'visi-misi' => [
+                'visi_teks' => 'nullable|string',
+                'misi_teks' => 'nullable|string',
+            ],
+            'tupoksi'   => [
+                'tupoksi_teks' => 'nullable|string',
+            ],
+            'struktur'  => [
+                'struktur_keterangan' => 'nullable|string',
+                'struktur_gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            ],
+            'kode-etik' => [
+                'kode_etik_teks' => 'nullable|string',
+            ],
+            'maklumat'  => [
+                'maklumat_teks' => 'nullable|string',
+            ],
+            'motto'     => [
+                'motto_teks' => 'nullable|string',
+            ],
+            default => [],
+        };
+
+        $validated = $request->validate($rules);
+
+        // Sanitasi HTML
+        $htmlFields = [
+            'sambutan_teks', 'visi_teks', 'misi_teks', 'tupoksi_teks',
+            'struktur_keterangan', 'kode_etik_teks', 'maklumat_teks', 'motto_teks'
+        ];
+
+        foreach ($htmlFields as $field) {
+            if (isset($validated[$field])) {
+                $validated[$field] = Purifier::clean($validated[$field], 'profil_dinas');
+            }
+        }
+
+        // Handle file uploads
+        if ($request->hasFile('kadis_foto')) {
+            if ($profil->kadis_foto) {
+                Storage::disk('public')->delete($profil->kadis_foto);
+            }
+            $validated['kadis_foto'] = $request->file('kadis_foto')->store('profil-dinas/foto', 'public');
+        }
+
+        if ($request->hasFile('struktur_gambar')) {
+            if ($profil->struktur_gambar) {
+                Storage::disk('public')->delete($profil->struktur_gambar);
+            }
+            $validated['struktur_gambar'] = $request->file('struktur_gambar')->store('profil-dinas/struktur', 'public');
+        }
+
+        // Simpan
+        $profil->update($validated);
+
+        return redirect()->back()->with('message', 'Perubahan profil dinas berhasil disimpan.');
+    }
+}

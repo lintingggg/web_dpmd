@@ -22,6 +22,10 @@
     },
     "dependencies": {
         "@idds/vue": "^1.6.50",
-        "@tabler/icons-vue": "^3.44.0"
+        "@tabler/icons-vue": "^3.44.0",
+        "@tiptap/extension-underline": "^3.28.0",
+        "@tiptap/pm": "^3.28.0",
+        "@tiptap/starter-kit": "^3.28.0",
+        "@tiptap/vue-3": "^3.28.0"
     }
 }
