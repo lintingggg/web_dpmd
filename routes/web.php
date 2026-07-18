@@ -21,9 +21,6 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/berita', function () {
-    return Inertia::render('Berita');
-});
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('admin.pengumuman.index');
@@ -82,20 +79,17 @@ Route::get('/maklumat-pelayanan', function () {
 Route::get('/struktur-organisasi', function () {
     return Inertia::render('ProfilDinas/StrukturOrganisasi');
 });
-Route::prefix('publikasi-dokumen')->group(function () {
-    Route::get('/dokumen-lainnya', function () {
-        return Inertia::render('PublikasiDokumen/DokumenLainnya');
-    });
-    
-    Route::get('/dokumen-perencanaan', function () {
-        return Inertia::render('PublikasiDokumen/DokumenPerencanaan'); 
-    });
 
-    Route::get('/produk-peraturan', function () {
-        return Inertia::render('PublikasiDokumen/ProdukPeraturan'); 
-    });
-
+Route::get('/dokumen-dan-peraturan', function () {
+    return Inertia::render('DokumenDanPeraturan');
 });
 
+Route::get('/berita', function () {
+    return Inertia::render('Berita');
+});
+
+Route::get('/berita-detail', function () {
+    return Inertia::render('BeritaDetail');
+});
 
 require __DIR__.'/auth.php';

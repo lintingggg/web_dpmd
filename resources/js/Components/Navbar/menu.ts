@@ -64,7 +64,7 @@ export const menu: NavItem[] = [
             },
             {
                 label: "Dokumen",
-                href: "/dokumen"
+                href: "/dokumen-dan-peraturan"
             }
         ]
     },
