@@ -26,11 +26,6 @@ const getFilteredDocuments = () => {
         <!-- Page Header Top -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-                <div class="flex items-center gap-2 text-[13px] font-medium text-[#646a79] mb-2">
-                    <span>Beranda</span>
-                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                    <span>Publikasi Dokumen</span>
-                </div>
                 <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
                     Publikasi Dokumen
                 </h2>

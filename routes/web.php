@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PengumumanController;
+use App\Http\Controllers\Admin\BidangTugasController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,13 +36,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
     Route::get('/profil-dinas/{section?}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'edit'])->name('admin.profil-dinas');
     Route::post('/profil-dinas/{section}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'update'])->name('admin.profil-dinas.update');
+    
+    Route::get('/bidang-tugas/{section?}', [BidangTugasController::class, 'edit'])->name('admin.bidang-tugas');
+    Route::post('/bidang-tugas/{section}', [BidangTugasController::class, 'update'])->name('admin.bidang-tugas.update');
 });
-
-
-
-Route::get('/admin/bidang-tugas/{bidang?}', function ($bidang = 'pemdes') {
-    return Inertia::render('Admin/BidangTugas', ['bidang' => $bidang]);
-})->middleware(['auth', 'verified'])->name('admin.bidang-tugas');
 
 Route::get('/admin/publikasi-dokumen', function () {
     return Inertia::render('Admin/PublikasiDokumen');

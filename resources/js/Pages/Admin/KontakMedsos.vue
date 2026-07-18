@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from '@idds/vue';
 
@@ -55,15 +55,7 @@ watch([hariBuka, hariTutup, jamBuka, jamTutup], () => {
 
 const submit = () => {
     form.post(route('admin.kontak-medsos.update'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            toast({
-                state: 'positive',
-                title: 'Berhasil',
-                description: 'Pengaturan Kontak & Media Sosial berhasil disimpan',
-                duration: 3000
-            });
-        }
+        preserveScroll: true
     });
 };
 </script>
@@ -73,23 +65,25 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
-                    Kontak & Media Sosial
-                </h2>
-                <p class="text-[14px] font-medium text-[#646a79]">Kelola informasi kontak dinas dan tautan akun media sosial resmi.</p>
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+                        Kontak & Media Sosial
+                    </h2>
+                    <p class="text-[14px] font-medium text-[#646a79]">Kelola informasi kontak dinas dan tautan akun media sosial resmi.</p>
+                </div>
+                
+                <button 
+                    @click="submit"
+                    :disabled="form.processing"
+                    class="bg-[#0f172a] hover:bg-[#222a3d] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+                >
+                    <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                    <span v-else class="material-symbols-outlined text-[18px]">save</span>
+                    Simpan Perubahan
+                </button>
             </div>
-            
-            <button 
-                @click="submit"
-                :disabled="form.processing"
-                class="bg-[#0f172a] hover:bg-[#222a3d] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
-            >
-                <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                <span v-else class="material-symbols-outlined text-[18px]">save</span>
-                Simpan Perubahan
-            </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

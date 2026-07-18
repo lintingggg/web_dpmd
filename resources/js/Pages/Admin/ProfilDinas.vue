@@ -1,5 +1,5 @@
 <script setup>
-import { Head, usePage, useForm } from '@inertiajs/vue3';
+import { Head, usePage, useForm, Link } from '@inertiajs/vue3';
 import { computed, ref, onMounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from '@idds/vue';
@@ -80,15 +80,7 @@ const { toast } = useToast();
 const submit = () => {
     form.post(route('admin.profil-dinas.update', currentSection.value), {
         forceFormData: true,
-        preserveScroll: true,
-        onSuccess: () => {
-            toast({
-                state: 'positive',
-                title: 'Berhasil',
-                description: 'Perubahan pada Profil Dinas berhasil disimpan.',
-                duration: 3000
-            });
-        }
+        preserveScroll: true
     });
 };
 
@@ -107,11 +99,6 @@ const formatDate = (dateString) => {
     <AuthenticatedLayout>
         <!-- Page Header Top -->
         <div class="mb-8">
-            <div class="flex items-center gap-2 text-[13px] font-medium text-[#646a79] mb-2">
-                <span>Beranda</span>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span>Profil Dinas</span>
-            </div>
             <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
                 Profil & Informasi
             </h2>

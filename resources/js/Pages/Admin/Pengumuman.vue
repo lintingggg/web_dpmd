@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import { useToast } from '@idds/vue';
@@ -100,14 +100,12 @@ const submitForm = () => {
         form.post(route('admin.pengumuman.update', editingId.value), {
             onSuccess: () => {
                 closeModal();
-                toast({ state: 'positive', title: 'Berhasil', description: 'Pengumuman berhasil diperbarui', duration: 3000 });
             },
         });
     } else {
         form.post(route('admin.pengumuman.store'), {
             onSuccess: () => {
                 closeModal();
-                toast({ state: 'positive', title: 'Berhasil', description: 'Pengumuman berhasil ditambahkan', duration: 3000 });
             },
         });
     }
@@ -128,7 +126,6 @@ const executeDelete = () => {
             onSuccess: () => {
                 isDeleteModalOpen.value = false;
                 itemToDelete.value = null;
-                toast({ state: 'positive', title: 'Dihapus', description: 'Pengumuman berhasil dihapus', duration: 3000 });
             }
         });
     }
@@ -145,18 +142,20 @@ const formatDate = (dateString) => {
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
-                    Pengumuman
-                </h2>
-                <p class="text-[14px] font-medium text-[#646a79]">Kelola daftar pengumuman penting yang tampil di halaman depan website.</p>
-            </div>
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+                        Pengumuman
+                    </h2>
+                    <p class="text-[14px] font-medium text-[#646a79]">Kelola daftar pengumuman penting yang tampil di halaman depan website.</p>
+                </div>
             
-            <button @click="openModal" class="bg-[#0f172a] hover:bg-[#222a3d] text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
-                <span class="material-symbols-outlined text-[18px]">add</span>
-                Tambah Pengumuman
-            </button>
+                <button @click="openModal" class="bg-[#0f172a] hover:bg-[#222a3d] text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    Tambah Pengumuman
+                </button>
+            </div>
         </div>
 
         <!-- Main Content Card -->

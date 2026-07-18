@@ -35,7 +35,7 @@ return [
             'CSS.AllowedProperties' => '',  // Tidak ada CSS inline
             'AutoFormat.AutoParagraph' => true,
             'AutoFormat.RemoveEmpty' => true,
-            'HTML.AllowedAttributes' => '', // Tidak ada atribut (class, style, onclick, dll)
+            'HTML.AllowedAttributes' => 'img.src,img.alt', // Workaround untuk mencegah error validasi internal Purifier
         ],
         'test'    => [
             'Attr.EnableID' => 'true',

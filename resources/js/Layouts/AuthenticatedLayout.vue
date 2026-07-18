@@ -8,10 +8,13 @@ const showingNavigationDropdown = ref(false);
 const profilDinasOpen = ref(false);
 const bidangTugasOpen = ref(false);
 const page = usePage();
+
+import GlobalToast from '@/Components/GlobalToast.vue';
 </script>
 
 <template>
     <ToastProvider>
+        <GlobalToast />
         <div class="bg-[#f9f9f9] font-['Plus_Jakarta_Sans'] text-[#1a1c1c] antialiased flex h-screen overflow-hidden">
             
             <!-- SideNavBar -->
@@ -70,10 +73,10 @@ const page = usePage();
                         </button>
                         <!-- Dropdown Content -->
                         <div v-show="bidangTugasOpen" class="pl-12 pr-4 space-y-1 mb-2">
-                            <Link :href="route('admin.bidang-tugas', { bidang: 'pemdes' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Pemerintahan Desa</Link>
-                            <Link :href="route('admin.bidang-tugas', { bidang: 'pemberdayaan' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Pemberdayaan Desa</Link>
-                            <Link :href="route('admin.bidang-tugas', { bidang: 'lembaga' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Lembaga Kemasyarakatan</Link>
-                            <Link :href="route('admin.bidang-tugas', { bidang: 'sekretariat' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Sekretariat</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'pemdes' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Pemerintahan Desa</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'pemberdayaan' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Pemberdayaan Desa</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'lembaga' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Lembaga Kemasyarakatan</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Sekretariat</Link>
                         </div>
                     </div>
                     <Link :href="route('admin.publikasi-dokumen')" 
