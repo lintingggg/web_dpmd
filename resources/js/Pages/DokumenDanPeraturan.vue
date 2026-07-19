@@ -1,23 +1,39 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
+import Navbar from '@/Components/Navbar/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
 import PageHeader from '@/Components/PageHeader.vue'; // Dipakai untuk judul halaman
 import SearchBar from '@/Components/SearchBar.vue';   // Dipakai untuk pencarian + history
 import TableDokumen from '@/Components/TableDokumen.vue'; // Dipakai untuk list tabel
+
+// State untuk mendeteksi tab yang aktif
+const activeTab = ref('perencanaan');
 
 // State untuk input pencarian dan dropdown history
 const searchQuery = ref('');
 const searchHistory = ref([]);
 const isDropdownOpen = ref(false);
 
-// --- DATA DUMMY PRODUK PERATURAN ---
+// --- DATA DUMMY DOKUMEN ---
 // Route halaman ini render statis (tanpa props dari controller), jadi data
 // ditulis langsung di sini. Ganti dengan props dari backend kalau nanti
 // controller-nya dibuat untuk kirim data lewat Inertia::render(..., [...]).
+const dokumenPerencanaan = [
+    { no: 1, judul: 'Rencana Strategis (Renstra) DPMD 2024–2029', tahun: 2024, link: '#' },
+    { no: 2, judul: 'Laporan Kinerja Instansi Pemerintah (LKjIP) 2023', tahun: 2024, link: '#' },
+    { no: 3, judul: 'Rencana Kerja (Renja) DPMD Tahun 2024', tahun: 2023, link: '#' },
+    { no: 4, judul: 'Indikator Kinerja Utama (IKU) Revisi 2023', tahun: 2023, link: '#' },
+];
+
 const produkPeraturan = [
     { no: 1, judul: 'Peraturan Bupati Bangkalan Nomor 12 Tahun 2025 tentang Pengelolaan Dana Desa', tahun: 2025, link: '#' },
     { no: 2, judul: 'Peraturan Daerah Kabupaten Bangkalan Nomor 3 Tahun 2024 tentang Kedudukan Keuangan Kepala Desa', tahun: 2024, link: '#' },
+];
+
+const dokumenLainnya = [
+    { no: 1, judul: 'Panduan Teknis Aplikasi Administrasi Desa Digital 2026', tahun: 2026, link: '#' },
+    { no: 2, judul: 'Surat Edaran DPMD Terkait Alokasi Hari Kerja Perangkat Desa', tahun: 2025, link: '#' },
 ];
 
 // --- LOGIKA HISTORY PENCARIAN (Maksimal 3) ---
@@ -56,19 +72,31 @@ const deleteHistoryItem = (index) => {
 
 // --- COMPUTED FILTER DATA ---
 const filteredDokumen = computed(() => {
+    let data = [];
+    if (activeTab.value === 'perencanaan') data = dokumenPerencanaan;
+    else if (activeTab.value === 'peraturan') data = produkPeraturan;
+    else if (activeTab.value === 'lainnya') data = dokumenLainnya;
+
     if (searchQuery.value.trim() !== '') {
-        return produkPeraturan.filter(dokumen =>
+        return data.filter(dokumen =>
             dokumen.judul.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
     }
-    return produkPeraturan;
+    return data;
 });
+
+const changeTab = (tabName) => {
+    activeTab.value = tabName;
+    searchQuery.value = '';
+    isDropdownOpen.value = false;
+};
 </script>
 
 <template>
-    <Head title="Publikasi Dokumen - Produk Peraturan" />
+    <Head title="Publikasi Dokumen" />
 
     <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+        <Navbar />
 
         <div class="max-w-7xl mx-auto mt-8">
 
@@ -79,24 +107,24 @@ const filteredDokumen = computed(() => {
 
             <div class="border-b border-gray-200 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <Link
-                        href="/publikasi-dokumen/dokumen-perencanaan"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    <button
+                        @click="changeTab('perencanaan')"
+                        :class="[activeTab === 'perencanaan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
                     >
                         Dokumen Perencanaan
-                    </Link>
-                    <Link
-                        href="/publikasi-dokumen/produk-peraturan"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors border-blue-600 text-blue-600 font-semibold"
+                    </button>
+                    <button
+                        @click="changeTab('peraturan')"
+                        :class="[activeTab === 'peraturan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
                     >
                         Produk Peraturan
-                    </Link>
-                    <Link
-                        href="/publikasi-dokumen/dokumen-lainnya"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    </button>
+                    <button
+                        @click="changeTab('lainnya')"
+                        :class="[activeTab === 'lainnya' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
                     >
                         Dokumen Lainnya
-                    </Link>
+                    </button>
                 </nav>
 
                 <div class="w-full md:w-80 mb-2 md:mb-0 relative">
