@@ -36,11 +36,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     
     Route::get('/bidang-tugas/{section?}', [BidangTugasController::class, 'edit'])->name('admin.bidang-tugas');
     Route::post('/bidang-tugas/{section}', [BidangTugasController::class, 'update'])->name('admin.bidang-tugas.update');
+    Route::get('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'index'])->name('admin.publikasi-dokumen');
+    Route::post('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'store'])->name('admin.publikasi-dokumen.store');
+    Route::put('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'update'])->name('admin.publikasi-dokumen.update');
+    Route::delete('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'destroy'])->name('admin.publikasi-dokumen.destroy');
 });
-
-Route::get('/admin/publikasi-dokumen', function () {
-    return Inertia::render('Admin/PublikasiDokumen');
-})->middleware(['auth', 'verified'])->name('admin.publikasi-dokumen');
 
 Route::get('/admin/berita', function () {
     return Inertia::render('Admin/Berita');
