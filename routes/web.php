@@ -69,6 +69,7 @@ Route::prefix('bidang-tugas')->group(function () {
     Route::get('/pemberdayaan-lembaga-kemasyarakatan', function () {
         return Inertia::render('BidangTugas/BidangPemberdayaanLembagaKemasyarakatan');
     });
+});
 
 Route::get('/kode-etik-pelayanan', function () {
     return Inertia::render('ProfilDinas/KodeEtikPelayanan');
@@ -106,5 +107,14 @@ Route::prefix('publikasi-dokumen')->group(function () {
 
 });
 
+Route::get('/motto-pelayanan', function () {
+    return Inertia::render('ProfilDinas/MottoPelayanan');
+
+});
+
+Route::get('/sambutan-kepala-dinas', function () {
+    return Inertia::render('ProfilDinas/SambutanKepalaDinas');
+
+});
 
 require __DIR__.'/auth.php';
