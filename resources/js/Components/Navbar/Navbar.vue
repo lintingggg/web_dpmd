@@ -1,78 +1,83 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { IconMenu2 } from "@tabler/icons-vue";
 
+import NavbarLogo from "./NavbarLogo.vue";
 import NavbarMenu from "./NavbarMenu.vue";
 import MobileDrawer from "./MobileDrawer.vue";
 
-const drawerOpen = ref(false);
+const mobileOpen = ref(false);
+
+const isScrolled = ref(false);
+
+function handleScroll() {
+    isScrolled.value = window.scrollY > 10;
+}
+
+onMounted(() => {
+    window.addEventListener("scroll", handleScroll);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("scroll", handleScroll);
+});
 </script>
 
 <template>
-    <header class="w-full">
 
-        <!-- HEADER BIRU -->
-        <div class="bg-[#0E3478] text-white">
+<header
+    class="sticky top-0 z-50 transition-all duration-300"
+    :class="[
+        isScrolled
+            ? 'bg-white shadow-md'
+            : 'bg-white'
+    ]"
+>
 
-            <div
-                class="max-w-7xl mx-auto px-4 py-5 flex justify-between items-center"
-            >
+    <div
+        class="max-w-7xl mx-auto h-20 px-5 flex items-center justify-between"
+    >
 
-                <!-- Logo + Judul -->
-                <div class="flex items-center gap-4">
+        <!-- Logo -->
 
-                    <div
-                        class="w-16 h-16 rounded-full bg-white text-[#0E3478] flex items-center justify-center font-bold shrink-0"
-                    >
-                        LOGO
-                    </div>
+        <NavbarLogo />
 
-                    <div>
+        <!-- Desktop -->
 
-                        <p class="text-sm opacity-90">
-                            Pemerintah Kabupaten
-                        </p>
+        <div
+            class="hidden lg:flex flex-1 justify-center"
+        >
 
-                        <h1
-                            class="text-xl lg:text-2xl font-bold leading-tight"
-                        >
-                            Dinas Pemberdayaan Masyarakat dan Desa
-                        </h1>
-
-                    </div>
-
-                </div>
-
-                <!-- HAMBURGER -->
-                <button
-                    class="lg:hidden p-2 rounded-lg hover:bg-blue-600 transition"
-                    @click="drawerOpen = true"
-                >
-                    <IconMenu2 :size="30" />
-                </button>
-
-            </div>
+            <NavbarMenu />
 
         </div>
 
-        <!-- NAVBAR PUTIH -->
-        <div class="bg-white border-b shadow-sm hidden lg:block">
+        <!-- Right Space Desktop -->
 
-            <div
-                class="max-w-7xl mx-auto h-16 px-4 flex justify-center items-center"
-            >
+        <div
+            class="hidden lg:block w-32"
+        ></div>
 
-                <NavbarMenu />
+        <!-- Mobile -->
 
-            </div>
+        <button
+            class="lg:hidden w-11 h-11 rounded-xl bg-[#103973] text-white flex items-center justify-center"
+            @click="mobileOpen=true"
+        >
 
-        </div>
+            <IconMenu2
+                :size="24"
+            />
 
-        <!-- MOBILE DRAWER -->
-        <MobileDrawer
-            :open="drawerOpen"
-            @close="drawerOpen = false"
-        />
+        </button>
 
-    </header>
+    </div>
+
+    <MobileDrawer
+        :open="mobileOpen"
+        @close="mobileOpen=false"
+    />
+
+</header>
+
 </template>

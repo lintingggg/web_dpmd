@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 </script>
 
 <template>
@@ -9,7 +9,6 @@
     class="max-w-7xl mx-auto px-4 py-5 flex items-center gap-5"
 >
 
-    <!-- Logo -->
 
     <div
         class="w-20 h-20 rounded-full bg-white flex items-center justify-center text-blue-700 font-bold"
@@ -19,7 +18,6 @@
 
     </div>
 
-    <!-- Instansi -->
 
     <div>
 
@@ -41,4 +39,4 @@
 
 </header>
 
-</template>
+</template> -->
