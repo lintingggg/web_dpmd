@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\BidangTugasController;
 use App\Http\Controllers\Admin\BeritaController;
+use App\Http\Controllers\Admin\GaleriController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,11 +46,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/berita', [BeritaController::class, 'store'])->name('admin.berita.store');
     Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('admin.berita.update');
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('admin.berita.destroy');
+    
+    Route::get('/galeri', [GaleriController::class, 'index'])->name('admin.galeri');
+    Route::post('/galeri', [GaleriController::class, 'store'])->name('admin.galeri.store');
+    Route::put('/galeri/{galeri}', [GaleriController::class, 'update'])->name('admin.galeri.update');
+    Route::delete('/galeri/{galeri}', [GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
 });
-
-Route::get('/admin/galeri', function () {
-    return Inertia::render('Admin/Galeri');
-})->middleware(['auth', 'verified'])->name('admin.galeri');
 
 Route::prefix('bidang-tugas')->group(function () {
     Route::get('/sekretariat', function () {
