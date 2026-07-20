@@ -1,76 +1,78 @@
+// resources/js/Components/Navbar/menu.ts
+
 export interface NavChild {
-    label: string
-    href: string
+    label: string;
+    href: string;
 }
 
 export interface NavItem {
-    label: string
-    href?: string
-    children?: NavChild[]
+    label: string;
+    href?: string;
+    children?: NavChild[];
 }
 
 export const menu: NavItem[] = [
     {
         label: "Beranda",
-        href: "/"
+        href: "/",
     },
 
     {
-        label: "Profil Dinas",
+        label: "Profil",
         children: [
             {
-                label: "Profil Singkat",
-                href: "/profil"
+                label: "Profil Dinas",
+                href: "/profil",
             },
             {
                 label: "Visi & Misi",
-                href: "/visi-misi"
+                href: "/visi-misi",
             },
             {
                 label: "Struktur Organisasi",
-                href: "/struktur-organisasi"
-            }
-        ]
+                href: "/struktur-organisasi",
+            },
+            {
+                label: "Tugas Pokok & Fungsi",
+                href: "/tugas-pokok-fungsi",
+            },
+        ],
     },
 
     {
-        label: "Bidang Tugas",
+        label: "Bidang",
         children: [
             {
                 label: "Bidang Pemerintahan Desa",
-                href: "/bidang/pemerintahan-desa"
+                href: "/bidang/pemerintahan",
             },
             {
-                label: "Bidang Pemberdayaan Masyarakat",
-                href: "/bidang/pemberdayaan"
+                label: "Bidang Pemberdayaan",
+                href: "/bidang/pemberdayaan",
             },
             {
-                label: "Sekretariat",
-                href: "/sekretariat"
-            }
-        ]
+                label: "Bidang Administrasi",
+                href: "/bidang/administrasi",
+            },
+        ],
     },
 
     {
         label: "Publikasi",
         children: [
             {
-                label: "Berita",
-                href: "/berita"
-            },
-            {
-                label: "Galeri",
-                href: "/galeri"
-            },
-            {
                 label: "Dokumen",
-                href: "/dokumen-dan-peraturan"
-            }
-        ]
+                href: "/dokumen",
+            },
+            {
+                label: "Berita",
+                href: "/berita",
+            },
+        ],
     },
 
     {
         label: "Kontak",
-        href: "/kontak"
-    }
-]
+        href: "/kontak",
+    },
+];

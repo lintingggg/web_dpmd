@@ -1,189 +1,99 @@
-<!-- <script setup lang="ts">
-
-import { menu } from "@/Components/Navbar/menu";
-
-</script>
-
-<template>
-
-<nav
-class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-neutral-200"
->
-
-<div
-class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between"
->
-
-<div class="lg:hidden">
-
-☰
-
-</div>
-
-<div
-class="hidden lg:flex gap-8"
->
-
-<a
-v-for="item in menu"
-:key="item.label"
-:href="item.href"
-class="text-sm font-medium hover:text-blue-600"
->
-
-{{ item.label }}
-
-</a>
-
-</div>
-
-</div>
-
-</nav>
-
-</template> -->
-
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { IconChevronDown } from "@tabler/icons-vue";
 
+import NavbarMegaMenu from "./NavbarMegaMenu.vue";
 import { menu } from "./menu";
 
 const page = usePage();
 
-const openDropdown = ref<string | null>(null);
-
-function toggleDropdown(label: string) {
-    openDropdown.value =
-        openDropdown.value === label
-            ? null
-            : label;
-}
-
-function closeDropdown() {
-    openDropdown.value = null;
-}
-
-function handleClickOutside(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-
-    if (!target.closest(".navbar-menu")) {
-        closeDropdown();
-    }
-}
-
-onMounted(() => {
-    document.addEventListener("click", handleClickOutside);
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener("click", handleClickOutside);
-});
+const activeDropdown = ref<string | null>(null);
 
 function isActive(href?: string) {
     if (!href) return false;
 
     return page.url === href;
 }
+
+function isParentActive(children?: { href: string }[]) {
+    if (!children) return false;
+
+    return children.some((child) => page.url.startsWith(child.href));
+}
 </script>
 
 <template>
+    <nav class="hidden lg:flex items-center gap-2">
 
-<nav
-class="navbar-menu hidden lg:flex items-center gap-8"
->
-
-    <template
-        v-for="item in menu"
-        :key="item.label"
-    >
-
-        <!-- Menu tanpa dropdown -->
-
-        <Link
-            v-if="!item.children"
-            :href="item.href!"
-            class="text-sm font-medium transition"
-            :class="[
-                isActive(item.href)
-                    ? 'text-blue-600'
-                    : 'text-neutral-700 hover:text-blue-600'
-            ]"
+        <template
+            v-for="item in menu"
+            :key="item.label"
         >
 
-            {{ item.label }}
+            <!-- MENU BIASA -->
 
-        </Link>
-
-        <!-- Dropdown -->
-
-        <div
-            v-else
-            class="relative"
-
-            @mouseenter="openDropdown=item.label"
-
-            @mouseleave="closeDropdown"
-        >
-
-            <button
-                class="flex items-center gap-1 text-sm font-medium text-neutral-700 hover:text-blue-600 transition"
-                @click="toggleDropdown(item.label)"
+            <Link
+                v-if="!item.children"
+                :href="item.href!"
+                class="px-5 py-3 rounded-xl font-medium transition-all duration-200"
+                :class="[
+                    isActive(item.href)
+                        ? 'bg-[#103973] text-white shadow-sm'
+                        : 'text-neutral-700 hover:bg-neutral-100 hover:text-[#103973]'
+                ]"
             >
 
                 {{ item.label }}
 
-                <IconChevronDown
-                    :size="16"
-                    class="transition-transform"
-                    :class="{
-                        'rotate-180':
-                        openDropdown===item.label
-                    }"
-                />
+            </Link>
 
-            </button>
+            <!-- DROPDOWN -->
 
-            <transition name="dropdown">
+            <div
+                v-else
+                class="relative"
 
-                <div
-                    v-if="openDropdown===item.label"
-                    class="absolute left-0 top-full pt-3 w-64 z-50"
+                @mouseenter="activeDropdown=item.label"
+
+                @mouseleave="activeDropdown=null"
+            >
+
+                <button
+                    class="flex items-center gap-1 px-5 py-3 rounded-xl font-medium transition-all duration-200"
+                    :class="[
+                        isParentActive(item.children)
+                            ? 'bg-[#103973] text-white shadow-sm'
+                            : 'text-neutral-700 hover:bg-neutral-100 hover:text-[#103973]'
+                    ]"
                 >
 
-                    <div
-                        class="rounded-xl border border-neutral-200 bg-white shadow-xl overflow-hidden"
-                    >
+                    {{ item.label }}
 
-                        <Link
-                            v-for="child in item.children"
-                            :key="child.label"
-                            :href="child.href"
-                            class="block px-5 py-3 text-sm transition"
-                            :class="[
-                                isActive(child.href)
-                                    ? 'bg-blue-50 text-blue-600 font-medium'
-                                    : 'hover:bg-neutral-50 text-neutral-700'
-                            ]"
-                        >
+                    <IconChevronDown
+                        :size="16"
+                        class="transition duration-200"
+                        :class="{
+                            'rotate-180':activeDropdown===item.label
+                        }"
+                    />
 
-                            {{ child.label }}
+                </button>
 
-                        </Link>
+                <transition name="dropdown">
 
-                    </div>
+                    <NavbarMegaMenu
+                        v-if="activeDropdown===item.label"
+                        :items="item.children"
+                    />
 
-                </div>
+                </transition>
 
-            </transition>
+            </div>
 
-        </div>
+        </template>
 
-    </template>
-
-</nav>
-
+    </nav>
 </template>
 
 <style scoped>
@@ -200,7 +110,7 @@ transition:.18s ease;
 
 opacity:0;
 
-transform:translateY(8px);
+transform:translateY(10px);
 
 }
 
