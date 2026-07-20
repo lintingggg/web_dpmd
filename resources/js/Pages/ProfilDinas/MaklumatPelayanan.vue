@@ -1,5 +1,5 @@
 <script setup>
-import Navbar from "@/Components/Navbar.vue";
+import Navbar from "@/Components/Navbar/Navbar.vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Footer from "@/Components/Footer.vue";
 
