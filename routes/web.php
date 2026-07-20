@@ -68,14 +68,6 @@ Route::prefix('bidang-tugas')->group(function () {
     });
 });
 
-Route::get('/kode-etik-pelayanan', function () {
-    return Inertia::render('ProfilDinas/KodeEtikPelayanan');
-});
-
-Route::get('/maklumat-pelayanan', function () {
-    return Inertia::render('ProfilDinas/MaklumatPelayanan');
-
-});
 
 Route::get('/kode-etik-pelayanan', function () {
     return Inertia::render('ProfilDinas/KodeEtikPelayanan');
@@ -95,9 +87,10 @@ Route::get('/dokumen-dan-peraturan', function () {
 
 Route::get('/berita', function () {
     return Inertia::render('Berita');
+});
+
 Route::get('/motto-pelayanan', function () {
     return Inertia::render('ProfilDinas/MottoPelayanan');
-
 });
 
 Route::get('/sambutan-kepala-dinas', function () {
