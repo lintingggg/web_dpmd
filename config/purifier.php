@@ -37,6 +37,13 @@ return [
             'AutoFormat.RemoveEmpty' => true,
             'HTML.AllowedAttributes' => 'img.src,img.alt', // Workaround untuk mencegah error validasi internal Purifier
         ],
+        'berita' => [
+            'HTML.Allowed' => 'h2,h3,h4,p[style],strong,em,u,s,blockquote,a[href|title|target],ul,ol,li,br,span[style],img[src|alt|width|height],figure,figcaption,pre,code',
+            'CSS.AllowedProperties' => 'text-align,color,font-weight,font-style,text-decoration',
+            'AutoFormat.AutoParagraph' => false,
+            'AutoFormat.RemoveEmpty' => true,
+            'HTML.Nofollow' => true,
+        ],
         'test'    => [
             'Attr.EnableID' => 'true',
         ],

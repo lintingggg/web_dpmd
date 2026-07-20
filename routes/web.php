@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\BidangTugasController;
+use App\Http\Controllers\Admin\BeritaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,11 +41,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'store'])->name('admin.publikasi-dokumen.store');
     Route::put('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'update'])->name('admin.publikasi-dokumen.update');
     Route::delete('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'destroy'])->name('admin.publikasi-dokumen.destroy');
+    Route::get('/berita', [BeritaController::class, 'index'])->name('admin.berita');
+    Route::post('/berita', [BeritaController::class, 'store'])->name('admin.berita.store');
+    Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('admin.berita.update');
+    Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('admin.berita.destroy');
 });
-
-Route::get('/admin/berita', function () {
-    return Inertia::render('Admin/Berita');
-})->middleware(['auth', 'verified'])->name('admin.berita');
 
 Route::get('/admin/galeri', function () {
     return Inertia::render('Admin/Galeri');
