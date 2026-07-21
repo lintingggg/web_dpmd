@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('HalamanUtama');
+    $pengumumanList = \App\Models\Pengumuman::orderBy('tanggal', 'desc')->take(4)->get();
+    return Inertia::render('HalamanUtama', [
+        'pengumumanList' => $pengumumanList
+    ]);
 });
 
 Route::get('/dashboard', function () {
