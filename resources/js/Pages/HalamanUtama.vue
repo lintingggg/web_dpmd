@@ -7,6 +7,7 @@ import {
   IconBrandWhatsapp, 
   IconBrandFacebook, 
   IconBrandInstagram, 
+  IconBrandTiktok,
   IconBrandX, 
   IconBrandYoutube,
   IconMenu2, 
@@ -228,6 +229,77 @@ onUnmounted(() => {
       </div>
       <div v-else class="text-center py-12 text-gray-500 border border-dashed border-gray-200 rounded-xl">
         Belum ada berita terbaru.
+      </div>
+    </section>
+    <!-- SOSIAL MEDIA -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">
+      <div class="mb-12 text-center section-header">
+        <h2 class="text-3xl font-bold text-[#0F1B3D] mb-4">Temukan Doksli Kami Disosial Media</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Ikuti dokumentasi asli (Doksli), video kegiatan, dan informasi terbaru seputar program DPMD Kabupaten Bangkalan melalui platform media sosial resmi kami.</p>
+      </div>
+
+      <div class="flex flex-col gap-10 max-w-5xl mx-auto">
+        <!-- TikTok -->
+        <div class="bg-white rounded-[2rem] p-6 sm:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 hover:shadow-lg transition-all duration-300 group">
+          <div class="text-center md:text-left flex flex-col justify-center items-center md:items-start">
+            <div class="inline-flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4 w-max">
+              <IconBrandTiktok class="w-4 h-4" />
+              TikTok Official
+            </div>
+            <h3 class="text-3xl md:text-4xl font-extrabold text-[#0F1B3D] mb-4 leading-tight">Video & Dokumentasi Kegiatan DPMD</h3>
+            <p class="text-gray-600 mb-4 text-lg leading-relaxed max-w-3xl text-center md:text-left">
+              Tonton berbagai cuplikan video menarik, edukatif, dan dokumentasi asli (Doksli) dari setiap program kerja kami secara langsung di TikTok.
+            </p>
+          </div>
+          
+          <!-- Embed Grid TikTok -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center w-full">
+            <div class="w-full flex justify-center">
+              <iframe src="https://www.tiktok.com/embed/v2/7658293635275902228?lang=id-ID" style="width: 100%; max-width: 325px; height: 720px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-100 shadow-sm bg-gray-50"></iframe>
+            </div>
+            <div class="w-full flex justify-center">
+              <iframe src="https://www.tiktok.com/embed/v2/7650272551016451348?lang=id-ID" style="width: 100%; max-width: 325px; height: 720px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-100 shadow-sm bg-gray-50"></iframe>
+            </div>
+          </div>
+
+          <div class="flex justify-center mt-4">
+            <a href="https://www.tiktok.com/@dinaspmdbangkalan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-800 transition-all shadow-md hover:shadow-lg hover:-translate-y-1">
+              Kunjungi TikTok Kami
+              <IconArrowRight class="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="bg-white rounded-[2rem] p-6 sm:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 hover:shadow-lg transition-all duration-300 group">
+          <div class="text-center md:text-left flex flex-col justify-center items-center md:items-start">
+            <div class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4 w-max">
+              <IconBrandInstagram class="w-4 h-4" />
+              Instagram Official
+            </div>
+            <h3 class="text-3xl md:text-4xl font-extrabold text-[#0F1B3D] mb-4 leading-tight">Galeri & Postingan Informatif</h3>
+            <p class="text-gray-600 mb-4 text-lg leading-relaxed max-w-3xl text-center md:text-left">
+              Lihat galeri foto, postingan terbaru, dan infografis menarik seputar program pemberdayaan masyarakat.
+            </p>
+          </div>
+          
+          <!-- Embed Grid Instagram -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center w-full">
+            <div class="w-full flex justify-center">
+              <iframe src="https://www.instagram.com/p/DavD7dtzzJr/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-100 max-w-[400px] shadow-sm bg-gray-50"></iframe>
+            </div>
+            <div class="w-full flex justify-center">
+              <iframe src="https://www.instagram.com/p/DavCU1vzIOK/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-100 max-w-[400px] shadow-sm bg-gray-50"></iframe>
+            </div>
+          </div>
+
+          <div class="flex justify-center mt-4">
+            <a href="https://www.instagram.com/dpmd_bangkalan/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all shadow-md hover:shadow-lg hover:-translate-y-1">
+              Kunjungi Instagram Kami
+              <IconArrowRight class="w-5 h-5" />
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
