@@ -1,45 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import Navbar from "@/Components/Navbar/Navbar.vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Footer from "@/Components/Footer.vue";
 
-/*
-|--------------------------------------------------------------------------
-| Dummy Data
-| Nanti cukup diganti dengan data dari API.
-|--------------------------------------------------------------------------
-*/
-const profile = {
-    title: "Sambutan Kepala Dinas",
-
-    subtitle:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-
-    image: "",
-
-    name: "Nama Kepala Dinas",
-
-    position: "Kepala Dinas Pemberdayaan Masyarakat dan Desa",
-
-    greeting: `
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco
-            laboris nisi ut aliquip ex ea commodo consequat.
-        </p>
-
-        <p>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur.
-        </p>
-
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Integer facilisis, risus nec fermentum faucibus.
-        </p>
-    `
-}
+const props = defineProps<{
+    profil: any;
+}>();
 </script>
 
 <template>
@@ -55,9 +21,9 @@ const profile = {
                 Profil Dinas
             </span>
 
-            <h1>{{ profile.title }}</h1>
+            <h1>Sambutan Kepala Dinas</h1>
 
-            <p>{{ profile.subtitle }}</p>
+            <p>Sambutan hangat dari Kepala Dinas Pemberdayaan Masyarakat dan Desa.</p>
 
         </div>
 
@@ -68,9 +34,9 @@ const profile = {
         <section class="image-section">
 
             <img
-                v-if="profile.image"
-                :src="profile.image"
-                :alt="profile.title"
+                v-if="profil.kadis_foto"
+                :src="profil.kadis_foto.startsWith('http') ? profil.kadis_foto : '/storage/' + profil.kadis_foto"
+                alt="Foto Kepala Dinas"
             >
 
             <div
@@ -98,17 +64,15 @@ const profile = {
         </section>
 
         <div class="leader-info">
-
-            <h3>{{ profile.name }}</h3>
-
-            <p>{{ profile.position }}</p>
-
+            <h2>{{ profil.kadis_nama || 'Nama Belum Diisi' }}</h2>
+            <p class="leader-position">
+                Kepala Dinas Pemberdayaan Masyarakat dan Desa
+            </p>
         </div>
 
-        <section
-            class="content-card"
-            v-html="profile.greeting"
-        />
+        <section class="content-section">
+            <div class="greeting-content" v-html="profil.sambutan_teks || '<p>Belum ada sambutan.</p>'"></div>
+        </section>
 
     </main>
 

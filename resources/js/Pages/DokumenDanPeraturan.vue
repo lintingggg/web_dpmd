@@ -1,42 +1,59 @@
-<script setup>
-import { ref, computed, onMounted } from 'vue';
-import { Head } from '@inertiajs/vue3';
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
+import { Head, router, Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
-import PageHeader from '@/Components/PageHeader.vue'; // Dipakai untuk judul halaman
-import SearchBar from '@/Components/SearchBar.vue';   // Dipakai untuk pencarian + history
-import TableDokumen from '@/Components/TableDokumen.vue'; // Dipakai untuk list tabel
+import PageHeader from '@/Components/PageHeader.vue';
+import SearchBar from '@/Components/SearchBar.vue';
+import TableDokumen from '@/Components/TableDokumen.vue';
 
-// State untuk mendeteksi tab yang aktif
-const activeTab = ref('perencanaan');
+const props = defineProps<{
+    dokumenList: any;
+    filters: any;
+}>();
 
-// State untuk input pencarian dan dropdown history
-const searchQuery = ref('');
-const searchHistory = ref([]);
+const activeTab = ref(props.filters.kategori || 'Perencanaan');
+const searchQuery = ref(props.filters.search || '');
+const searchHistory = ref<string[]>([]);
 const isDropdownOpen = ref(false);
 
-// --- DATA DUMMY DOKUMEN ---
-// Route halaman ini render statis (tanpa props dari controller), jadi data
-// ditulis langsung di sini. Ganti dengan props dari backend kalau nanti
-// controller-nya dibuat untuk kirim data lewat Inertia::render(..., [...]).
-const dokumenPerencanaan = [
-    { no: 1, judul: 'Rencana Strategis (Renstra) DPMD 2024–2029', tahun: 2024, link: '#' },
-    { no: 2, judul: 'Laporan Kinerja Instansi Pemerintah (LKjIP) 2023', tahun: 2024, link: '#' },
-    { no: 3, judul: 'Rencana Kerja (Renja) DPMD Tahun 2024', tahun: 2023, link: '#' },
-    { no: 4, judul: 'Indikator Kinerja Utama (IKU) Revisi 2023', tahun: 2023, link: '#' },
-];
+const dataDokumen = computed(() => {
+    // Mapping from DB field names to TableDokumen expected format if needed
+    // TableDokumen uses: no, judul, tahun, link
+    return (props.dokumenList.data || []).map((doc: any, index: number) => {
+        return {
+            id: doc.id,
+            no: index + 1 + ((props.dokumenList.current_page - 1) * props.dokumenList.per_page),
+            judul: doc.judul,
+            tahun: doc.tahun,
+            link: doc.file_path ? `/storage/${doc.file_path}` : '#',
+        };
+    });
+});
 
-const produkPeraturan = [
-    { no: 1, judul: 'Peraturan Bupati Bangkalan Nomor 12 Tahun 2025 tentang Pengelolaan Dana Desa', tahun: 2025, link: '#' },
-    { no: 2, judul: 'Peraturan Daerah Kabupaten Bangkalan Nomor 3 Tahun 2024 tentang Kedudukan Keuangan Kepala Desa', tahun: 2024, link: '#' },
-];
+let searchTimeout: any = null;
 
-const dokumenLainnya = [
-    { no: 1, judul: 'Panduan Teknis Aplikasi Administrasi Desa Digital 2026', tahun: 2026, link: '#' },
-    { no: 2, judul: 'Surat Edaran DPMD Terkait Alokasi Hari Kerja Perangkat Desa', tahun: 2025, link: '#' },
-];
+const fetchFiltered = () => {
+    router.get('/dokumen-dan-peraturan', { 
+        kategori: activeTab.value,
+        search: searchQuery.value 
+    }, { preserveState: true, replace: true });
+};
 
-// --- LOGIKA HISTORY PENCARIAN (Maksimal 3) ---
+watch(searchQuery, (newVal) => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        fetchFiltered();
+    }, 500);
+});
+
+const changeTab = (tabName: string) => {
+    activeTab.value = tabName;
+    searchQuery.value = '';
+    isDropdownOpen.value = false;
+    fetchFiltered();
+};
+
 onMounted(() => {
     const savedHistory = localStorage.getItem('search_history_dpmd');
     if (savedHistory) {
@@ -60,45 +77,32 @@ const saveToHistory = () => {
     isDropdownOpen.value = false;
 };
 
-const selectHistory = (item) => {
+const selectHistory = (item: string) => {
     searchQuery.value = item;
     isDropdownOpen.value = false;
+    fetchFiltered();
 };
 
-const deleteHistoryItem = (index) => {
+const deleteHistoryItem = (index: number) => {
     searchHistory.value.splice(index, 1);
     localStorage.setItem('search_history_dpmd', JSON.stringify(searchHistory.value));
 };
 
-// --- COMPUTED FILTER DATA ---
-const filteredDokumen = computed(() => {
-    let data = [];
-    if (activeTab.value === 'perencanaan') data = dokumenPerencanaan;
-    else if (activeTab.value === 'peraturan') data = produkPeraturan;
-    else if (activeTab.value === 'lainnya') data = dokumenLainnya;
-
-    if (searchQuery.value.trim() !== '') {
-        return data.filter(dokumen =>
-            dokumen.judul.toLowerCase().includes(searchQuery.value.toLowerCase())
-        );
-    }
-    return data;
-});
-
-const changeTab = (tabName) => {
-    activeTab.value = tabName;
-    searchQuery.value = '';
-    isDropdownOpen.value = false;
+const handleBlur = () => {
+    setTimeout(() => {
+        isDropdownOpen.value = false;
+    }, 200);
 };
+
 </script>
 
 <template>
     <Head title="Publikasi Dokumen" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div class="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col">
         <Navbar />
 
-        <div class="max-w-7xl mx-auto mt-8">
+        <div class="max-w-7xl mx-auto mt-8 flex-grow w-full">
 
             <PageHeader
                 title="Publikasi Dokumen"
@@ -106,22 +110,22 @@ const changeTab = (tabName) => {
             />
 
             <div class="border-b border-gray-200 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
                     <button
-                        @click="changeTab('perencanaan')"
-                        :class="[activeTab === 'perencanaan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
+                        @click="changeTab('Perencanaan')"
+                        :class="[activeTab === 'Perencanaan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
                     >
                         Dokumen Perencanaan
                     </button>
                     <button
-                        @click="changeTab('peraturan')"
-                        :class="[activeTab === 'peraturan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
+                        @click="changeTab('Peraturan')"
+                        :class="[activeTab === 'Peraturan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
                     >
                         Produk Peraturan
                     </button>
                     <button
-                        @click="changeTab('lainnya')"
-                        :class="[activeTab === 'lainnya' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
+                        @click="changeTab('Lainnya')"
+                        :class="[activeTab === 'Lainnya' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
                     >
                         Dokumen Lainnya
                     </button>
@@ -131,7 +135,7 @@ const changeTab = (tabName) => {
                     <SearchBar
                         v-model="searchQuery"
                         @focus="isDropdownOpen = true"
-                        @blur="setTimeout(() => isDropdownOpen = false, 200)"
+                        @blur="handleBlur"
                         @keydown.enter="saveToHistory"
                         placeholder="Cari dokumen..."
                     />
@@ -163,10 +167,34 @@ const changeTab = (tabName) => {
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 md:p-4 doc-table">
-                <TableDokumen v-if="filteredDokumen.length > 0" :data="filteredDokumen" />
+                <TableDokumen v-if="dataDokumen.length > 0" :data="dataDokumen" />
                 <div v-else class="p-12 text-center text-gray-500">
                     <p class="text-base font-medium">Dokumen tidak ditemukan</p>
                     <p class="text-sm text-gray-400 mt-1">Coba gunakan kata kunci lain atau periksa kategori dokumen lainnya.</p>
+                </div>
+            </div>
+
+            <!-- Kontrol paginasi -->
+            <div v-if="dokumenList.links && dokumenList.links.length > 3" class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
+                    <template v-for="(link, index) in dokumenList.links" :key="index">
+                        <Link
+                            v-if="link.url"
+                            :href="link.url"
+                            :class="[
+                                link.active
+                                    ? 'bg-blue-600 text-white font-semibold'
+                                    : 'text-slate-600 hover:bg-gray-100 border border-gray-200',
+                                'px-3 py-1.5 min-w-[36px] flex items-center justify-center rounded-lg text-sm transition-colors'
+                            ]"
+                            v-html="link.label"
+                        />
+                        <span 
+                            v-else
+                            class="px-3 py-1.5 min-w-[36px] flex items-center justify-center rounded-lg border border-gray-200 text-slate-400 opacity-50 cursor-not-allowed text-sm"
+                            v-html="link.label"
+                        ></span>
+                    </template>
                 </div>
             </div>
 

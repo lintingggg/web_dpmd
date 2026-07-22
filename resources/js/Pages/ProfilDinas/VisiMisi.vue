@@ -5,16 +5,9 @@ import Navbar from "@/Components/Navbar/Navbar.vue";
 import Footer from "@/Components/Footer.vue";
 import PageHeader from "@/Components/PageHeader.vue";
 
-const visi =
-    "Terwujudnya masyarakat desa yang mandiri, maju, sejahtera, dan berdaya saing melalui tata kelola pemerintahan desa yang profesional.";
-
-const misi = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-];
+const props = defineProps<{
+    profil: any;
+}>();
 </script>
 
 <template>
@@ -48,13 +41,10 @@ const misi = [
 
                 </h2>
 
-                <blockquote
+                <div
                     class="border-l-4 border-blue-600 pl-6 italic text-lg text-neutral-700 leading-8"
-                >
-
-                    "{{ visi }}"
-
-                </blockquote>
+                    v-html="profil.visi_teks"
+                ></div>
 
             </section>
 
@@ -75,43 +65,7 @@ const misi = [
                 <div
                     class="space-y-5"
                 >
-
-                    <div
-                        v-for="(item,index) in misi"
-                        :key="index"
-                        class="flex gap-5 items-start"
-                    >
-
-                        <div
-                            class="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center text-lg font-bold shrink-0"
-                        >
-
-                            {{ String(index+1).padStart(2,'0') }}
-
-                        </div>
-
-                        <div>
-
-                            <h3
-                                class="font-semibold text-neutral-900"
-                            >
-
-                                Misi {{ index+1 }}
-
-                            </h3>
-
-                            <p
-                                class="mt-1 text-neutral-600 leading-7"
-                            >
-
-                                {{ item }}
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
+                    <div class="prose max-w-none text-neutral-700 leading-relaxed" v-html="profil.misi_teks"></div>
                 </div>
 
             </section>

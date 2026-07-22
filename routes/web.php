@@ -5,16 +5,17 @@ use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\BidangTugasController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\GaleriController;
+use App\Http\Controllers\Frontend\BerandaController;
+use App\Http\Controllers\Frontend\ProfilController;
+use App\Http\Controllers\Frontend\BidangController;
+use App\Http\Controllers\Frontend\DokumenController;
+use App\Http\Controllers\Frontend\BeritaController as FrontendBeritaController;
+use App\Http\Controllers\Frontend\GaleriController as FrontendGaleriController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    $pengumumanList = \App\Models\Pengumuman::orderBy('tanggal', 'desc')->take(4)->get();
-    return Inertia::render('HalamanUtama', [
-        'pengumumanList' => $pengumumanList
-    ]);
-});
+Route::get('/', [BerandaController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -56,61 +57,31 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::delete('/galeri/{galeri}', [GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
 });
 
+// Rute Bidang Tugas
 Route::prefix('bidang-tugas')->group(function () {
-    Route::get('/sekretariat', function () {
-        return Inertia::render('BidangTugas/Sekretariat');
-    });
-    Route::get('/pemerintahan-desa', function () {
-        return Inertia::render('BidangTugas/BidangPemerintahanDesa');
-    });
-    Route::get('/pemberdayaan-desa', function () {
-        return Inertia::render('BidangTugas/BidangPemberdayaanDesa');
-    });
-    Route::get('/pemberdayaan-lembaga-kemasyarakatan', function () {
-        return Inertia::render('BidangTugas/BidangPemberdayaanLembagaKemasyarakatan');
-    });
+    Route::get('/sekretariat', [BidangController::class, 'sekretariat']);
+    Route::get('/pemerintahan-desa', [BidangController::class, 'pemerintahanDesa']);
+    Route::get('/pemberdayaan-desa', [BidangController::class, 'pemberdayaanDesa']);
+    Route::get('/pemberdayaan-lembaga-kemasyarakatan', [BidangController::class, 'pemberdayaanLembaga']);
 });
 
+// Rute Profil Dinas
+Route::get('/visi-misi', [ProfilController::class, 'visiMisi']);
+Route::get('/tugas-pokok-fungsi', [ProfilController::class, 'tugasFungsi']);
+Route::get('/struktur-organisasi', [ProfilController::class, 'strukturOrganisasi']);
+Route::get('/sambutan-kepala-dinas', [ProfilController::class, 'sambutanKadis']);
+Route::get('/motto-pelayanan', [ProfilController::class, 'motto']);
+Route::get('/maklumat-pelayanan', [ProfilController::class, 'maklumat']);
+Route::get('/kode-etik-pelayanan', [ProfilController::class, 'kodeEtik']);
 
-Route::get('/kode-etik-pelayanan', function () {
-    return Inertia::render('ProfilDinas/KodeEtikPelayanan');
-});
+// Rute Berita
+Route::get('/berita', [FrontendBeritaController::class, 'index']);
+Route::get('/berita/{slug}', [FrontendBeritaController::class, 'show']);
 
-Route::get('/maklumat-pelayanan', function () {
-    return Inertia::render('ProfilDinas/MaklumatPelayanan');
-});
+// Rute Dokumen
+Route::get('/dokumen-dan-peraturan', [DokumenController::class, 'index']);
 
-Route::get('/struktur-organisasi', function () {
-    return Inertia::render('ProfilDinas/StrukturOrganisasi');
-});
-
-Route::get('/dokumen-dan-peraturan', function () {
-    return Inertia::render('DokumenDanPeraturan');
-});
-
-Route::get('/berita', function () {
-    return Inertia::render('Berita');
-});
-
-Route::get('/motto-pelayanan', function () {
-    return Inertia::render('ProfilDinas/MottoPelayanan');
-});
-
-Route::get('/sambutan-kepala-dinas', function () {
-    return Inertia::render('ProfilDinas/SambutanKepalaDinas');
-
-});
-
-Route::get('/berita-detail', function () {
-    return Inertia::render('BeritaDetail');
-});
-
-Route::get('/visi-misi', function () {
-    return Inertia::render('ProfilDinas/VisiMisi');
-});
-
-Route::get('/tugas-pokok-fungsi', function () {
-    return Inertia::render('ProfilDinas/TugasPokokFungsi');
-});
+// Rute Galeri
+Route::get('/galeri', [FrontendGaleriController::class, 'index']);
 
 require __DIR__.'/auth.php';

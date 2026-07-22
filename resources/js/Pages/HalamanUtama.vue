@@ -22,12 +22,17 @@ import { initHomeAnimations } from '../animations/homeAnimations';
 import Navbar from '../Components/Navbar/Navbar.vue';
 import Footer from '../Components/Footer.vue';
 
-const props = defineProps({
-  pengumumanList: {
-    type: Array,
-    default: () => []
-  }
-});
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const props = defineProps<{
+  pengumumanList: any[];
+  beritaTerkini?: any[];
+  galeriHighlight?: any[];
+}>();
+
+const page = usePage();
+const kontak = computed(() => (page.props.kontak as any) || {});
 
 // Format date helper
 const formatDate = (dateString: string) => {
@@ -47,34 +52,7 @@ const isBidangOpen = ref(false);
 const isMobileProfilOpen = ref(false);
 const isMobileBidangOpen = ref(false);
 
-// Dummy data for Berita
-const beritaList = [
-  {
-    id: 1,
-    judul: 'Sosialisasi Program Inovasi Desa Tahun 2024 Berjalan Sukses',
-    ringkasan: 'DPMD Bangkalan baru saja menyelesaikan rangkaian sosialisasi program inovasi desa yang bertujuan untuk meningkatkan kapasitas...',
-    tanggal: '12 Oktober 2024',
-    gambar: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    slug: 'sosialisasi-inovasi-desa'
-  },
-  {
-    id: 2,
-    judul: 'Penyaluran Bantuan Alat Pertanian untuk Kelompok Tani',
-    ringkasan: 'Sebagai upaya mendukung ketahanan pangan, DPMD menyalurkan bantuan alat pertanian modern kepada 15 kelompok tani...',
-    tanggal: '10 Oktober 2024',
-    gambar: 'https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    slug: 'bantuan-alat-pertanian'
-  },
-  {
-    id: 3,
-    judul: 'Bimtek Sistem Informasi Desa Terpadu',
-    ringkasan: 'Untuk mempercepat digitalisasi layanan desa, telah dilaksanakan Bimbingan Teknis Sistem Informasi Desa bagi seluruh operator desa...',
-    tanggal: '05 Oktober 2024',
-    gambar: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    slug: 'bimtek-sistem-informasi'
-  }
-];
-
+// Data BeritaTerkini sekarang berasal dari props database
 const form = ref({
   nama: '',
   email: '',
@@ -226,24 +204,30 @@ onUnmounted(() => {
         </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 card-container">
-        <div v-for="berita in beritaList" :key="berita.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col card-item hover:-translate-y-1">
-          <div class="relative h-48 overflow-hidden">
-            <img :src="berita.gambar" :alt="berita.judul" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 card-container" v-if="beritaTerkini && beritaTerkini.length > 0">
+        <div v-for="berita in beritaTerkini" :key="berita.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col card-item hover:-translate-y-1">
+          <div class="relative h-48 overflow-hidden bg-gray-100">
+            <img v-if="berita.thumbnail" :src="berita.thumbnail_url || (berita.thumbnail.startsWith('http') ? berita.thumbnail : '/storage/' + berita.thumbnail)" :alt="berita.judul" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+            <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+              <span class="material-symbols-outlined text-4xl">image</span>
+            </div>
           </div>
           <div class="p-6 flex-1 flex flex-col">
             <div class="flex items-center text-gray-500 text-xs mb-3 font-medium">
               <IconCalendar class="w-4 h-4 mr-1.5" />
-              {{ berita.tanggal }}
+              {{ formatDate(berita.published_at) }}
             </div>
             <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
               <a :href="`/berita/${berita.slug}`" class="hover:text-blue-600 transition-colors">{{ berita.judul }}</a>
             </h3>
             <p class="text-gray-600 text-sm line-clamp-2 mb-4 flex-1">
-              {{ berita.ringkasan }}
+              {{ (berita.konten ? berita.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...' : '') }}
             </p>
           </div>
         </div>
+      </div>
+      <div v-else class="text-center py-12 text-gray-500 border border-dashed border-gray-200 rounded-xl">
+        Belum ada berita terbaru.
       </div>
     </section>
 
@@ -258,36 +242,42 @@ onUnmounted(() => {
           </p>
           
           <div class="space-y-6">
-            <div class="flex items-start">
+            <div class="flex items-start" v-if="kontak.alamat">
               <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
                 <IconMapPin class="w-6 h-6 text-white" />
               </div>
               <div>
                 <h4 class="font-semibold text-sm mb-1">Alamat Kantor</h4>
-                <p class="text-blue-100 text-sm leading-relaxed">
-                  Jl. Halim Perdana Kusuma No. 1, Bangkalan,<br/>
-                  Jawa Timur
-                </p>
+                <p class="text-blue-100 text-sm leading-relaxed whitespace-pre-line">{{ kontak.alamat }}</p>
               </div>
             </div>
             
-            <div class="flex items-start">
+            <div class="flex items-start" v-if="kontak.email">
               <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
                 <IconMail class="w-6 h-6 text-white" />
               </div>
               <div>
                 <h4 class="font-semibold text-sm mb-1">Email</h4>
-                <a href="mailto:info@dpmd.bangkalankab.go.id" class="text-blue-100 text-sm hover:underline">info@dpmd.bangkalankab.go.id</a>
+                <a :href="`mailto:${kontak.email}`" class="text-blue-100 text-sm hover:underline">{{ kontak.email }}</a>
               </div>
             </div>
             
-            <div class="flex items-start">
+            <div class="flex items-start" v-if="kontak.whatsapp">
               <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
                 <IconBrandWhatsapp class="w-6 h-6 text-white" />
               </div>
               <div>
                 <h4 class="font-semibold text-sm mb-1">WhatsApp</h4>
-                <a href="https://wa.me/6281234567890" class="text-blue-100 text-sm hover:underline">+62 812-3456-7890</a>
+                <a :href="`https://wa.me/${kontak.whatsapp.replace(/[^0-9]/g, '')}`" target="_blank" class="text-blue-100 text-sm hover:underline">{{ kontak.whatsapp }}</a>
+              </div>
+            </div>
+            <div class="flex items-start" v-else-if="kontak.telepon">
+              <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
+                <IconBrandWhatsapp class="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-sm mb-1">Telepon</h4>
+                <a :href="`tel:${kontak.telepon}`" class="text-blue-100 text-sm hover:underline">{{ kontak.telepon }}</a>
               </div>
             </div>
           </div>

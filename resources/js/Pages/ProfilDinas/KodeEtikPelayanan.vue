@@ -1,69 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import Navbar from "@/Components/Navbar/Navbar.vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Footer from "@/Components/Footer.vue";
 
-/*
-|--------------------------------------------------------------------------
-| Dummy Data
-| Nanti cukup diganti dengan data dari API.
-|--------------------------------------------------------------------------
-*/
-const profile = {
-    title: "Kode Etik Pelayanan",
-
-    subtitle:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-
-    image: "",
-
-    content: `
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-        </p>
-
-        <p>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-            cupidatat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum.
-        </p>
-
-        <h2>Lorem Ipsum Heading</h2>
-
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-            facilisis, risus nec fermentum faucibus, sapien libero bibendum
-            augue, sed gravida odio sapien vel magna. Pellentesque habitant
-            morbi tristique senectus et netus et malesuada fames ac turpis
-            egestas.
-        </p>
-
-        <h2>Another Section</h2>
-
-        <ul>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Consectetur adipiscing elit.</li>
-            <li>Sed do eiusmod tempor incididunt.</li>
-            <li>Ut labore et dolore magna aliqua.</li>
-            <li>Ut enim ad minim veniam.</li>
-            <li>Quis nostrud exercitation ullamco.</li>
-        </ul>
-
-        <h2>Final Section</h2>
-
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute
-            irure dolor in reprehenderit in voluptate velit esse cillum dolore
-            eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est
-            laborum.
-        </p>
-    `,
-};
+const props = defineProps<{
+    profil: any;
+}>();
 </script>
 
 <template>
@@ -79,9 +21,9 @@ const profile = {
                 Profil Dinas
             </span>
 
-            <h1>{{ profile.title }}</h1>
+            <h1>Kode Etik Pelayanan</h1>
 
-            <p>{{ profile.subtitle }}</p>
+            <p>Aturan dan panduan perilaku dalam memberikan pelayanan di Dinas Pemberdayaan Masyarakat dan Desa.</p>
 
         </div>
 
@@ -89,42 +31,11 @@ const profile = {
 
     <main class="container">
 
-        <section class="image-section">
-
-            <img
-                v-if="profile.image"
-                :src="profile.image"
-                :alt="profile.title"
-            >
-
-            <div
-                v-else
-                class="image-placeholder"
-            >
-
-                <div class="placeholder-icon">
-
-                    🖼️
-
-                </div>
-
-                <h4>Image Not Available</h4>
-
-                <p>
-
-                    Gambar akan ditampilkan
-                    setelah diunggah oleh administrator.
-
-                </p>
-
-            </div>
-
-        </section>
-
+        <!-- Kode Etik tidak punya field image khusus di db, kita asumsikan teks utuh -->
         <section
             class="content-card"
-            v-html="profile.content"
-        />
+            v-html="profil.kode_etik_teks || '<p>Belum ada kode etik.</p>'"
+        ></section>
 
     </main>
 

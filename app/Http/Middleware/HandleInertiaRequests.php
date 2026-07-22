@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\PengaturanKontak;
+use Illuminate\Support\Facades\Cache;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -38,6 +40,9 @@ class HandleInertiaRequests extends Middleware
                 'message' => fn () => $request->session()->get('message'),
                 'error' => fn () => $request->session()->get('error'),
             ],
+            'kontak' => fn () => Cache::remember('pengaturan-kontak', 86400, function () {
+                return PengaturanKontak::first() ?? new PengaturanKontak();
+            }),
         ];
     }
 }

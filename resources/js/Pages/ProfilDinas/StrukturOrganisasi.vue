@@ -6,9 +6,9 @@ import Footer from "@/Components/Footer.vue";
 // import Breadcrumb from "@/Components/Breadcrumb.vue";
 import PageHeader from "@/Components/PageHeader.vue";
 
-import OrganizationTree from "@/Components/OrganizationTree.vue";
-
-
+const props = defineProps<{
+    profil: any;
+}>();
 </script>
 
 <template>
@@ -37,7 +37,11 @@ import OrganizationTree from "@/Components/OrganizationTree.vue";
                 <section
                     class="mt-8 rounded-3xl border border-neutral-200 bg-white shadow-sm p-8"
                 >
-                    <OrganizationTree />
+                    <div v-if="profil.struktur_gambar" class="mb-8">
+                        <img :src="profil.struktur_gambar.startsWith('http') ? profil.struktur_gambar : '/storage/' + profil.struktur_gambar" alt="Struktur Organisasi" class="max-w-full h-auto rounded-lg shadow-sm mx-auto">
+                    </div>
+                    
+                    <div class="prose max-w-none text-neutral-700 leading-relaxed text-center" v-html="profil.struktur_keterangan || '<p>Belum ada informasi struktur organisasi.</p>'"></div>
                 </section>
 
             </div>
