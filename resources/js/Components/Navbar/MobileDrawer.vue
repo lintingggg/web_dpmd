@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import { IconX } from "@tabler/icons-vue";
+import { computed } from "vue";
 
 import { menu } from "./menu";
 import MobileAccordion from "./MobileAccordion.vue";
@@ -12,6 +13,9 @@ defineProps<{
 const emit = defineEmits([
     "close",
 ]);
+
+const page = usePage();
+const kontak = computed(() => page.props.kontak as any);
 </script>
 
 <template>
@@ -81,6 +85,22 @@ const emit = defineEmits([
             </Link>
 
         </template>
+
+        <!-- Contact Section in Mobile -->
+        <div class="mt-8 pt-6 border-t border-neutral-200">
+            <a
+                v-if="kontak?.whatsapp"
+                :href="`https://wa.me/${kontak.whatsapp.replace(/[^0-9]/g, '')}`"
+                target="_blank"
+                class="flex items-center justify-center gap-3 bg-[#0F172A] text-white px-5 py-3.5 rounded-xl font-bold text-sm shadow-md hover:bg-[#1e293b] transition-all"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9"></path>
+                    <path d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1"></path>
+                </svg>
+                Hubungi Kami
+            </a>
+        </div>
 
     </aside>
 

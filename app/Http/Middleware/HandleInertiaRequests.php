@@ -40,9 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'message' => fn () => $request->session()->get('message'),
                 'error' => fn () => $request->session()->get('error'),
             ],
-            'kontak' => fn () => Cache::remember('pengaturan-kontak', 86400, function () {
-                return PengaturanKontak::first() ?? new PengaturanKontak();
-            }),
+            'kontak' => fn () => PengaturanKontak::first() ?? new PengaturanKontak(),
         ];
     }
 }

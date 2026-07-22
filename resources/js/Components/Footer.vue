@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { usePage } from "@inertiajs/vue3";
+import { menu as menuItems } from "./Navbar/menu";
 import {
   IconBrandFacebook,
   IconBrandInstagram,
-  IconBrandFacebook,
   IconBrandYoutube,
   IconBrandTwitter,
   IconBrandWhatsapp,
@@ -19,45 +20,18 @@ const logoImg = "/assets/Logo-kabupaten-Bangkalan.png";
 
 const year = new Date().getFullYear();
 
-const navItems = [
-  { type: "link", title: "Beranda", href: "/" },
-  {
-    type: "submenu",
-    title: "Profil",
-    href: "#",
-    links: [
-      ["Sambutan Kepala Dinas", "#"],
-      ["Visi & Misi", "#"],
-      ["Tugas Pokok & Fungsi", "#"],
-      ["Struktur Organisasi", "#"],
-      ["Motto Pelayanan", "#"],
-      ["Maklumat Pelayanan", "#"],
-      ["Kode Etik Pelayanan", "#"],
-    ],
-  },
-  {
-    type: "submenu",
-    title: "Bidang",
-    href: "#",
-    links: [
-      ["Sekretariat", "#"],
-      ["Pemerintahan Desa", "#"],
-      ["Pemberdayaan Desa", "#"],
-      ["Pemberdayaan Lembaga Kemasyarakatan", "#"],
-    ],
-  },
-  { type: "link", title: "Dokumen", href: "/dokumen" },
-  { type: "link", title: "Galeri", href: "/galeri" },
-  { type: "link", title: "Berita", href: "/berita" },
-];
+const page = usePage();
+const kontak = computed(() => page.props.kontak || {});
 
-const socialLinks = [
-  { label: "Instagram", href: "#", icon: IconBrandInstagram },
-  { label: "Facebook", href: "#", icon: IconBrandFacebook },
-  { label: "YouTube", href: "#", icon: IconBrandYoutube },
-  { label: "Twitter", href: "#", icon: IconBrandTwitter },
-  { label: "WhatsApp", href: "#", icon: IconBrandWhatsapp },
-];
+const socialLinks = computed(() => {
+  const links = [];
+  if (kontak.value.instagram_url) links.push({ label: "Instagram", href: kontak.value.instagram_url, icon: IconBrandInstagram });
+  if (kontak.value.facebook_url) links.push({ label: "Facebook", href: kontak.value.facebook_url, icon: IconBrandFacebook });
+  if (kontak.value.youtube_url) links.push({ label: "YouTube", href: kontak.value.youtube_url, icon: IconBrandYoutube });
+  if (kontak.value.twitter_url) links.push({ label: "Twitter", href: kontak.value.twitter_url, icon: IconBrandTwitter });
+  if (kontak.value.whatsapp) links.push({ label: "WhatsApp", href: `https://wa.me/${kontak.value.whatsapp.replace(/[^0-9]/g, '')}`, icon: IconBrandWhatsapp });
+  return links;
+});
 
 const hoverKey = ref(null);
 
@@ -134,35 +108,35 @@ onBeforeUnmount(() => {
 
           <div class="nav-list">
 
-            <template v-for="item in navItems" :key="item.title">
+            <template v-for="item in menuItems" :key="item.label">
 
-              <a v-if="item.type === 'link'" :href="item.href" class="nav-row">
+              <a v-if="!item.children" :href="item.href" class="nav-row">
                 <span class="footer-nav-link">
                   <span class="bullet"></span>
-                  {{ item.title }}
+                  {{ item.label }}
                 </span>
               </a>
 
               <div
                 v-else
                 class="nav-row has-submenu"
-                :class="{ 'is-hover': hoverKey === item.title }"
-                @mouseenter="toggleHover(item.title)"
+                :class="{ 'is-hover': hoverKey === item.label }"
+                @mouseenter="toggleHover(item.label)"
                 @mouseleave="hoverKey = null"
               >
-                <a :href="item.href" class="footer-nav-link">
+                <a :href="item.href || '#'" class="footer-nav-link">
                   <span class="bullet"></span>
-                  {{ item.title }}
+                  {{ item.label }}
                 </a>
                 <IconChevronRight :size="14" class="chevron" />
 
                 <Transition name="popup">
-                  <div v-if="hoverKey === item.title" class="submenu-popup">
+                  <div v-if="hoverKey === item.label" class="submenu-popup">
                     <ul class="submenu-list">
-                      <li v-for="link in item.links" :key="link[0]">
-                        <a :href="link[1]" class="submenu-link">
+                      <li v-for="link in item.children" :key="link.label">
+                        <a :href="link.href" class="submenu-link">
                           <span class="bullet"></span>
-                          {{ link[0] }}
+                          {{ link.label }}
                         </a>
                       </li>
                     </ul>
@@ -183,23 +157,23 @@ onBeforeUnmount(() => {
             <div class="kontak-item">
               <span class="kontak-icon"><IconMapPin :size="17" /></span>
               <div class="kontak-value">
-                <span class="kontak-text">Dinas Pemberdayaan Masyarakat dan Desa</span>
+                <span class="kontak-text">{{ kontak?.alamat || 'Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan' }}</span>
               </div>
             </div>
 
-            <div class="kontak-item">
+            <div class="kontak-item" v-if="kontak?.telepon">
               <span class="kontak-icon"><IconPhone :size="17" /></span>
               <div class="kontak-value">
                 <span class="kontak-label">Telepon</span>
-                <span class="kontak-text">(031) xxxx-xxxx</span>
+                <span class="kontak-text">{{ kontak.telepon }}</span>
               </div>
             </div>
 
-            <div class="kontak-item">
+            <div class="kontak-item" v-if="kontak?.email">
               <span class="kontak-icon"><IconMail :size="17" /></span>
               <div class="kontak-value">
                 <span class="kontak-label">Email</span>
-                <span class="kontak-text">info@dpmd.go.id</span>
+                <span class="kontak-text">{{ kontak.email }}</span>
               </div>
             </div>
 

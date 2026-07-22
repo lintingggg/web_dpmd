@@ -17,8 +17,7 @@ class DokumenController extends Controller
         if ($request->has('kategori') && $request->kategori !== '') {
             $query->where('kategori', $request->kategori);
         }
-
-        $dokumenList = $query->latest('tanggal_publikasi')->paginate(10)->withQueryString();
+        $dokumenList = $query->latest()->paginate(10)->withQueryString();
 
         return Inertia::render('DokumenDanPeraturan', [
             'dokumenList' => $dokumenList,
