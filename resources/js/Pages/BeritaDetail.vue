@@ -28,7 +28,7 @@ const getImageUrl = (path: string) => {
 <template>
     <Head :title="pageTitle" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
         <Navbar />
 
         <div class="max-w-6xl mx-auto mt-8">
@@ -138,7 +138,7 @@ const getImageUrl = (path: string) => {
                         <!-- Item ke-5: Lihat berita lainnya -->
                         <Link
                             href="/berita"
-                            class="flex items-center justify-center gap-1.5 mt-2 py-3 rounded-lg bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 transition-colors"
+                            class="flex items-center justify-center gap-1.5 mt-5 py-3 rounded-lg bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 transition-colors"
                         >
                             Lihat Berita Lainnya
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -153,4 +153,5 @@ const getImageUrl = (path: string) => {
     </div>
 
     <Footer />
+    <UpButton />
 </template>

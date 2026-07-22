@@ -200,11 +200,85 @@ const handleBlur = () => {
 
         </div>
 
-        <Footer class="mt-10" />
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Tampilkan</span>
+                    <div class="flex gap-1.5">
+                        <button
+                            v-for="n in perPageOptions"
+                            :key="n"
+                            @click="pilihJumlahTampilan(n)"
+                            :class="[
+                                itemsPerPage === n
+                                    ? 'bg-slate-900 text-white font-semibold'
+                                    : 'bg-gray-100 text-slate-700 hover:bg-gray-200',
+                                'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
+                            ]"
+                        >
+                            {{ n }}
+                        </button>
+                    </div>
+                    <span>per halaman</span>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                    <button
+                        @click="gotoPage(currentPage - 1)"
+                        :disabled="currentPage === 1"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                        aria-label="Halaman sebelumnya"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
+
+                    <button
+                        v-for="page in pageNumbers"
+                        :key="page"
+                        @click="gotoPage(page)"
+                        :class="[
+                            currentPage === page
+                                ? 'bg-slate-900 text-white font-semibold'
+                                : 'text-slate-600 hover:bg-gray-100',
+                            'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
+                        ]"
+                    >
+                        {{ page }}
+                    </button>
+
+                    <button
+                        @click="gotoPage(currentPage + 1)"
+                        :disabled="currentPage === totalPages"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                        aria-label="Halaman berikutnya"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+    <Footer />
+    <UpButton />
 </template>
 
 <style scoped>
+/* Container tabel dokumen: disamakan dengan gaya card footer
+   (radius besar + shadow soft 3-layer, tanpa border solid) supaya
+   konsisten dengan elemen lain di halaman. */
+.doc-table-wrapper {
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow:
+        0 -8px 20px -12px rgba(15, 23, 42, 0.08),
+        0 24px 48px -20px rgba(15, 23, 42, 0.14),
+        0 4px 12px -4px rgba(15, 23, 42, 0.05);
+}
+
 /* Animasi hover pada baris dokumen: border memerah, judul berubah warna,
    dan tombol download berubah dari outline jadi solid terisi. */
 .doc-table :deep(tbody tr) {

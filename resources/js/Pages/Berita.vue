@@ -6,6 +6,7 @@ import PageHeader from '@/Components/PageHeader.vue';
 import SearchBar from '@/Components/SearchBar.vue';
 import CardNews from '@/Components/CardNews.vue';
 import Footer from '@/Components/Footer.vue';
+import UpButton from '@/Components/UpButton.vue';
 
 const props = defineProps<{
     beritaList: any;
@@ -50,7 +51,7 @@ const restBerita = computed(() => showHero.value ? dataBerita.value.slice(2) : d
 <template>
     <Head title="Berita & Kegiatan" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
         <Navbar />
 
         <div class="max-w-7xl mx-auto mt-8">
@@ -156,4 +157,5 @@ const restBerita = computed(() => showHero.value ? dataBerita.value.slice(2) : d
     </div>
 
     <Footer />
+    <UpButton />
 </template>
