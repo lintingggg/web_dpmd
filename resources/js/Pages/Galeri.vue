@@ -27,10 +27,10 @@ const getImageUrl = (path: string) => {
 <template>
     <Head title="Galeri Kegiatan" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col">
+    <div class="min-h-screen bg-gray-50 flex flex-col">
         <Navbar />
 
-        <div class="max-w-7xl mx-auto mt-8 flex-grow w-full">
+        <div class="max-w-7xl mx-auto mt-8 flex-grow w-full p-4 md:p-8">
 
             <PageHeader
                 title="Galeri Kegiatan"
