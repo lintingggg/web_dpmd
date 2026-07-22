@@ -3,11 +3,6 @@ import Navbar from "@/Components/Navbar/Navbar.vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Footer from "@/Components/Footer.vue";
 
-<<<<<<< HEAD
-const props = defineProps<{
-    profil: any;
-}>();
-=======
 const profile = {
     title: "Sambutan Kepala Dinas",
     name: "[Nama Kepala Dinas]",
@@ -25,7 +20,6 @@ const profile = {
         <p>Demikian sambutan ini saya sampaikan, ditutup dengan pesan moral dan keilmuan bagi kita semua.</p>
     `
 };
->>>>>>> c1ce14d7d67b69a4a9c67bb1e221fa951921e941
 </script>
 
 <template>
@@ -35,19 +29,7 @@ const profile = {
 
     <section class="page-header">
         <div class="container">
-<<<<<<< HEAD
-
-            <span class="hero-badge">
-                Profil Dinas
-            </span>
-
-            <h1>Sambutan Kepala Dinas</h1>
-
-            <p>Sambutan hangat dari Kepala Dinas Pemberdayaan Masyarakat dan Desa.</p>
-
-=======
             <h1>{{ profile.title }}</h1>
->>>>>>> c1ce14d7d67b69a4a9c67bb1e221fa951921e941
         </div>
     </section>
 
