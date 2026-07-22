@@ -21,8 +21,8 @@ export const menu: NavItem[] = [
         label: "Profil",
         children: [
             {
-                label: "Profil Dinas",
-                href: "/profil",
+                label: "Sambutan Kepala Dinas",
+                href: "/sambutan-kepala-dinas",
             },
             {
                 label: "Visi & Misi",
@@ -36,43 +36,47 @@ export const menu: NavItem[] = [
                 label: "Tugas Pokok & Fungsi",
                 href: "/tugas-pokok-fungsi",
             },
+                        {
+                label: "Kode Etik Pelayanan",
+                href: "/kode-etik-pelayanan",
+            },
+                        {
+                label: "Maklumat Pelayanan",
+                href: "/maklumat-pelayanan",
+            },
         ],
     },
 
     {
-        label: "Bidang",
+        label: "Bidang Tugas",
         children: [
             {
                 label: "Bidang Pemerintahan Desa",
-                href: "/bidang/pemerintahan",
+                href: "/bidang-tugas/pemerintahan-desa",
             },
             {
-                label: "Bidang Pemberdayaan",
-                href: "/bidang/pemberdayaan",
+                label: "Bidang Pemberdayaan Desa",
+                href: "/bidang-tugas/pemberdayaan-desa",
             },
             {
-                label: "Bidang Administrasi",
-                href: "/bidang/administrasi",
+                label: "Bidang Pemberdayaan Lembaga Kemasyarakatan",
+                href: "/bidang-tugas/pemberdayaan-lembaga-kemasyarakatan",
             },
+            {
+                label: "Bidang Sekeretariat",
+                href: "/bidang-tugas/sekretariat",
+            },
+            
         ],
     },
 
     {
-        label: "Publikasi",
-        children: [
-            {
-                label: "Dokumen",
-                href: "/dokumen",
-            },
-            {
-                label: "Berita",
-                href: "/berita",
-            },
-        ],
+        label: "Publikasi Dokumen",
+        href: "/dokumen-dan-peraturan",
     },
 
     {
-        label: "Kontak",
-        href: "/kontak",
+        label: "Berita",
+        href: "/berita",
     },
 ];
