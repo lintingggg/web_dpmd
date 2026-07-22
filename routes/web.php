@@ -105,4 +105,12 @@ Route::get('/berita-detail', function () {
     return Inertia::render('BeritaDetail');
 });
 
+Route::get('/visi-misi', function () {
+    return Inertia::render('ProfilDinas/VisiMisi');
+});
+
+Route::get('/tugas-pokok-fungsi', function () {
+    return Inertia::render('ProfilDinas/TugasPokokFungsi');
+});
+
 require __DIR__.'/auth.php';

@@ -9,16 +9,18 @@ import {
   IconBrandInstagram, 
   IconBrandX, 
   IconBrandYoutube,
-  IconArrowRight,
-  IconCalendar,
-  IconMenu2,
-  IconX,
-  IconChevronDown,
-  IconSend,
-  IconBell,
-  IconFileDescription
+  IconMenu2, 
+  IconX, 
+  IconChevronDown, 
+  IconSend, 
+  IconBell, 
+  IconFileDescription, 
+  IconArrowRight, 
+  IconCalendar 
 } from '@tabler/icons-vue';
 import { initHomeAnimations } from '../animations/homeAnimations';
+import Navbar from '../Components/Navbar/Navbar.vue';
+import Footer from '../Components/Footer.vue';
 
 const props = defineProps({
   pengumumanList: {
@@ -114,113 +116,7 @@ onUnmounted(() => {
 
   <div class="min-h-screen bg-gray-50 font-sans text-gray-800">
     <!-- NAVBAR -->
-    <nav class="bg-white sticky top-0 z-50 nav-container transition-shadow duration-300">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-20">
-          <div class="flex items-center">
-            <a href="/" class="flex-shrink-0 flex items-center gap-2">
-              <span class="font-bold text-xl text-[#0F1B3D]">DPMD Bangkalan</span>
-            </a>
-          </div>
-          
-          <!-- Desktop Menu -->
-          <div class="hidden md:flex items-center space-x-8">
-            <a href="/" class="text-sm font-medium text-[#0F1B3D] border-b-2 border-[#0F1B3D]">Beranda</a>
-            
-            <!-- Dropdown Profil -->
-            <div class="relative dropdown-container" @mouseenter="isProfilOpen = true" @mouseleave="isProfilOpen = false">
-              <button @click="isProfilOpen = !isProfilOpen" class="flex items-center text-sm font-medium text-gray-600 hover:text-[#0F1B3D] focus:outline-none">
-                Profil Dinas
-                <IconChevronDown class="ml-1 w-4 h-4" />
-              </button>
-              <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-                <div v-show="isProfilOpen" class="absolute z-10 -ml-4 mt-0 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-2">
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sambutan Kepala Dinas</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Visi dan Misi</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tugas Pokok dan Fungsi</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Struktur Organisasi</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kode Etik Pelayanan</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Maklumat Pelayanan</a>
-                </div>
-              </transition>
-            </div>
-
-            <!-- Dropdown Bidang -->
-            <div class="relative dropdown-container" @mouseenter="isBidangOpen = true" @mouseleave="isBidangOpen = false">
-              <button @click="isBidangOpen = !isBidangOpen" class="flex items-center text-sm font-medium text-gray-600 hover:text-[#0F1B3D] focus:outline-none">
-                Bidang Tugas
-                <IconChevronDown class="ml-1 w-4 h-4" />
-              </button>
-              <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-                <div v-show="isBidangOpen" class="absolute z-10 -ml-4 mt-0 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-2">
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Bidang Pemerintahan Desa</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Bidang Pemberdayaan Desa</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Bidang Pemberdayaan Lembaga Kemasyarakatan</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sekretariat</a>
-                </div>
-              </transition>
-            </div>
-
-            <a href="/dokumen" class="text-sm font-medium text-gray-600 hover:text-[#0F1B3D]">Publikasi Dokumen</a>
-            <a href="/berita" class="text-sm font-medium text-gray-600 hover:text-[#0F1B3D]">Berita</a>
-          </div>
-
-          <div class="hidden md:flex items-center">
-            <a href="#kontak" class="bg-[#0F1B3D] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-opacity-90 transition-colors">
-              Hubungi Kami
-            </a>
-          </div>
-
-          <!-- Mobile menu button -->
-          <div class="flex items-center md:hidden">
-            <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-gray-500 hover:text-gray-700 focus:outline-none p-2">
-              <IconMenu2 v-if="!isMobileMenuOpen" class="w-6 h-6" />
-              <IconX v-else class="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div v-show="isMobileMenuOpen" class="md:hidden bg-white border-t border-gray-100">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a href="/" class="block px-3 py-2 rounded-md text-base font-medium text-[#0F1B3D] bg-gray-50">Beranda</a>
-          
-          <button @click="isMobileProfilOpen = !isMobileProfilOpen" class="w-full text-left px-3 py-2 flex justify-between items-center text-base font-medium text-gray-600 hover:text-[#0F1B3D] hover:bg-gray-50 focus:outline-none">
-            Profil Dinas
-            <IconChevronDown class="w-4 h-4 transition-transform" :class="{'rotate-180': isMobileProfilOpen}" />
-          </button>
-          <div v-show="isMobileProfilOpen" class="pl-6 space-y-1 pb-2">
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Sambutan Kepala Dinas</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Visi dan Misi</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Tugas Pokok dan Fungsi</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Struktur Organisasi</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Kode Etik Pelayanan</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Maklumat Pelayanan</a>
-          </div>
-
-          <button @click="isMobileBidangOpen = !isMobileBidangOpen" class="w-full text-left px-3 py-2 flex justify-between items-center text-base font-medium text-gray-600 hover:text-[#0F1B3D] hover:bg-gray-50 focus:outline-none">
-            Bidang Tugas
-            <IconChevronDown class="w-4 h-4 transition-transform" :class="{'rotate-180': isMobileBidangOpen}" />
-          </button>
-          <div v-show="isMobileBidangOpen" class="pl-6 space-y-1 pb-2">
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Bidang Pemerintahan Desa</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Bidang Pemberdayaan Desa</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Bidang Pemberdayaan Lembaga Kemasyarakatan</a>
-            <a href="#" class="block px-3 py-2 text-sm text-gray-600">Sekretariat</a>
-          </div>
-
-          <a href="/dokumen" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-[#0F1B3D] hover:bg-gray-50">Publikasi Dokumen</a>
-          <a href="/berita" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-[#0F1B3D] hover:bg-gray-50">Berita</a>
-          
-          <div class="pt-4 px-3">
-            <a href="#kontak" class="block w-full text-center bg-[#0F1B3D] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-opacity-90">
-              Hubungi Kami
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <Navbar />
 
     <!-- HERO SECTION -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
@@ -461,55 +357,6 @@ onUnmounted(() => {
     </section>
 
     <!-- FOOTER -->
-    <footer class="bg-[#0F1B3D] text-white pt-16 pb-8">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
-          
-          <!-- Column 1: Info -->
-          <div class="md:col-span-5">
-            <h3 class="font-bold text-xl mb-4">DPMD Bangkalan</h3>
-            <p class="text-blue-100 text-sm leading-relaxed mb-6 max-w-sm">
-              Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan. Membangun desa mandiri untuk masa depan yang lebih baik.
-            </p>
-          </div>
-          
-          <!-- Column 2: Quick Links -->
-          <div class="md:col-span-3">
-            <h4 class="font-bold mb-4">Tautan Cepat</h4>
-            <ul class="space-y-3">
-              <li><a href="/" class="text-blue-100 text-sm hover:text-white transition-colors">Beranda</a></li>
-              <li><a href="#" class="text-blue-100 text-sm hover:text-white transition-colors">Profil Instansi</a></li>
-              <li><a href="/berita" class="text-blue-100 text-sm hover:text-white transition-colors">Berita & Pengumuman</a></li>
-              <li><a href="#kontak" class="text-blue-100 text-sm hover:text-white transition-colors">Kontak Kami</a></li>
-            </ul>
-          </div>
-          
-          <!-- Column 3: Social Media -->
-          <div class="md:col-span-4">
-            <h4 class="font-bold mb-4">Ikuti Kami</h4>
-            <div class="flex gap-4">
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#1877F2] transition-colors" aria-label="Facebook">
-                <IconBrandFacebook class="w-5 h-5 text-white" />
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E4405F] transition-colors" aria-label="Instagram">
-                <IconBrandInstagram class="w-5 h-5 text-white" />
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#FF0000] transition-colors" aria-label="YouTube">
-                <IconBrandYoutube class="w-5 h-5 text-white" />
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-black transition-colors" aria-label="Twitter">
-                <IconBrandX class="w-5 h-5 text-white" />
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="pt-8 border-t border-white/10 text-center flex flex-col md:flex-row justify-center items-center">
-          <p class="text-xs text-blue-200">
-            &copy; 2024 DPMD Kabupaten Bangkalan. All Rights Reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
+    <Footer />
   </div>
 </template>

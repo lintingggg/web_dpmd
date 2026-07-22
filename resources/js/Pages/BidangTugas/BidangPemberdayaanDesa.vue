@@ -9,7 +9,7 @@ import {
   IconBuildingStore,
   IconChevronRight,
 } from '@tabler/icons-vue';
-import Header from '../../Components/Header.vue';
+import Navbar from '../../Components/Navbar/Navbar.vue';
 import Footer from '../../Components/Footer.vue';
 import Breadcrumb from '../../Components/Breadcrumb.vue';
 import Accordion from '../../Components/Accordion.vue';
@@ -56,7 +56,7 @@ const subBagian = [
   <Head title="Pemberdayaan Desa - DPMD Bangkalan" />
 
   <div class="min-h-screen bg-[#F7F9FC] flex flex-col font-body">
-    <Header />
+    <Navbar />
 
     <main class="flex-grow w-full pb-24">
 
