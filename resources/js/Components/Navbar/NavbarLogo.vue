@@ -1,31 +1,27 @@
 <script setup lang="ts">
-
+import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
 
 <div class="flex items-center gap-4">
 
-    <div
-        class="w-14 h-14 rounded-full bg-[#103973] flex items-center justify-center text-white font-bold"
-    >
-
-        LOGO
-
-    </div>
+    <Link href="/" class="flex items-center justify-center shrink-0">
+        <img src="/assets/logo-dpmd-bangkalan.png" alt="Logo DPMD Bangkalan" class="h-12 w-auto object-contain" />
+    </Link>
 
     <div>
 
         <div
-            class="text-[11px] uppercase tracking-wider text-neutral-500"
+            class="text-[10px] sm:text-[11px] uppercase tracking-wider text-neutral-500"
         >
-            Pemerintah Kabupaten
+            Pemerintah Kabupaten Bangkalan
         </div>
 
         <div
-            class="font-bold text-xl text-[#103973]"
+            class="font-bold text-base sm:text-xl text-[#0F172A] leading-tight"
         >
-            Dinas Pemberdayaan
+            Dinas Pemberdayaan Masyarakat dan Desa
         </div>
 
         <div

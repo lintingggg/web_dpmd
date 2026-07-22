@@ -30,11 +30,11 @@ defineProps<{
             v-for="item in items"
             :key="item.label"
             :href="item.href"
-            class="block px-6 py-4 hover:bg-[#103973]/5 transition group"
+            class="block px-6 py-4 hover:bg-[#F8FAFC] transition group"
         >
 
             <div
-                class="font-medium text-neutral-800 group-hover:text-[#103973]"
+                class="font-medium text-[#646A79] group-hover:text-[#0F172A]"
             >
 
                 {{ item.label }}

@@ -41,7 +41,7 @@ const emit = defineEmits([
         >
 
             <h2
-                class="font-bold text-xl text-[#103973]"
+                class="font-bold text-xl text-[#0F172A]"
             >
 
                 Menu
@@ -72,7 +72,7 @@ const emit = defineEmits([
             <Link
                 v-else
                 :href="item.href!"
-                class="block py-4 border-b border-neutral-200 font-medium text-neutral-700 hover:text-[#103973]"
+                class="block py-4 border-b border-neutral-200 font-medium text-[#646A79] hover:text-[#0F172A]"
                 @click="emit('close')"
             >
 

@@ -36,11 +36,11 @@ function isParentActive(children?: { href: string }[]) {
             <Link
                 v-if="!item.children"
                 :href="item.href!"
-                class="px-5 py-3 rounded-xl font-medium transition-all duration-200"
+                class="px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
                 :class="[
                     isActive(item.href)
-                        ? 'bg-[#103973] text-white shadow-sm'
-                        : 'text-neutral-700 hover:bg-neutral-100 hover:text-[#103973]'
+                        ? 'bg-[#F8FAFC] text-[#0F172A] shadow-sm'
+                        : 'text-[#646A79] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
                 ]"
             >
 
@@ -60,11 +60,11 @@ function isParentActive(children?: { href: string }[]) {
             >
 
                 <button
-                    class="flex items-center gap-1 px-5 py-3 rounded-xl font-medium transition-all duration-200"
+                    class="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
                     :class="[
                         isParentActive(item.children)
-                            ? 'bg-[#103973] text-white shadow-sm'
-                            : 'text-neutral-700 hover:bg-neutral-100 hover:text-[#103973]'
+                            ? 'bg-[#F8FAFC] text-[#0F172A] shadow-sm'
+                            : 'text-[#646A79] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
                     ]"
                 >
 

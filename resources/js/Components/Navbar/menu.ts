@@ -29,50 +29,58 @@ export const menu: NavItem[] = [
                 href: "/visi-misi",
             },
             {
+                label: "Tugas Pokok & Fungsi",
+                href: "/tugas-pokok-fungsi",
+            },
+            {
                 label: "Struktur Organisasi",
                 href: "/struktur-organisasi",
             },
             {
-                label: "Tugas Pokok & Fungsi",
-                href: "/tugas-pokok-fungsi",
+                label: "Motto Pelayanan",
+                href: "/motto-pelayanan",
             },
-                        {
-                label: "Kode Etik Pelayanan",
-                href: "/kode-etik-pelayanan",
-            },
-                        {
+            {
                 label: "Maklumat Pelayanan",
                 href: "/maklumat-pelayanan",
             },
+            {
+                label: "Kode Etik Pelayanan",
+                href: "/kode-etik-pelayanan",
+            },
         ],
     },
 
     {
-        label: "Bidang Tugas",
+        label: "Bidang",
         children: [
             {
-                label: "Bidang Pemerintahan Desa",
+                label: "Sekretariat",
+                href: "/bidang-tugas/sekretariat",
+            },
+            {
+                label: "Pemerintahan Desa",
                 href: "/bidang-tugas/pemerintahan-desa",
             },
             {
-                label: "Bidang Pemberdayaan Desa",
+                label: "Pemberdayaan Desa",
                 href: "/bidang-tugas/pemberdayaan-desa",
             },
             {
-                label: "Bidang Pemberdayaan Lembaga Kemasyarakatan",
+                label: "Pemberdayaan Lembaga Kemasyarakatan",
                 href: "/bidang-tugas/pemberdayaan-lembaga-kemasyarakatan",
             },
-            {
-                label: "Bidang Sekeretariat",
-                href: "/bidang-tugas/sekretariat",
-            },
-            
         ],
     },
 
     {
-        label: "Publikasi Dokumen",
+        label: "Dokumen",
         href: "/dokumen-dan-peraturan",
+    },
+    
+    {
+        label: "Galeri",
+        href: "/galeri",
     },
 
     {

@@ -21,7 +21,7 @@ const open = ref(false);
 
         <button
             @click="open = !open"
-            class="w-full flex items-center justify-between py-4 text-left font-medium text-neutral-700"
+            class="w-full flex items-center justify-between py-4 text-left font-medium text-[#646A79]"
         >
             {{ label }}
 
@@ -43,7 +43,7 @@ const open = ref(false);
                     v-for="item in children"
                     :key="item.label"
                     :href="item.href"
-                    class="py-2 text-sm text-neutral-500 hover:text-[#103973]"
+                    class="py-2 text-sm text-[#646A79] hover:text-[#0F172A]"
                 >
 
                     {{ item.label }}
