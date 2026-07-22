@@ -61,13 +61,28 @@ const form = ref({
   pesan: ''
 });
 
+// Social Media Tabs State
+const activeSocialTab = ref('instagram');
+const socialTabs = [
+  { id: 'twitter', name: 'Twitter (X)', icon: IconBrandX, color: 'text-black' },
+  { id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' },
+  { id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' },
+  { id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' },
+  { id: 'tiktok', name: 'Tik Tok', icon: IconBrandTiktok, color: 'text-black' },
+];
+
 const submitForm = () => {
-  // Handle form submission (validasi ringan)
   if(!form.value.nama || !form.value.email || !form.value.pesan) {
     alert('Mohon lengkapi form kontak!');
     return;
   }
-  alert('Pesan berhasil dikirim!');
+  
+  const subject = form.value.subjek ? encodeURIComponent(form.value.subjek) : encodeURIComponent('Pesan dari Website DPMD');
+  const body = encodeURIComponent(`Nama: ${form.value.nama}\nEmail: ${form.value.email}\n\nPesan:\n${form.value.pesan}`);
+  const targetEmail = kontak.value.email || 'dpmd@bangkalankab.go.id';
+  
+  window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+  
   form.value = { nama: '', email: '', subjek: '', pesan: '' };
 };
 
@@ -98,94 +113,39 @@ onUnmounted(() => {
     <Navbar />
 
     <!-- HERO SECTION -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
-      <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden flex flex-col lg:flex-row border border-gray-100">
-        <div class="p-8 lg:p-16 lg:w-1/2 flex flex-col justify-center">
-          <div class="inline-block px-4 py-1.5 rounded-full border border-gray-200 text-xs font-semibold text-gray-600 mb-6 w-max hero-fade-up">
-            PEMDA Kabupaten Bangkalan
-          </div>
-          <h1 class="text-4xl lg:text-5xl font-extrabold text-[#0F1B3D] leading-tight mb-6 overflow-hidden">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        
+        <!-- TEXT CONTENT -->
+        <div class="lg:w-5/12 flex flex-col justify-center z-10">
+          <h1 class="text-4xl lg:text-[2.75rem] font-extrabold text-[#0F172A] leading-[1.15] mb-6 overflow-hidden">
             <span class="inline-block hero-title-inner">Membangun Desa Bangkalan yang Mandiri dan Sejahtera.</span>
           </h1>
-          <p class="text-gray-600 text-lg mb-8 leading-relaxed hero-fade-up">
+          <p class="text-[#646A79] text-lg mb-10 leading-relaxed hero-fade-up font-medium">
             Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan berkomitmen penuh dalam mendorong kemajuan potensi desa di seluruh wilayah Bangkalan.
           </p>
-          <div class="hero-fade-up">
-            <a href="#pelajari" class="inline-flex items-center justify-center gap-2 bg-[#0F1B3D] text-white px-8 py-4 rounded-full font-medium hover:bg-opacity-90 transition-all">
-              Pelajari Lebih Lanjut
-              <IconArrowRight class="w-5 h-5" />
-            </a>
-          </div>
-        </div>
-        <div class="lg:w-1/2 relative h-64 sm:h-96 lg:h-auto overflow-hidden rounded-b-[2rem] lg:rounded-r-[2rem] lg:rounded-bl-none">
-          <img src="https://images.unsplash.com/photo-1596489370008-0414ab262071?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Pemandangan Desa" class="absolute inset-0 w-full h-full object-cover hero-image" />
-        </div>
-      </div>
-    </section>
-
-    <!-- PENGUMUMAN TERKINI -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 section-pengumuman">
-      <!-- Header Pengumuman -->
-      <div class="flex flex-col mb-8 section-header">
-        <div class="flex items-center">
-          <div class="flex-shrink-0 bg-gray-100 p-2.5 rounded-xl flex items-center justify-center mr-4">
-            <IconBell class="w-6 h-6 text-[#0F1B3D]" />
-          </div>
-          <div class="flex-shrink-0">
-            <h2 class="text-sm font-extrabold text-[#0F1B3D] uppercase tracking-widest mb-1">Pengumuman Terkini</h2>
-            <p class="text-xs text-gray-500">Informasi terbaru seputar layanan dan program</p>
-          </div>
-        </div>
-        <div class="mt-4 w-16 h-1 bg-[#0F1B3D] rounded-full"></div>
-      </div>
-
-      <!-- Layout Opsi A -->
-      <div v-if="pengumumanList && pengumumanList.length > 0" class="flex flex-col lg:flex-row gap-6 card-container">
-        
-        <!-- Highlight Kiri -->
-        <div class="lg:w-1/2 group bg-white rounded-2xl border border-gray-100 shadow-sm p-8 hover:shadow-md transition-all flex flex-col relative overflow-hidden card-item hover:-translate-y-1">
-          <div class="flex-grow flex flex-col justify-center items-center text-center py-8 mb-4 border-b border-gray-100 border-dashed">
-            <IconFileDescription class="w-20 h-20 text-[#0F1B3D] opacity-10 mb-4 group-hover:scale-110 transition-transform duration-500" stroke-width="1" />
-            <div class="flex items-center gap-2 mb-4 justify-center">
-              <span class="inline-block border border-[#0F1B3D] text-[#0F1B3D] text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-md">
-                {{ formatDate(pengumumanList[0].tanggal || pengumumanList[0].created_at) }}
-              </span>
-            </div>
-            <h3 class="text-2xl font-bold text-[#0F1B3D] mb-4 line-clamp-3 group-hover:text-blue-700 transition-colors">
-              {{ pengumumanList[0].judul }}
-            </h3>
-            <p class="text-gray-500 text-sm line-clamp-3">
-              {{ pengumumanList[0].cuplikan || (pengumumanList[0].konten ? pengumumanList[0].konten.replace(/<[^>]+>/g, '').substring(0, 100) + '...' : '') }}
-            </p>
-          </div>
-          <div class="pt-4 flex justify-end">
-            <a :href="`/pengumuman/${pengumumanList[0].slug}`" class="inline-flex items-center text-xs font-bold text-gray-600 uppercase tracking-wide group-hover:text-[#0F1B3D] transition-colors">
-              <span class="mr-3">Baca Selengkapnya</span>
-              <div class="bg-[#0F1B3D] text-white p-2 rounded-full group-hover:translate-x-1 transition-transform">
-                <IconArrowRight class="w-4 h-4" />
-              </div>
-            </a>
-          </div>
         </div>
 
-        <!-- List Kanan -->
-        <div class="lg:w-1/2 flex flex-col gap-4">
-          <div v-for="pengumuman in pengumumanList.slice(1, 4)" :key="pengumuman.id" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 card-item hover:-translate-x-1">
-            <div class="flex-grow">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="inline-block bg-gray-100 text-[#0F1B3D] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md">
-                  {{ formatDate(pengumuman.tanggal || pengumuman.created_at) }}
-                </span>
-              </div>
-              <h3 class="text-base font-bold text-[#0F1B3D] mb-1 line-clamp-2 group-hover:text-blue-700 transition-colors">
-                {{ pengumuman.judul }}
-              </h3>
+        <!-- IMAGE COLLAGE -->
+        <div class="lg:w-7/12 relative min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] w-full flex items-center justify-center p-8 bg-transparent">
+          
+          <div class="relative w-full max-w-[600px] h-full flex items-center justify-center">
+            
+            <!-- Image 1 (Left/Back) -->
+            <div class="absolute left-[0%] top-[15%] w-2/5 aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-[#FFFFFF] hero-img-1 z-0 -rotate-6">
+              <img src="/assets/Pengukuhan TP. PKK Kecamatan Kabupaten Bangkalan.jpg.jpeg" alt="Kegiatan PKK 1" class="w-full h-full object-cover" />
             </div>
-            <div class="flex-shrink-0 mt-2 sm:mt-0">
-              <a :href="`/pengumuman/${pengumuman.slug}`" class="inline-flex items-center justify-center bg-gray-50 group-hover:bg-[#0F1B3D] text-[#0F1B3D] group-hover:text-white p-3 rounded-full transition-colors border border-gray-100">
-                <IconArrowRight class="w-4 h-4" />
-              </a>
+
+            <!-- Image 2 (Right/Back) -->
+            <div class="absolute right-[0%] top-[30%] w-2/5 aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-[#FFFFFF] hero-img-2 z-0 rotate-6">
+              <img src="/assets/PKK Mengikuti Seminar Bagi Perempuan Dalam Menghadapi Era Digital.jpg.jpeg" alt="Kegiatan PKK 2" class="w-full h-full object-cover" />
             </div>
+
+            <!-- Image 3 (Center/Front) -->
+            <div class="relative w-1/2 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFFFF] hero-img-3 z-10 translate-y-[-10%]">
+              <img src="/assets/Rapat Pleno PKK.jpg.jpeg" alt="Kegiatan PKK 3" class="w-full h-full object-cover" />
+            </div>
+
           </div>
         </div>
 
@@ -196,10 +156,10 @@ onUnmounted(() => {
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-berita">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
         <div>
-          <h2 class="text-3xl font-bold text-[#0F1B3D] mb-2">Berita Terkini</h2>
-          <p class="text-gray-500">Informasi terbaru seputar kegiatan dan program DPMD Bangkalan.</p>
+          <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Berita Terkini</h2>
+          <p class="text-[#646A79]">Informasi terbaru seputar kegiatan dan program DPMD Bangkalan.</p>
         </div>
-        <a href="/berita" class="mt-4 sm:mt-0 flex items-center text-sm font-semibold text-[#0F1B3D] hover:underline">
+        <a href="/berita" class="mt-4 sm:mt-0 flex items-center text-sm font-semibold text-[#0F172A] hover:underline">
           Lihat Semua
           <IconArrowRight class="ml-1 w-4 h-4" />
         </a>
@@ -227,136 +187,169 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <div v-else class="text-center py-12 text-gray-500 border border-dashed border-gray-200 rounded-xl">
+      <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
         Belum ada berita terbaru.
       </div>
     </section>
-    <!-- SOSIAL MEDIA -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">
-      <div class="mb-12 text-center section-header">
-        <h2 class="text-3xl font-bold text-[#0F1B3D] mb-4">Temukan Doksli Kami Disosial Media</h2>
-        <p class="text-gray-500 max-w-2xl mx-auto">Ikuti dokumentasi asli (Doksli), video kegiatan, dan informasi terbaru seputar program DPMD Kabupaten Bangkalan melalui platform media sosial resmi kami.</p>
+
+    <!-- PENGUMUMAN TERKINI -->
+    <!-- <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
+        <div>
+          <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Pengumuman Terkini</h2>
+          <p class="text-[#646A79]">Informasi terbaru seputar layanan dan program</p>
+        </div>
+        <a href="/pengumuman" class="mt-4 sm:mt-0 flex items-center text-sm font-semibold text-[#0F172A] hover:underline">
+          Lihat Semua
+          <IconArrowRight class="ml-1 w-4 h-4" />
+        </a>
       </div>
 
-      <div class="flex flex-col gap-10 max-w-5xl mx-auto">
-        <!-- TikTok -->
-        <div class="bg-white rounded-[2rem] p-6 sm:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 hover:shadow-lg transition-all duration-300 group">
-          <div class="text-center md:text-left flex flex-col justify-center items-center md:items-start">
-            <div class="inline-flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4 w-max">
-              <IconBrandTiktok class="w-4 h-4" />
-              TikTok Official
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 card-container" v-if="pengumumanList && pengumumanList.length > 0">
+        <div v-for="pengumuman in pengumumanList" :key="pengumuman.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col card-item hover:-translate-y-1">
+          <div class="relative h-48 overflow-hidden bg-gray-100">
+            <img v-if="pengumuman.file_lampiran && (pengumuman.file_lampiran.endsWith('.jpg') || pengumuman.file_lampiran.endsWith('.png') || pengumuman.file_lampiran.endsWith('.jpeg'))" :src="(pengumuman.file_lampiran.startsWith('http') ? pengumuman.file_lampiran : '/storage/' + pengumuman.file_lampiran)" :alt="pengumuman.judul" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+            <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+              <IconFileDescription class="w-12 h-12" stroke-width="1.5" />
             </div>
-            <h3 class="text-3xl md:text-4xl font-extrabold text-[#0F1B3D] mb-4 leading-tight">Video & Dokumentasi Kegiatan DPMD</h3>
-            <p class="text-gray-600 mb-4 text-lg leading-relaxed max-w-3xl text-center md:text-left">
-              Tonton berbagai cuplikan video menarik, edukatif, dan dokumentasi asli (Doksli) dari setiap program kerja kami secara langsung di TikTok.
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <div class="flex items-center text-gray-500 text-xs mb-3 font-medium">
+              <IconCalendar class="w-4 h-4 mr-1.5" />
+              {{ formatDate(pengumuman.tanggal || pengumuman.created_at) }}
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
+              <a :href="`/pengumuman/${pengumuman.slug}`" class="hover:text-blue-600 transition-colors">{{ pengumuman.judul }}</a>
+            </h3>
+            <p class="text-gray-600 text-sm line-clamp-2 mb-4 flex-1">
+              {{ pengumuman.cuplikan || (pengumuman.konten ? pengumuman.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...' : '') }}
             </p>
-          </div>
-          
-          <!-- Embed Grid TikTok -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center w-full">
-            <div class="w-full flex justify-center">
-              <iframe src="https://www.tiktok.com/embed/v2/7658293635275902228?lang=id-ID" style="width: 100%; max-width: 325px; height: 720px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-100 shadow-sm bg-gray-50"></iframe>
-            </div>
-            <div class="w-full flex justify-center">
-              <iframe src="https://www.tiktok.com/embed/v2/7650272551016451348?lang=id-ID" style="width: 100%; max-width: 325px; height: 720px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-100 shadow-sm bg-gray-50"></iframe>
-            </div>
-          </div>
-
-          <div class="flex justify-center mt-4">
-            <a href="https://www.tiktok.com/@dinaspmdbangkalan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-800 transition-all shadow-md hover:shadow-lg hover:-translate-y-1">
-              Kunjungi TikTok Kami
-              <IconArrowRight class="w-5 h-5" />
-            </a>
           </div>
         </div>
+      </div>
+      <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
+        Belum ada pengumuman terbaru.
+      </div>
+    </section> -->
 
-        <!-- Instagram -->
-        <div class="bg-white rounded-[2rem] p-6 sm:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 hover:shadow-lg transition-all duration-300 group">
-          <div class="text-center md:text-left flex flex-col justify-center items-center md:items-start">
-            <div class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4 w-max">
-              <IconBrandInstagram class="w-4 h-4" />
-              Instagram Official
+    <!-- SOSIAL MEDIA -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
+        <div>
+          <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Media Sosial Resmi</h2>
+          <p class="text-[#646A79]">Ikuti berbagai kegiatan, dokumentasi asli, dan informasi terbaru melalui kanal media sosial resmi DPMD Kabupaten Bangkalan.</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto items-start">
+        <!-- Sidebar Tabs -->
+        <div class="w-full md:w-1/3 flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <button 
+            v-for="tab in socialTabs" :key="tab.id"
+            @click="activeSocialTab = tab.id"
+            :class="[
+              'flex items-center gap-4 px-6 py-5 text-left font-semibold transition-colors duration-200 border-l-4',
+              activeSocialTab === tab.id 
+                ? 'bg-[#0056b3] text-white border-transparent' 
+                : 'text-[#0F172A] hover:bg-gray-50 border-transparent border-b-gray-100'
+            ]"
+          >
+            <div :class="[
+              'p-2 rounded-full flex-shrink-0 flex items-center justify-center',
+              activeSocialTab === tab.id ? 'bg-white text-gray-900' : 'bg-gray-100 ' + tab.color
+            ]">
+              <component :is="tab.icon" class="w-5 h-5" />
             </div>
-            <h3 class="text-3xl md:text-4xl font-extrabold text-[#0F1B3D] mb-4 leading-tight">Galeri & Postingan Informatif</h3>
-            <p class="text-gray-600 mb-4 text-lg leading-relaxed max-w-3xl text-center md:text-left">
-              Lihat galeri foto, postingan terbaru, dan infografis menarik seputar program pemberdayaan masyarakat.
-            </p>
+            {{ tab.name }}
+          </button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="w-full md:w-2/3 bg-transparent min-h-[500px]">
+          
+          <!-- Instagram Embed -->
+          <div v-show="activeSocialTab === 'instagram'" class="w-full flex flex-col gap-6 slide-in-tab">
+             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <iframe src="https://www.instagram.com/p/DavD7dtzzJr/embed" width="100%" height="520" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+                <iframe src="https://www.instagram.com/p/DavCU1vzIOK/embed" width="100%" height="520" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+             </div>
+             <div class="flex justify-center mt-4">
+               <a href="https://www.instagram.com/dpmd_bangkalan/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all shadow-md hover:-translate-y-1">
+                 Kunjungi Instagram Kami
+                 <IconArrowRight class="w-5 h-5" />
+               </a>
+             </div>
           </div>
           
-          <!-- Embed Grid Instagram -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center w-full">
-            <div class="w-full flex justify-center">
-              <iframe src="https://www.instagram.com/p/DavD7dtzzJr/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-100 max-w-[400px] shadow-sm bg-gray-50"></iframe>
-            </div>
-            <div class="w-full flex justify-center">
-              <iframe src="https://www.instagram.com/p/DavCU1vzIOK/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-100 max-w-[400px] shadow-sm bg-gray-50"></iframe>
-            </div>
+          <!-- TikTok Embed -->
+          <div v-show="activeSocialTab === 'tiktok'" class="w-full flex flex-col gap-6 slide-in-tab">
+             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <iframe src="https://www.tiktok.com/embed/v2/7658293635275902228?lang=id-ID" style="width: 100%; max-width: 325px; height: 580px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+                <iframe src="https://www.tiktok.com/embed/v2/7650272551016451348?lang=id-ID" style="width: 100%; max-width: 325px; height: 580px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+             </div>
+             <div class="flex justify-center mt-4">
+               <a href="https://www.tiktok.com/@dinaspmdbangkalan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-800 transition-all shadow-md hover:-translate-y-1">
+                 Kunjungi TikTok Kami
+                 <IconArrowRight class="w-5 h-5" />
+               </a>
+             </div>
           </div>
 
-          <div class="flex justify-center mt-4">
-            <a href="https://www.instagram.com/dpmd_bangkalan/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all shadow-md hover:shadow-lg hover:-translate-y-1">
-              Kunjungi Instagram Kami
-              <IconArrowRight class="w-5 h-5" />
-            </a>
+          <!-- Other Empty States -->
+          <div v-show="!['instagram', 'tiktok'].includes(activeSocialTab)" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[500px]">
+             <div class="text-center p-8">
+               <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                 <IconFileDescription class="w-8 h-8 text-gray-400" />
+               </div>
+               <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+               <p class="text-[#646A79]">Konten dari platform ini sedang dalam persiapan.</p>
+             </div>
           </div>
+
         </div>
       </div>
     </section>
 
-    <!-- HUBUNGI KAMI -->
+    <!-- HUBUNGI KAMI & LOKASI -->
     <section id="kontak" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 section-kontak overflow-hidden">
+      <div class="mb-12 text-center section-header">
+        <h2 class="text-3xl font-bold text-[#0F172A] mb-4">Hubungi Kami & Lokasi Kantor</h2>
+        <p class="text-[#646A79] max-w-2xl mx-auto">Kami siap membantu menjawab pertanyaan Anda dan memberikan informasi seputar layanan DPMD Kabupaten Bangkalan.</p>
+      </div>
+
       <div class="bg-white rounded-[2rem] shadow-lg overflow-hidden flex flex-col lg:flex-row border border-gray-100">
-        <!-- Kolom Kiri: Info Kontak -->
-        <div class="bg-[#0F1B3D] text-white p-10 lg:p-14 lg:w-2/5 flex flex-col justify-center kontak-kiri">
-          <h2 class="text-3xl font-bold mb-4">Hubungi Kami</h2>
-          <p class="text-blue-100 mb-10 leading-relaxed text-sm">
-            Kami siap membantu menjawab pertanyaan dan memberikan informasi seputar layanan DPMD.
-          </p>
+        
+        <!-- Kolom Kiri: Embed Map -->
+        <div class="lg:w-1/2 flex flex-col h-[500px] lg:h-auto border-b lg:border-b-0 lg:border-r border-gray-100 relative bg-gray-50 peta-container">
+          <!-- Embed Google Maps -->
+          <iframe 
+            v-if="kontak.koordinat_map"
+            :src="`https://maps.google.com/maps?q=${kontak.koordinat_map}&hl=id&z=15&output=embed`" 
+            class="w-full h-full border-0 absolute inset-0" 
+            allowfullscreen="true" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+          <div v-else class="w-full h-full flex flex-col items-center justify-center text-gray-400 p-8 text-center absolute inset-0">
+            <IconMapPin class="w-12 h-12 mb-4 text-gray-300" />
+            <p>Koordinat map belum diatur.</p>
+          </div>
           
-          <div class="space-y-6">
-            <div class="flex items-start" v-if="kontak.alamat">
-              <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
-                <IconMapPin class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 class="font-semibold text-sm mb-1">Alamat Kantor</h4>
-                <p class="text-blue-100 text-sm leading-relaxed whitespace-pre-line">{{ kontak.alamat }}</p>
-              </div>
+          <!-- Overlay Alamat -->
+          <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-100 flex items-center justify-between gap-4">
+            <div class="flex items-center text-gray-700 text-sm flex-1">
+              <IconMapPin class="w-8 h-8 mr-3 text-[#0F172A] flex-shrink-0" />
+              <span class="line-clamp-2 leading-relaxed">{{ kontak.alamat || 'Jl. Halim Perdana Kusuma No. 1, Bangkalan' }}</span>
             </div>
-            
-            <div class="flex items-start" v-if="kontak.email">
-              <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
-                <IconMail class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 class="font-semibold text-sm mb-1">Email</h4>
-                <a :href="`mailto:${kontak.email}`" class="text-blue-100 text-sm hover:underline">{{ kontak.email }}</a>
-              </div>
-            </div>
-            
-            <div class="flex items-start" v-if="kontak.whatsapp">
-              <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
-                <IconBrandWhatsapp class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 class="font-semibold text-sm mb-1">WhatsApp</h4>
-                <a :href="`https://wa.me/${kontak.whatsapp.replace(/[^0-9]/g, '')}`" target="_blank" class="text-blue-100 text-sm hover:underline">{{ kontak.whatsapp }}</a>
-              </div>
-            </div>
-            <div class="flex items-start" v-else-if="kontak.telepon">
-              <div class="mt-1 bg-white/10 p-2 rounded-lg mr-4">
-                <IconBrandWhatsapp class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 class="font-semibold text-sm mb-1">Telepon</h4>
-                <a :href="`tel:${kontak.telepon}`" class="text-blue-100 text-sm hover:underline">{{ kontak.telepon }}</a>
-              </div>
-            </div>
+            <a v-if="kontak.koordinat_map" :href="`https://maps.google.com/?q=${kontak.koordinat_map}`" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 bg-[#0F172A] text-white p-3 rounded-xl hover:bg-gray-800 transition-colors shadow-sm" title="Buka di Google Maps">
+              <IconArrowRight class="w-5 h-5" />
+            </a>
           </div>
         </div>
         
-        <!-- Kolom Kanan: Form -->
-        <div class="p-10 lg:p-14 lg:w-3/5 bg-white kontak-kanan">
+        <!-- Kolom Kanan: Form Kontak -->
+        <div class="p-10 lg:p-14 lg:w-1/2 bg-white flex flex-col justify-center kontak-kanan">
+          <h3 class="text-2xl font-bold text-[#0F172A] mb-8">Kirim Pesan via WhatsApp</h3>
           <form @submit.prevent="submitForm" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
@@ -379,42 +372,13 @@ onUnmounted(() => {
               <textarea v-model="form.pesan" rows="4" placeholder="Tuliskan pesan atau pertanyaan Anda di sini..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0F1B3D] focus:border-[#0F1B3D] outline-none transition-all text-sm resize-none" required></textarea>
             </div>
             
-            <button type="submit" class="inline-flex items-center gap-2 bg-[#0F1B3D] text-white px-8 py-3.5 rounded-full font-semibold hover:bg-opacity-90 transition-colors shadow-sm">
-              Kirim Pesan
-              <IconSend class="w-4 h-4" />
+            <button type="submit" class="inline-flex items-center justify-center w-full sm:w-auto gap-2 bg-[#0F1B3D] text-white px-8 py-3.5 rounded-full font-semibold hover:bg-opacity-90 transition-colors shadow-sm">
+              <IconSend class="w-5 h-5" />
+              Kirim via Email
             </button>
           </form>
         </div>
-      </div>
-    </section>
 
-    <!-- PETA LOKASI -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 section-peta">
-      <div class="mb-8 text-center">
-        <h2 class="text-3xl font-bold text-[#0F1B3D] mb-4">Lokasi Kantor DPMD Kabupaten Bangkalan</h2>
-      </div>
-      
-      <div class="bg-white p-2 rounded-[2rem] shadow-md border border-gray-100 peta-container">
-        <div class="rounded-[1.5rem] overflow-hidden h-[400px]">
-          <!-- Iframe ini dapat diganti dengan kode embed Google Maps asli -->
-          <!-- Contoh dari tombol "Share > Embed a map" -->
-          <iframe 
-            src="https://maps.google.com/maps?q=-7.037149,112.753303&hl=id&z=15&output=embed" 
-            class="w-full h-full border-0" 
-            allowfullscreen="true" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
-        <div class="p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 rounded-b-[1.5rem] mt-2">
-          <div class="flex items-center text-gray-700 text-sm">
-            <IconMapPin class="w-5 h-5 mr-2 text-[#0F1B3D]" />
-            Jl. Halim Perdana Kusuma No. 1, Bangkalan, Jawa Timur
-          </div>
-          <a href="https://maps.app.goo.gl/mNXFSBVcWa8DYWhx6" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0F1B3D] bg-white border border-gray-200 px-6 py-2.5 rounded-full hover:bg-gray-50 transition-colors shadow-sm whitespace-nowrap">
-            Buka di Google Maps
-          </a>
-        </div>
       </div>
     </section>
 

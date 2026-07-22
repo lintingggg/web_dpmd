@@ -12,7 +12,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { setBrandTheme } from '@idds/vue';
 setBrandTheme('panrb')
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'DPMD Bangkalan';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

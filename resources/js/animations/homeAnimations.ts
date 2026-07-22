@@ -34,11 +34,19 @@ export function initHomeAnimations() {
       "-=0.6" // Start slightly before title finishes
     );
 
-    // Hero Image Scale-down
+    // Hero Images Staggered Pop
     gsap.fromTo(
-      '.hero-image',
-      { scale: 1.05, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 1.5, ease: 'power2.out', delay: 0.2 }
+      ['.hero-img-1', '.hero-img-2', '.hero-img-3'],
+      { y: 50, opacity: 0, scale: 0.9 },
+      { 
+        y: 0, 
+        opacity: 1, 
+        scale: 1, 
+        duration: 0.8, 
+        stagger: 0.2, 
+        ease: 'back.out(1.2)', 
+        delay: 0.2 
+      }
     );
 
     // 3. Pengumuman Terkini & Berita Terkini (Staggered Fade-Up)
