@@ -1,11 +1,12 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
 import PageHeader from '@/Components/PageHeader.vue'; // Dipakai untuk judul halaman
 import SearchBar from '@/Components/SearchBar.vue';   // Dipakai untuk pencarian + history
 import TableDokumen from '@/Components/TableDokumen.vue'; // Dipakai untuk list tabel
+import UpButton from '@/Components/UpButton.vue';
 
 // State untuk mendeteksi tab yang aktif
 const activeTab = ref('perencanaan');
@@ -14,6 +15,14 @@ const activeTab = ref('perencanaan');
 const searchQuery = ref('');
 const searchHistory = ref([]);
 const isDropdownOpen = ref(false);
+
+// Jumlah dokumen per halaman: null berarti tampilan default (10 item)
+const itemsPerPage = ref(null);
+const perPageOptions = [20, 35, 50];
+const DEFAULT_PAGE_SIZE = 10;
+
+// Halaman aktif
+const currentPage = ref(1);
 
 // --- DATA DUMMY DOKUMEN ---
 // Route halaman ini render statis (tanpa props dari controller), jadi data
@@ -89,13 +98,55 @@ const changeTab = (tabName) => {
     activeTab.value = tabName;
     searchQuery.value = '';
     isDropdownOpen.value = false;
+    currentPage.value = 1;
 };
+
+// Reset ke halaman 1 setiap kali pencarian berubah
+watch(searchQuery, () => {
+    currentPage.value = 1;
+});
+
+// Ukuran halaman yang dipakai: sesuai pilihan user (15/25/50) atau default 10
+const activePageSize = computed(() => itemsPerPage.value || DEFAULT_PAGE_SIZE);
+
+// Total halaman berdasarkan hasil filter/pencarian saat ini
+const totalPages = computed(() => {
+    return Math.max(1, Math.ceil(filteredDokumen.value.length / activePageSize.value));
+});
+
+// Potongan data dokumen untuk halaman yang sedang aktif
+const paginatedDokumen = computed(() => {
+    const start = (currentPage.value - 1) * activePageSize.value;
+    return filteredDokumen.value.slice(start, start + activePageSize.value);
+});
+
+function pilihJumlahTampilan(jumlah) {
+    if (itemsPerPage.value === jumlah) {
+        // Klik ulang angka yang sudah aktif -> kembali ke tampilan default
+        itemsPerPage.value = null;
+    } else {
+        itemsPerPage.value = jumlah;
+    }
+    currentPage.value = 1;
+}
+
+function gotoPage(page) {
+    if (page < 1 || page > totalPages.value) return;
+    currentPage.value = page;
+}
+
+// Daftar nomor halaman yang ditampilkan di kontrol paginasi
+const pageNumbers = computed(() => {
+    const arr = [];
+    for (let i = 1; i <= totalPages.value; i++) arr.push(i);
+    return arr;
+});
 </script>
 
 <template>
     <Head title="Publikasi Dokumen" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
         <Navbar />
 
         <div class="max-w-7xl mx-auto mt-8">
@@ -162,21 +213,96 @@ const changeTab = (tabName) => {
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 md:p-4 doc-table">
-                <TableDokumen v-if="filteredDokumen.length > 0" :data="filteredDokumen" />
+            <div class="doc-table-wrapper p-2 md:p-4 doc-table">
+                <TableDokumen v-if="filteredDokumen.length > 0" :data="paginatedDokumen" />
                 <div v-else class="p-12 text-center text-gray-500">
                     <p class="text-base font-medium">Dokumen tidak ditemukan</p>
                     <p class="text-sm text-gray-400 mt-1">Coba gunakan kata kunci lain atau periksa kategori dokumen lainnya.</p>
                 </div>
             </div>
 
-        </div>
+            <!-- Kontrol jumlah tampilan + paginasi -->
+            <div v-if="filteredDokumen.length > 0" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-        <Footer class="mt-10" />
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Tampilkan</span>
+                    <div class="flex gap-1.5">
+                        <button
+                            v-for="n in perPageOptions"
+                            :key="n"
+                            @click="pilihJumlahTampilan(n)"
+                            :class="[
+                                itemsPerPage === n
+                                    ? 'bg-slate-900 text-white font-semibold'
+                                    : 'bg-gray-100 text-slate-700 hover:bg-gray-200',
+                                'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
+                            ]"
+                        >
+                            {{ n }}
+                        </button>
+                    </div>
+                    <span>per halaman</span>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                    <button
+                        @click="gotoPage(currentPage - 1)"
+                        :disabled="currentPage === 1"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                        aria-label="Halaman sebelumnya"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
+
+                    <button
+                        v-for="page in pageNumbers"
+                        :key="page"
+                        @click="gotoPage(page)"
+                        :class="[
+                            currentPage === page
+                                ? 'bg-slate-900 text-white font-semibold'
+                                : 'text-slate-600 hover:bg-gray-100',
+                            'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
+                        ]"
+                    >
+                        {{ page }}
+                    </button>
+
+                    <button
+                        @click="gotoPage(currentPage + 1)"
+                        :disabled="currentPage === totalPages"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                        aria-label="Halaman berikutnya"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+    <Footer />
+    <UpButton />
 </template>
 
 <style scoped>
+/* Container tabel dokumen: disamakan dengan gaya card footer
+   (radius besar + shadow soft 3-layer, tanpa border solid) supaya
+   konsisten dengan elemen lain di halaman. */
+.doc-table-wrapper {
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow:
+        0 -8px 20px -12px rgba(15, 23, 42, 0.08),
+        0 24px 48px -20px rgba(15, 23, 42, 0.14),
+        0 4px 12px -4px rgba(15, 23, 42, 0.05);
+}
+
 /* Animasi hover pada baris dokumen: border memerah, judul berubah warna,
    dan tombol download berubah dari outline jadi solid terisi. */
 .doc-table :deep(tbody tr) {

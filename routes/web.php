@@ -81,12 +81,16 @@ Route::get('/struktur-organisasi', function () {
     return Inertia::render('ProfilDinas/StrukturOrganisasi');
 });
 
-Route::get('/dokumen-dan-peraturan', function () {
-    return Inertia::render('DokumenDanPeraturan');
-});
-
 Route::get('/berita', function () {
     return Inertia::render('Berita');
+});
+
+Route::get('/berita-detail', function () {
+    return Inertia::render('BeritaDetail');
+});
+
+Route::get('/dokumen-dan-peraturan', function () {
+    return Inertia::render('DokumenDanPeraturan');
 });
 
 Route::get('/motto-pelayanan', function () {
@@ -96,10 +100,6 @@ Route::get('/motto-pelayanan', function () {
 Route::get('/sambutan-kepala-dinas', function () {
     return Inertia::render('ProfilDinas/SambutanKepalaDinas');
 
-});
-
-Route::get('/berita-detail', function () {
-    return Inertia::render('BeritaDetail');
 });
 
 require __DIR__.'/auth.php';

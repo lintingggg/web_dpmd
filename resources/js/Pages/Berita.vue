@@ -6,6 +6,7 @@ import PageHeader from '@/Components/PageHeader.vue';
 import SearchBar from '@/Components/SearchBar.vue';
 import CardNews from '@/Components/CardNews.vue';
 import Footer from '@/Components/Footer.vue';
+import UpButton from '@/Components/UpButton.vue';
 
 // State kategori yang aktif (Semua, Kegiatan, Pemberdayaan, Informasi)
 const activeCategory = ref('Semua');
@@ -164,7 +165,7 @@ const pageNumbers = computed(() => {
 <template>
     <Head title="Berita & Kegiatan" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
         <Navbar />
 
         <div class="max-w-7xl mx-auto mt-8">
@@ -329,4 +330,5 @@ const pageNumbers = computed(() => {
     </div>
 
     <Footer />
+    <UpButton />
 </template>

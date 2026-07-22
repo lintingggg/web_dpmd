@@ -4,19 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import CardNews from '@/Components/CardNews.vue';
 import Footer from '@/Components/Footer.vue';
-
-// =========================================================================
-// CATATAN: Ini baru tampilan (UI) saja. Data masih dummy/statis.
-// Nanti kalau backend Laravel sudah siap, tinggal ganti bagian dummy di
-// bawah ini dengan props yang dikirim dari controller lewat Inertia, misal:
-//
-//   const props = defineProps({
-//       berita: Object,          // data berita utama
-//       beritaTerkait: Array,    // 4 berita terbaru untuk sidebar
-//   });
-//
-// lalu hapus variabel `berita` & `beritaTerkait` dummy di bawah.
-// =========================================================================
+import UpButton from '@/Components/UpButton.vue';
 
 // Dummy data berita utama
 const berita = {
@@ -75,7 +63,7 @@ const pageTitle = computed(() => berita.title);
 <template>
     <Head :title="pageTitle" />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
         <Navbar />
 
         <div class="max-w-6xl mx-auto mt-8">
@@ -186,7 +174,7 @@ const pageTitle = computed(() => berita.title);
                         <!-- Item ke-5: Lihat berita lainnya -->
                         <Link
                             href="/berita"
-                            class="flex items-center justify-center gap-1.5 mt-2 py-3 rounded-lg bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 transition-colors"
+                            class="flex items-center justify-center gap-1.5 mt-5 py-3 rounded-lg bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 transition-colors"
                         >
                             Lihat Berita Lainnya
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -201,4 +189,5 @@ const pageTitle = computed(() => berita.title);
     </div>
 
     <Footer />
+    <UpButton />
 </template>
