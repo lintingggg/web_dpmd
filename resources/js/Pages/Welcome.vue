@@ -25,7 +25,7 @@ function handleImageError() {
     document.getElementById('background')?.classList.add('!hidden');
 }
 </script>
-
+ 
 <template>
     <Head title="Welcome" />
     <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">

@@ -11,8 +11,11 @@ class Pengumuman extends Model
     protected $fillable = [
         'judul',
         'slug',
+        'cuplikan',
         'konten',
         'file_lampiran',
+        'link_eksternal',
+        'tanggal',
         'is_published',
     ];
 
