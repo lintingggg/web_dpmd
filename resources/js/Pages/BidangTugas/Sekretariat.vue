@@ -22,38 +22,24 @@ const breadcrumbItems = [
   { label: 'Sekretariat' },
 ];
 
-const tupoksi = [
-  {
-    code: 'F.01',
-    title: 'Perumusan Kebijakan Teknis Kesekretariatan',
-    content:
-      'Merumuskan kebijakan teknis di bidang kesekretariatan yang meliputi perencanaan, evaluasi, pelaporan, pengelolaan keuangan, urusan umum, perlengkapan, dan administrasi kepegawaian dinas sesuai dengan pedoman yang berlaku.',
-  },
-  {
-    code: 'F.02',
-    title: 'Pengelolaan Urusan Umum & Kepegawaian',
-    content:
-      'Melaksanakan urusan tata usaha, surat-menyurat, kearsipan, pengelolaan barang milik daerah, rumah tangga, perlengkapan kantor, serta pengelolaan administrasi kepegawaian di lingkungan dinas.',
-  },
-  {
-    code: 'F.03',
-    title: 'Pengelolaan Urusan Perencanaan & Keuangan',
-    content:
-      'Menyusun rencana strategis (Renstra), rencana kerja (Renja), menyusun RKA/DPA, melaksanakan penatausahaan keuangan, serta menyusun laporan pertanggungjawaban keuangan dan kinerja dinas (LAKIP).',
-  },
-];
+const dasarFungsi = {
+  deskripsi: "Sekretariat mempunyai tugas melaksanakan pengelolaan surat menyurat, kearsipan, administrasi kepegawaian, keuangan, perlengkapan dan rumah tangga kantor serta pengkoordinasian penyusunan rencana program, evaluasi dan pelaporan.",
+  kalimatPengantar: "Dalam melaksanakan tugas tersebut, Sekretariat menyelenggarakan fungsi:",
+  listFungsi: [
+    "Pelaksanaan pengkoordinasian penyusunan rencana program dan kegiatan;",
+    "Pelayanan administrasi umum, ketatausahaan, kearsipan dan dokumentasi dalam rangka menunjang kelancaran pelaksanaan tugas;",
+    "Pengelolaan administrasi keuangan dan urusan kepegawaian;",
+    "Pengelolaan urusan rumah tangga, perlengkapan dan inventaris kantor;",
+    "Pelayanan administrasi perjalanan dinas;",
+    "Pelaksanaan pengkoordinasian bidang-bidang di lingkup Dinas Pemberdayaan Masyarakat dan Desa;",
+    "Pengkoordinasian dan penyusunan laporan hasil pelaksanaan program dan kegiatan; dan",
+    "Pelaksanaan tugas kedinasan lain yang diberikan Kepala Dinas sesuai dengan bidang tugasnya."
+  ]
+};
 
-const subBagian = [
-  {
-    icon: IconUsers,
-    title: 'Sub Bagian Umum & Kepegawaian',
-    desc: 'Mengoordinasikan dan mengelola tata usaha, surat-menyurat, kearsipan, rumah tangga, perlengkapan dinas, serta administrasi kepegawaian.',
-  },
-  {
-    icon: IconWallet,
-    title: 'Sub Bagian Perencanaan & Keuangan',
-    desc: 'Mengoordinasikan penyusunan rencana program/kegiatan, mengelola perbendaharaan, akuntansi, pelaporan keuangan dan kinerja dinas.',
-  },
+const organisasi = [
+  "Sub Bagian Umum dan Kepegawaian: Melaksanakan urusan surat menyurat, kearsipan, perlengkapan, rumah tangga, dan administrasi kepegawaian.",
+  "Sub Bagian Keuangan dan Perencanaan: Menyusun rencana program, mengelola administrasi keuangan, serta evaluasi dan pelaporan kinerja dinas."
 ];
 </script>
 
@@ -152,27 +138,14 @@ const subBagian = [
                   </div>
                 </div>
 
-                <div class="space-y-4">
-                  <div v-for="(item, index) in tupoksi" :key="index" class="relative">
-                    <!-- connecting thread between items -->
-                    <div
-                      v-if="index !== 0"
-                      class="absolute -top-4 left-6 w-px h-4 bg-gradient-to-b from-[#528be6]/0 via-[#528be6]/40 to-[#528be6]/0"
-                    ></div>
-
-                    <Accordion
-                      :title="item.title"
-                      :defaultOpen="index === 0"
-                      class="rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50/60 group"
-                    >
-                      <div class="flex gap-4 p-5 pl-6 bg-white border-t border-neutral-200">
-                        <span class="shrink-0 font-mono text-xs font-bold text-[#528be6] bg-[#528be6]/10 rounded-md px-2 py-1 h-fit">
-                          {{ item.code }}
-                        </span>
-                        <p class="text-neutral-600 leading-relaxed">{{ item.content }}</p>
-                      </div>
-                    </Accordion>
-                  </div>
+                <div class="space-y-4 text-neutral-600 leading-relaxed">
+                  <p class="mb-4">{{ dasarFungsi.deskripsi }}</p>
+                  <p class="mb-3 font-medium">{{ dasarFungsi.kalimatPengantar }}</p>
+                  <ol class="list-decimal pl-5 space-y-2">
+                    <li v-for="(fungsi, index) in dasarFungsi.listFungsi" :key="index">
+                      {{ fungsi }}
+                    </li>
+                  </ol>
                 </div>
               </div>
             </section>
@@ -190,28 +163,12 @@ const subBagian = [
                   </div>
                 </div>
 
-                <div class="relative grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <!-- thread connecting the two sub-bagian -->
-                  <svg class="hidden sm:block absolute top-1/2 left-0 right-0 -translate-y-1/2 h-10 w-full pointer-events-none" viewBox="0 0 100 20" preserveAspectRatio="none">
-                    <path d="M 46 10 L 54 10" stroke="#528be6" stroke-width="0.6" stroke-dasharray="2 2" />
-                  </svg>
-
-                  <div
-                    v-for="(sub, i) in subBagian"
-                    :key="i"
-                    class="relative bg-white border border-neutral-200 p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(11,37,69,0.25)] hover:border-[#528be6]/50"
-                  >
-                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#528be6]/0 to-[#528be6]/0 group-hover:from-[#528be6]/[0.04] group-hover:to-transparent transition-all duration-300 pointer-events-none"></div>
-
-                    <div class="w-12 h-12 bg-[#103973] text-white flex items-center justify-center rounded-xl mb-5 shadow-sm group-hover:bg-[#528be6] transition-colors duration-300">
-                      <component :is="sub.icon" size="22" stroke-width="1.5" />
-                    </div>
-                    <h3 class="font-display font-semibold text-[#103973] text-lg mb-3">{{ sub.title }}</h3>
-                    <p class="text-sm text-neutral-600 leading-relaxed mb-5">{{ sub.desc }}</p>
-                    <div class="text-[#528be6] flex items-center gap-1 text-sm font-semibold group-hover:gap-2.5 transition-all duration-300">
-                      Detail Layanan <IconChevronRight size="16" />
-                    </div>
-                  </div>
+                <div class="space-y-4 text-neutral-600 leading-relaxed">
+                  <ul class="list-disc pl-5 space-y-2">
+                    <li v-for="(item, index) in organisasi" :key="index">
+                      {{ item }}
+                    </li>
+                  </ul>
                 </div>
               </div>
             </section>

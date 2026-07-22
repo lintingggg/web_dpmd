@@ -20,35 +20,19 @@ const breadcrumbItems = [
   { label: 'Pemerintahan Desa' },
 ];
 
-const tupoksi = [
-  {
-    code: 'F.01',
-    title: 'Perumusan Kebijakan Pemerintahan Desa',
-    content: 'Merumuskan kebijakan teknis di bidang pembinaan aparatur pemerintahan desa, penataan wilayah desa, fasilitasi pemilihan kepala desa, dan administrasi pemerintahan desa.'
-  },
-  {
-    code: 'F.02',
-    title: 'Fasilitasi & Pembinaan Aparatur Desa',
-    content: 'Mengoordinasikan dan memfasilitasi pembinaan kapasitas kepala desa, perangkat desa, dan Badan Permusyawaratan Desa (BPD) agar penyelenggaraan pemerintahan desa berjalan optimal.'
-  },
-  {
-    code: 'F.03',
-    title: 'Pembinaan Administrasi & Keuangan Desa',
-    content: 'Melakukan fasilitasi dan evaluasi terhadap penyusunan produk hukum desa, serta pembinaan dalam pengelolaan keuangan dan aset desa.'
-  }
-];
+const dasarFungsi = {
+  deskripsi: "[Masukkan deskripsi tugas pokok Bidang Pemerintahan Desa di sini]",
+  kalimatPengantar: "Dalam melaksanakan tugas tersebut, Bidang Pemerintahan Desa menyelenggarakan fungsi:",
+  listFungsi: [
+    "Merumuskan kebijakan teknis di bidang pembinaan aparatur pemerintahan desa, penataan wilayah desa, fasilitasi pemilihan kepala desa, dan administrasi pemerintahan desa.",
+    "Mengoordinasikan dan memfasilitasi pembinaan kapasitas kepala desa, perangkat desa, dan Badan Permusyawaratan Desa (BPD) agar penyelenggaraan pemerintahan desa berjalan optimal.",
+    "Melakukan fasilitasi dan evaluasi terhadap penyusunan produk hukum desa, serta pembinaan dalam pengelolaan keuangan dan aset desa."
+  ]
+};
 
-const subBagian = [
-  {
-    icon: IconBuildingCommunity,
-    title: 'Seksi Tata Pemerintahan Desa',
-    desc: 'Fasilitasi penataan desa, pilkades, peningkatan kapasitas aparatur desa, dan pengawasan administrasi pemerintahan desa.',
-  },
-  {
-    icon: IconFileDescription,
-    title: 'Seksi Keuangan & Aset Desa',
-    desc: 'Pembinaan dan pengawasan pengelolaan Dana Desa (DD), Alokasi Dana Desa (ADD), dan inventarisasi aset desa.',
-  },
+const organisasi = [
+  "Seksi Tata Pemerintahan Desa: Fasilitasi penataan desa, pilkades, peningkatan kapasitas aparatur desa, dan pengawasan administrasi pemerintahan desa.",
+  "Seksi Keuangan & Aset Desa: Pembinaan dan pengawasan pengelolaan Dana Desa (DD), Alokasi Dana Desa (ADD), dan inventarisasi aset desa."
 ];
 </script>
 
@@ -140,26 +124,14 @@ const subBagian = [
                   </div>
                 </div>
 
-                <div class="space-y-4">
-                  <div v-for="(item, index) in tupoksi" :key="index" class="relative">
-                    <div
-                      v-if="index !== 0"
-                      class="absolute -top-4 left-6 w-px h-4 bg-gradient-to-b from-[#528be6]/0 via-[#528be6]/40 to-[#528be6]/0"
-                    ></div>
-
-                    <Accordion
-                      :title="item.title"
-                      :defaultOpen="index === 0"
-                      class="rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50/60 group"
-                    >
-                      <div class="flex gap-4 p-5 pl-6 bg-white border-t border-neutral-200">
-                        <span class="shrink-0 font-mono text-xs font-bold text-[#528be6] bg-[#528be6]/10 rounded-md px-2 py-1 h-fit">
-                          {{ item.code }}
-                        </span>
-                        <p class="text-neutral-600 leading-relaxed">{{ item.content }}</p>
-                      </div>
-                    </Accordion>
-                  </div>
+                <div class="space-y-4 text-neutral-600 leading-relaxed">
+                  <p class="mb-4">{{ dasarFungsi.deskripsi }}</p>
+                  <p class="mb-3 font-medium">{{ dasarFungsi.kalimatPengantar }}</p>
+                  <ol class="list-decimal pl-5 space-y-2">
+                    <li v-for="(fungsi, index) in dasarFungsi.listFungsi" :key="index">
+                      {{ fungsi }}
+                    </li>
+                  </ol>
                 </div>
               </div>
             </section>
@@ -177,27 +149,12 @@ const subBagian = [
                   </div>
                 </div>
 
-                <div class="relative grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <svg class="hidden sm:block absolute top-1/2 left-0 right-0 -translate-y-1/2 h-10 w-full pointer-events-none" viewBox="0 0 100 20" preserveAspectRatio="none">
-                    <path d="M 46 10 L 54 10" stroke="#528be6" stroke-width="0.6" stroke-dasharray="2 2" />
-                  </svg>
-
-                  <div
-                    v-for="(sub, i) in subBagian"
-                    :key="i"
-                    class="relative bg-white border border-neutral-200 p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(11,37,69,0.25)] hover:border-[#528be6]/50"
-                  >
-                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#528be6]/0 to-[#528be6]/0 group-hover:from-[#528be6]/[0.04] group-hover:to-transparent transition-all duration-300 pointer-events-none"></div>
-
-                    <div class="w-12 h-12 bg-[#103973] text-white flex items-center justify-center rounded-xl mb-5 shadow-sm group-hover:bg-[#528be6] transition-colors duration-300">
-                      <component :is="sub.icon" size="22" stroke-width="1.5" />
-                    </div>
-                    <h3 class="font-display font-semibold text-[#103973] text-lg mb-3">{{ sub.title }}</h3>
-                    <p class="text-sm text-neutral-600 leading-relaxed mb-5">{{ sub.desc }}</p>
-                    <div class="text-[#528be6] flex items-center gap-1 text-sm font-semibold group-hover:gap-2.5 transition-all duration-300">
-                      Detail Layanan <IconChevronRight size="16" />
-                    </div>
-                  </div>
+                <div class="space-y-4 text-neutral-600 leading-relaxed">
+                  <ul class="list-disc pl-5 space-y-2">
+                    <li v-for="(item, index) in organisasi" :key="index">
+                      {{ item }}
+                    </li>
+                  </ul>
                 </div>
               </div>
             </section>

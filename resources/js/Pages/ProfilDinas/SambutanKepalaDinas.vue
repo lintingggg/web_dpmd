@@ -3,43 +3,23 @@ import Navbar from "@/Components/Navbar/Navbar.vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Footer from "@/Components/Footer.vue";
 
-/*
-|--------------------------------------------------------------------------
-| Dummy Data
-| Nanti cukup diganti dengan data dari API.
-|--------------------------------------------------------------------------
-*/
 const profile = {
     title: "Sambutan Kepala Dinas",
-
-    subtitle:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-
-    image: "",
-
-    name: "Nama Kepala Dinas",
-
-    position: "Kepala Dinas Pemberdayaan Masyarakat dan Desa",
-
+    name: "[Nama Kepala Dinas]",
+    positionBadge: "KEPALA DINAS",
+    nip: "[nomor NIP]",
+    phone: "(0283) xxxxxxx",
+    email: "dinaspppa@tegalkab.go.id",
+    image: "", // Placeholder
     greeting: `
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco
-            laboris nisi ut aliquip ex ea commodo consequat.
-        </p>
-
-        <p>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur.
-        </p>
-
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Integer facilisis, risus nec fermentum faucibus.
-        </p>
+        <p>Assalamu'alaikum Wr Wb, Salam Sejahtera untuk kita semua,</p>
+        <p>Puji syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas karunia dan hidayah-Nya, sehingga kita semua dapat membaktikan segala hal yang kita miliki untuk kemajuan pada bidang pemberdayaan perempuan, perlindungan Anak, pengendalian Penduduk serta keluarga berencana. Apapun bentuk dan sumbangsih yang kita berikan, jika dilandasi niat yang tulus tanpa memandang imbalan apapun akan menghasilkan karya yang agung untuk bekal kita dan generasi setelah kita.</p>
+        <p>Dinas Pemberdayaan Perempuan Perlindungan Anak Pengendalian Penduduk dan Keluarga Berencana Kabupaten Tegal dibentuk berdasarkan Peraturan Daerah Kabupaten Tegal Nomor 12 Tahun 2016 tentang Pembentukan dan Susunan Perangkat Daerah Kabupaten Tegal. Penjabaran Tugas, Fungsi dan Tata Kerja Dinas Pemberdayaan Perempuan, Perlindungan Anak, Pengendalian Penduduk dan Keluarga Berencana berdasarkan Peraturan Bupati Tegal Nomor 71 Tahun 2016 adalah melaksanakan urusan pemerintahan bidang pemberdayaan perempuan dan perlindungan anak, dan bidang pengendalian penduduk dan keluarga berencana yang menjadi kewenangan daerah dan tugas pembantuan yang ditugaskan kepada daerah.</p>
+        <p>Peluncuran Website Resmi Dinas P3A dan P2KB Kabupaten Tegal ini merupakan wujud komitmen keterbukaan kami untuk terus dapat memberikan Informasi dan gambaran kinerja program/kegiatan serta untuk meningkatkan pelayanan di Dinas P3A dan P2KB kepada seluruh masyarakat maupun stakeholder lainnya. Kami menyadari website ini masih jauh dari sempurna, untuk itu kami akan senantiasa melakukan perbaikan dan pengembangan secara bertahap demi peningkatan mutu informasi yang kami sajikan. Semoga keberadaan website ini dapat meningkatkan pelayanan mutu di bidang Pemberdayaan Perempuan, Perlindungan Anak, Pengendalian Penduduk dan Keluarga Berencana. Tidak lupa kami sampaikan terimakasih kepada semua pihak yang telah berpartisipasi turut memberikan saran dan masukan.</p>
+        <p>Secara pribadi saya mohon maaf, jika pemenuhan tuntutan dan kinerja yang saya lakukan masih ada kelemahan. Oleh karena itu, bantuan dan kerjasama dari berbagai pihak untuk optimalisasi peningkatan kinerja sangat saya harapkan. Mudah-mudahan dalam tiap langkah dan nafas kita menciptakan nilai jual yang tinggi bagi keilmuan dan nilai hakiki di hadapan Tuhan Yang Maha Esa.</p>
+        <p>Demikian sambutan ini saya sampaikan, ditutup dengan pesan moral dan keilmuan bagi kita semua.</p>
     `
-}
+};
 </script>
 
 <template>
@@ -47,374 +27,242 @@ const profile = {
 
     <Breadcrumb />
 
-    <section class="hero-section">
-
+    <section class="page-header">
         <div class="container">
-
-            <span class="hero-badge">
-                Profil Dinas
-            </span>
-
             <h1>{{ profile.title }}</h1>
-
-            <p>{{ profile.subtitle }}</p>
-
         </div>
-
     </section>
 
-    <main class="container">
-
-        <section class="image-section">
-
-            <img
-                v-if="profile.image"
-                :src="profile.image"
-                :alt="profile.title"
-            >
-
-            <div
-                v-else
-                class="image-placeholder"
-            >
-
-                <div class="placeholder-icon">
-
-                    🖼️
-
-                </div>
-
-                <h4>Image Not Available</h4>
-
-                <p>
-
-                    Gambar akan ditampilkan
-                    setelah diunggah oleh administrator.
-
-                </p>
-
+    <main class="container page-content">
+        <div class="content-wrapper">
+            <!-- Kolom Kiri: Konten Utama -->
+            <div class="main-column">
+                <div class="card content-card" v-html="profile.greeting"></div>
             </div>
 
-        </section>
-
-        <div class="leader-info">
-
-            <h3>{{ profile.name }}</h3>
-
-            <p>{{ profile.position }}</p>
-
+            <!-- Kolom Kanan: Sidebar Profil -->
+            <aside class="sidebar-column">
+                <div class="card sidebar-card">
+                    <div class="profile-image-container">
+                        <img v-if="profile.image" :src="profile.image" :alt="profile.name" class="profile-image">
+                        <div v-else class="image-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <h3 class="profile-name">{{ profile.name }}</h3>
+                        <span class="profile-badge">{{ profile.positionBadge }}</span>
+                        
+                        <div class="profile-info-list">
+                            <div class="info-item">
+                                <span class="info-label">NIP</span>
+                                <span class="info-value">{{ profile.nip }}</span>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                                <span class="info-value">{{ profile.phone }}</span>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <span class="info-value">{{ profile.email }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
         </div>
-
-        <section
-            class="content-card"
-            v-html="profile.greeting"
-        />
-
     </main>
 
     <Footer />
 </template>
 
 <style scoped>
-
-.container{
-
-    max-width:960px;
-
-    margin:auto;
-
-    padding:0 20px;
-
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* ========================= */
-
-.hero-section{
-
-    background:linear-gradient(180deg,#F8FAFC 0%,#FFFFFF 100%);
-
-    padding:56px 0 48px;
-
-    margin-bottom:36px;
-
+/* Page Header */
+.page-header {
+    background-color: #FFFFFF;
+    padding: 40px 0 20px;
 }
 
-.hero-badge{
-
-    display:inline-block;
-
-    padding:8px 18px;
-
-    background:#E0F2FE;
-
-    color:#0369A1;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    border-radius:999px;
-
-    margin-bottom:20px;
-
+.page-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0;
 }
 
-.hero-section h1{
-
-    font-size:42px;
-
-    font-weight:700;
-
-    color:#0F172A;
-
-    line-height:1.2;
-
-    margin-bottom:18px;
-
-    position:relative;
-
-    display:inline-block;
-
+/* Main Layout */
+.page-content {
+    margin-bottom: 60px;
+    padding-top: 20px;
 }
 
-.hero-section h1::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:0;
-
-    bottom:-10px;
-
-    width:90px;
-
-    height:4px;
-
-    border-radius:10px;
-
-    background:#2563EB;
-
+.content-wrapper {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
 }
 
-.hero-section p{
-
-    margin-top:26px;
-
-    max-width:720px;
-
-    color:#64748B;
-
-    line-height:1.9;
-
-    font-size:17px;
-
+.main-column {
+    flex: 1;
+    min-width: 0;
 }
 
-/* ========================= */
-
-.image-section{
-
-    margin-bottom:32px;
-
+.sidebar-column {
+    width: 320px;
+    flex-shrink: 0;
 }
 
-.image-section img{
-
-    width:100%;
-
-    height:260px;
-
-    object-fit:cover;
-
-    border-radius:18px;
-
-    display:block;
-
+/* Card General Styling */
+.card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.5);
 }
 
-.image-placeholder{
-
-    width:100%;
-
-    height:260px;
-
-    border:2px dashed #CBD5E1;
-
-    border-radius:18px;
-
-    background:#F8FAFC;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
-
-    text-align:center;
-
+/* Content Card */
+.content-card {
+    padding: 40px;
 }
 
-.placeholder-icon{
-
-    font-size:60px;
-
-    margin-bottom:18px;
-
-    opacity:.7;
-
+.content-card :deep(p) {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #334155;
+    margin-bottom: 20px;
+    text-align: justify;
 }
 
-.image-placeholder h4{
-
-    font-size:20px;
-
-    color:#1E293B;
-
-    margin-bottom:10px;
-
+.content-card :deep(p:last-child) {
+    margin-bottom: 0;
 }
 
-.image-placeholder p{
-
-    color:#64748B;
-
-    max-width:320px;
-
-    line-height:1.7;
-
+/* Sidebar Card */
+.sidebar-card {
+    padding: 32px 24px;
 }
 
-/* ========================= */
-
-.content-card{
-
-    background:#FFF;
-
-    border-radius:20px;
-
-    padding:40px;
-
-    box-shadow:0 10px 30px rgba(15,23,42,.06);
-
-    margin-bottom:60px;
-
-    font-size:17px;
-
-    line-height:2;
-
+.profile-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
 }
 
-.content-card :deep(h2){
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    margin-top:42px;
-
-    margin-bottom:18px;
-
-    color:#0F172A;
-
-    font-size:24px;
-
-    font-weight:700;
-
+.profile-image {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #F1F5F9;
 }
 
-.content-card :deep(h2)::before{
-
-    content:"📘";
-
-    font-size:24px;
-
+.image-placeholder {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #F8FAFC;
+    border: 2px dashed #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94A3B8;
 }
 
-.content-card :deep(ul){
-
-    padding-left:28px;
-
-    margin:20px 0;
-
+.icon-person {
+    width: 64px;
+    height: 64px;
 }
 
-.content-card :deep(li){
-
-    margin-bottom:14px;
-
-    color:#374151;
-
+.profile-details {
+    text-align: center;
 }
 
-.content-card :deep(p){
-
-    margin-bottom:16px;
-
+.profile-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0 0 12px 0;
 }
 
-/* ========================= */
-
-.leader-info{
-
-    margin-top:24px;
-
-    text-align:center;
-
+.profile-badge {
+    display: inline-block;
+    background: #0369A1;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
 }
 
-.leader-info h3{
-
-    font-size:26px;
-
-    font-weight:700;
-
-    color:#0F172A;
-
-    margin-bottom:8px;
-
+.profile-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 24px;
 }
 
-.leader-info p{
-
-    color:#64748B;
-
-    font-size:16px;
-
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #475569;
 }
 
-/* ========================= */
+.info-item .icon {
+    width: 20px;
+    height: 20px;
+    color: #0369A1;
+    flex-shrink: 0;
+}
 
-@media(max-width:768px){
+.info-label {
+    font-weight: 600;
+    color: #0F172A;
+    width: 32px;
+}
 
-    .hero-section{
+.info-value {
+    word-break: break-word;
+}
 
-        padding:42px 0;
-
+/* Responsive */
+@media (max-width: 992px) {
+    .content-wrapper {
+        flex-direction: column;
     }
-
-    .hero-section h1{
-
-        font-size:32px;
-
+    
+    .sidebar-column {
+        width: 100%;
     }
-
-    .image-placeholder{
-
-        height:220px;
-
-    }
-
-    .content-card{
-
-        padding:24px;
-
-    }
-
 }
 
+@media (max-width: 768px) {
+    .content-card {
+        padding: 24px;
+    }
+    
+    .page-header h1 {
+        font-size: 28px;
+    }
+}
 </style>
