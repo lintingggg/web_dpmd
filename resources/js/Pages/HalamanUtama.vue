@@ -65,11 +65,21 @@ const form = ref({
 // Social Media Tabs State
 const socialTabs = computed(() => {
   const tabs = [];
-  if (kontak.value.show_instagram !== false) tabs.push({ id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' });
-  if (kontak.value.show_tiktok !== false) tabs.push({ id: 'tiktok', name: 'TikTok', icon: IconBrandTiktok, color: 'text-black' });
-  if (kontak.value.show_youtube !== false) tabs.push({ id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' });
-  if (kontak.value.show_facebook !== false) tabs.push({ id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' });
-  if (kontak.value.show_twitter !== false) tabs.push({ id: 'twitter', name: 'X (Twitter)', icon: IconBrandX, color: 'text-black' });
+  if (kontak.value.show_instagram !== false && (kontak.value.instagram_embed_1 || kontak.value.instagram_embed_2)) 
+    tabs.push({ id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' });
+  
+  if (kontak.value.show_tiktok !== false && (kontak.value.tiktok_embed_1 || kontak.value.tiktok_embed_2)) 
+    tabs.push({ id: 'tiktok', name: 'TikTok', icon: IconBrandTiktok, color: 'text-black' });
+    
+  if (kontak.value.show_youtube !== false && (kontak.value.youtube_embed_1 || kontak.value.youtube_embed_2)) 
+    tabs.push({ id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' });
+    
+  if (kontak.value.show_facebook !== false && (kontak.value.facebook_embed_1 || kontak.value.facebook_embed_2)) 
+    tabs.push({ id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' });
+    
+  if (kontak.value.show_twitter !== false && (kontak.value.twitter_embed_1 || kontak.value.twitter_embed_2)) 
+    tabs.push({ id: 'twitter', name: 'X (Twitter)', icon: IconBrandX, color: 'text-black' });
+    
   return tabs;
 });
 
@@ -209,7 +219,7 @@ onUnmounted(() => {
     </section>
 
     <!-- PENGUMUMAN TERKINI -->
-    <!-- <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
         <div>
           <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Pengumuman Terkini</h2>
@@ -246,7 +256,7 @@ onUnmounted(() => {
       <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
         Belum ada pengumuman terbaru.
       </div>
-    </section> -->
+    </section>
 
     <!-- SOSIAL MEDIA -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">
