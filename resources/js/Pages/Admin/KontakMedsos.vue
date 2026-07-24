@@ -2,6 +2,7 @@
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from '@idds/vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     kontak: Object
@@ -22,12 +23,33 @@ const form = useForm({
     facebook_url: props.kontak?.facebook_url || '',
     instagram_url: props.kontak?.instagram_url || '',
     youtube_url: props.kontak?.youtube_url || '',
-    twitter_url: props.kontak?.twitter_url || ''
+    twitter_url: props.kontak?.twitter_url || '',
+    tiktok_url: props.kontak?.tiktok_url || '',
+    
+    // Embeds
+    instagram_embed_1: props.kontak?.instagram_embed_1 || '',
+    instagram_embed_2: props.kontak?.instagram_embed_2 || '',
+    tiktok_embed_1: props.kontak?.tiktok_embed_1 || '',
+    tiktok_embed_2: props.kontak?.tiktok_embed_2 || '',
+    youtube_embed_1: props.kontak?.youtube_embed_1 || '',
+    youtube_embed_2: props.kontak?.youtube_embed_2 || '',
+    facebook_embed_1: props.kontak?.facebook_embed_1 || '',
+    facebook_embed_2: props.kontak?.facebook_embed_2 || '',
+    twitter_embed_1: props.kontak?.twitter_embed_1 || '',
+    twitter_embed_2: props.kontak?.twitter_embed_2 || '',
+
+    // Toggles
+    show_instagram: props.kontak?.show_instagram ?? true,
+    show_tiktok: props.kontak?.show_tiktok ?? true,
+    show_youtube: props.kontak?.show_youtube ?? true,
+    show_facebook: props.kontak?.show_facebook ?? true,
+    show_twitter: props.kontak?.show_twitter ?? true,
 });
 
-// Logic untuk Jam Kerja Interaktif
-import { ref, watch } from 'vue';
+// State Tab
+const activeTab = ref('kontak');
 
+// Logic untuk Jam Kerja Interaktif
 let initHariBuka = 'Senin';
 let initHariTutup = 'Jumat';
 let initJamBuka = '08:00';
@@ -86,10 +108,17 @@ const submit = () => {
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Tabs Navigation -->
+        <div class="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-xl border border-[#e3e5e7] shadow-sm">
+            <button @click="activeTab = 'kontak'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all', activeTab === 'kontak' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">Informasi Kontak</button>
+            <button @click="activeTab = 'sosmed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all', activeTab === 'sosmed' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">Tautan Profil Media Sosial</button>
+            <button @click="activeTab = 'embed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all', activeTab === 'embed' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">Widget Beranda (Embed)</button>
+        </div>
+
+        <div class="w-full">
             
-            <!-- INFORMASI KONTAK -->
-            <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] p-8">
+            <!-- TAB: INFORMASI KONTAK -->
+            <div v-show="activeTab === 'kontak'" class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] p-8">
                 <div class="flex items-center gap-3 mb-6 pb-6 border-b border-[#e3e5e7]">
                     <div class="w-10 h-10 rounded-xl bg-[#e3f2fd] flex items-center justify-center flex-shrink-0">
                         <span class="material-symbols-outlined text-[#1976d2] text-[22px]">contact_phone</span>
@@ -179,14 +208,14 @@ const submit = () => {
                 </div>
             </div>
 
-            <!-- MEDIA SOSIAL -->
-            <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] p-8">
+            <!-- TAB: MEDIA SOSIAL -->
+            <div v-show="activeTab === 'sosmed'" class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] p-8">
                 <div class="flex items-center gap-3 mb-6 pb-6 border-b border-[#e3e5e7]">
                     <div class="w-10 h-10 rounded-xl bg-[#fce4ec] flex items-center justify-center flex-shrink-0">
                         <span class="material-symbols-outlined text-[#c2185b] text-[22px]">share</span>
                     </div>
                     <div>
-                        <h3 class="text-[18px] font-bold text-[#0f172a]">Widget Media Sosial</h3>
+                        <h3 class="text-[18px] font-bold text-[#0f172a]">Tautan Profil Media Sosial</h3>
                         <p class="text-[13px] font-medium text-[#646a79]">Tautan ke jejaring sosial resmi DPMD</p>
                     </div>
                 </div>
@@ -227,9 +256,168 @@ const submit = () => {
                         </div>
                         <div v-if="form.errors.twitter_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_url }}</div>
                     </div>
+
+                    <div>
+                        <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">TikTok URL</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#000000]">music_note</span>
+                            <input v-model="form.tiktok_url" type="url" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="https://tiktok.com/@..." />
+                        </div>
+                        <div v-if="form.errors.tiktok_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_url }}</div>
+                    </div>
                 </div>
             </div>
 
+            <!-- TAB: WIDGET EMBED BERANDA -->
+            <div v-show="activeTab === 'embed'" class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] p-8">
+                <div class="flex items-center gap-3 mb-8 pb-6 border-b border-[#e3e5e7]">
+                    <div class="w-10 h-10 rounded-xl bg-[#e8f5e9] flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-[#2e7d32] text-[22px]">code</span>
+                    </div>
+                    <div>
+                        <h3 class="text-[18px] font-bold text-[#0f172a]">Pengaturan Widget Beranda (Embed)</h3>
+                        <p class="text-[13px] font-medium text-[#646a79]">Kode Embed Iframe untuk menampilkan postingan media sosial di Halaman Utama.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-12">
+                    <!-- Instagram Embeds -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-[#0f172a] text-[16px]">Instagram</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.show_instagram" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0f172a]"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.show_instagram" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Instagram 1</label>
+                                <textarea v-model="form.instagram_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.instagram_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_embed_1 }}</div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Instagram 2</label>
+                                <textarea v-model="form.instagram_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.instagram_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_embed_2 }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TikTok Embeds -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-[#0f172a] text-[16px]">TikTok</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.show_tiktok" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0f172a]"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.show_tiktok" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed TikTok 1</label>
+                                <textarea v-model="form.tiktok_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.tiktok_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_embed_1 }}</div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed TikTok 2</label>
+                                <textarea v-model="form.tiktok_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.tiktok_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_embed_2 }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- YouTube Embeds -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-[#0f172a] text-[16px]">YouTube</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.show_youtube" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0f172a]"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.show_youtube" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed YouTube 1</label>
+                                <textarea v-model="form.youtube_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.youtube_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_embed_1 }}</div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed YouTube 2</label>
+                                <textarea v-model="form.youtube_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.youtube_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_embed_2 }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Facebook Embeds -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-[#0f172a] text-[16px]">Facebook</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.show_facebook" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0f172a]"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.show_facebook" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Facebook 1</label>
+                                <textarea v-model="form.facebook_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.facebook_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_embed_1 }}</div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Facebook 2</label>
+                                <textarea v-model="form.facebook_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.facebook_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_embed_2 }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Twitter Embeds -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-[#0f172a] text-[16px]">X (Twitter)</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.show_twitter" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0f172a]"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
+                            </label>
+                        </div>
+                        
+                        <div v-if="form.show_twitter" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Twitter 1</label>
+                                <textarea v-model="form.twitter_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.twitter_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_1 }}</div>
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Twitter 2</label>
+                                <textarea v-model="form.twitter_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <div v-if="form.errors.twitter_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_2 }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

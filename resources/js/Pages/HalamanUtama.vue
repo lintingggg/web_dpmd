@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { 
   IconMapPin, 
   IconMail, 
@@ -22,6 +22,7 @@ import {
 import { initHomeAnimations } from '../animations/homeAnimations';
 import Navbar from '../Components/Navbar/Navbar.vue';
 import Footer from '../Components/Footer.vue';
+import PrimaryButton from '../Components/PrimaryButton.vue';
 
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -62,14 +63,29 @@ const form = ref({
 });
 
 // Social Media Tabs State
-const activeSocialTab = ref('instagram');
-const socialTabs = [
-  { id: 'twitter', name: 'Twitter (X)', icon: IconBrandX, color: 'text-black' },
-  { id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' },
-  { id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' },
-  { id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' },
-  { id: 'tiktok', name: 'Tik Tok', icon: IconBrandTiktok, color: 'text-black' },
-];
+const socialTabs = computed(() => {
+  const tabs = [];
+  if (kontak.value.show_instagram !== false) tabs.push({ id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' });
+  if (kontak.value.show_tiktok !== false) tabs.push({ id: 'tiktok', name: 'TikTok', icon: IconBrandTiktok, color: 'text-black' });
+  if (kontak.value.show_youtube !== false) tabs.push({ id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' });
+  if (kontak.value.show_facebook !== false) tabs.push({ id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' });
+  if (kontak.value.show_twitter !== false) tabs.push({ id: 'twitter', name: 'X (Twitter)', icon: IconBrandX, color: 'text-black' });
+  return tabs;
+});
+
+const activeSocialTab = ref('');
+
+// Set default active tab
+watch(socialTabs, (newTabs) => {
+  if (newTabs.length > 0 && !newTabs.find(t => t.id === activeSocialTab.value)) {
+    activeSocialTab.value = newTabs[0].id;
+  }
+}, { immediate: true });
+
+
+const openLink = (url: string) => {
+  window.open(url, '_blank');
+};
 
 const submitForm = () => {
   if(!form.value.nama || !form.value.email || !form.value.pesan) {
@@ -269,29 +285,47 @@ onUnmounted(() => {
           
           <!-- Instagram Embed -->
           <div v-show="activeSocialTab === 'instagram'" class="w-full flex flex-col gap-6 slide-in-tab">
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <iframe src="https://www.instagram.com/p/DavD7dtzzJr/embed" width="100%" height="520" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
-                <iframe src="https://www.instagram.com/p/DavCU1vzIOK/embed" width="100%" height="520" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+             <div v-if="!kontak.instagram_embed_1 && !kontak.instagram_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten Instagram sedang dalam persiapan.</p>
+                 </div>
+             </div>
+             <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <div v-if="kontak.instagram_embed_1" v-html="kontak.instagram_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.instagram_embed_2" v-html="kontak.instagram_embed_2" class="w-full flex justify-center"></div>
              </div>
              <div class="flex justify-center mt-4">
-               <a href="https://www.instagram.com/dpmd_bangkalan/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all shadow-md hover:-translate-y-1">
+               <PrimaryButton type="button" @click="openLink(kontak.instagram_url || 'https://www.instagram.com/dpmd_bangkalan/')">
+                 <IconBrandInstagram class="w-5 h-5 mr-1" />
                  Kunjungi Instagram Kami
-                 <IconArrowRight class="w-5 h-5" />
-               </a>
+               </PrimaryButton>
              </div>
           </div>
           
           <!-- TikTok Embed -->
           <div v-show="activeSocialTab === 'tiktok'" class="w-full flex flex-col gap-6 slide-in-tab">
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <iframe src="https://www.tiktok.com/embed/v2/7658293635275902228?lang=id-ID" style="width: 100%; max-width: 325px; height: 580px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
-                <iframe src="https://www.tiktok.com/embed/v2/7650272551016451348?lang=id-ID" style="width: 100%; max-width: 325px; height: 580px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+             <div v-if="!kontak.tiktok_embed_1 && !kontak.tiktok_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten TikTok sedang dalam persiapan.</p>
+                 </div>
+             </div>
+             <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <div v-if="kontak.tiktok_embed_1" v-html="kontak.tiktok_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.tiktok_embed_2" v-html="kontak.tiktok_embed_2" class="w-full flex justify-center"></div>
              </div>
              <div class="flex justify-center mt-4">
-               <a href="https://www.tiktok.com/@dinaspmdbangkalan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-800 transition-all shadow-md hover:-translate-y-1">
+               <PrimaryButton type="button" @click="openLink(kontak.tiktok_url || 'https://www.tiktok.com/@dinaspmdbangkalan')">
+                 <IconBrandTiktok class="w-5 h-5 mr-1" />
                  Kunjungi TikTok Kami
-                 <IconArrowRight class="w-5 h-5" />
-               </a>
+               </PrimaryButton>
              </div>
           </div>
 
