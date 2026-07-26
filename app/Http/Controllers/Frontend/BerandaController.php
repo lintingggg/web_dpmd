@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Berita;
 use App\Models\Pengumuman;
 use App\Models\Galeri;
+use App\Models\PengaturanBeranda;
 
 class BerandaController extends Controller
 {
@@ -29,10 +30,13 @@ class BerandaController extends Controller
             ->take(4)
             ->get();
 
+        $pengaturanBeranda = PengaturanBeranda::first();
+
         return Inertia::render('HalamanUtama', [
             'beritaTerkini' => $beritaTerkini,
             'pengumumanList' => $pengumumanList,
             'galeriHighlight' => $galeriHighlight,
+            'pengaturanBeranda' => $pengaturanBeranda,
         ]);
     }
 }
