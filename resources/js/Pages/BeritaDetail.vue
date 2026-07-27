@@ -4,6 +4,9 @@ import { Head, Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import CardNews from '@/Components/CardNews.vue';
 import Footer from '@/Components/Footer.vue';
+import UpButton from '@/Components/UpButton.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
+import { IconHome } from '@tabler/icons-vue';
 
 const props = defineProps<{
     berita: any;
@@ -12,24 +15,69 @@ const props = defineProps<{
 
 const pageTitle = computed(() => props.berita.judul);
 
+// Breadcrumb: pola yang sama dengan Index.vue & VisiMisi.vue. Judul berita
+// dipotong biar breadcrumb nggak kepanjangan kalau judulnya panjang.
+const breadcrumbItems = computed(() => [
+    { label: 'Beranda', href: '/', icon: IconHome },
+    { label: 'Berita & Kegiatan', href: '/berita' },
+    {
+        label: props.berita.judul?.length > 40
+            ? props.berita.judul.slice(0, 40) + '…'
+            : props.berita.judul,
+    },
+]);
+
 // Formatting helpers
 const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: '2-digit' });
 };
+// poin 4: sidebar "Berita Terkini" butuh jam juga, bukan cuma tanggal
+const formatDateTime = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: '2-digit' })
+        + ' • ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+};
+
+// Placeholder inline SVG (data URI) -> tidak pernah 404 karena tidak minta
+// apa pun ke server. Sama persis dengan yang dipakai di Index.vue & CardNews.vue,
+// menggantikan via.placeholder.com yang sudah tidak reliable.
+const FALLBACK_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'>
+  <rect width='600' height='400' fill='#e5e7eb'/>
+  <g fill='#9ca3af'>
+    <path d='M255 165h90l15 25h35a10 10 0 0 1 10 10v95a10 10 0 0 1-10 10H235a10 10 0 0 1-10-10v-95a10 10 0 0 1 10-10h35z' fill='none' stroke='#9ca3af' stroke-width='6'/>
+    <circle cx='300' cy='245' r='28' fill='none' stroke='#9ca3af' stroke-width='6'/>
+  </g>
+  <text x='300' y='320' font-family='sans-serif' font-size='18' fill='#9ca3af' text-anchor='middle'>Gambar tidak tersedia</text>
+</svg>`;
+const FALLBACK_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(FALLBACK_SVG)}`;
+
 const getImageUrl = (path: string) => {
-    if (!path) return 'https://via.placeholder.com/600x400?text=No+Image';
+    if (!path) return FALLBACK_IMAGE;
     if (path.startsWith('http')) return path;
     return '/storage/' + path;
 };
+
+function onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    if (img.src !== FALLBACK_IMAGE) {
+        img.src = FALLBACK_IMAGE;
+    }
+}
 </script>
 
 <template>
     <Head :title="pageTitle" />
 
+    <!-- Navbar dipindah ke LUAR div ber-padding, supaya nyatu penuh ke tepi
+         layar (pola yang sama seperti di halaman list berita / Index.vue).
+         Sebelumnya navbar ada di dalam div "p-4 md:p-8", jadi ikut ketarik
+         padding dan kelihatan "mengambang" terpisah dari tepi. -->
+    <Navbar />
+
     <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
-        <Navbar />
 
         <div class="max-w-6xl mx-auto mt-8">
 
@@ -97,6 +145,7 @@ const getImageUrl = (path: string) => {
                         <img
                             :src="getImageUrl(berita.foto_utama)"
                             :alt="berita.judul"
+                            @error="onImageError"
                             class="w-full h-auto object-cover aspect-[16/9]"
                         />
                     </div>
@@ -128,17 +177,25 @@ const getImageUrl = (path: string) => {
                             >
                                 <CardNews
                                     :title="item.judul"
-                                    :date="formatDate(item.published_at)"
-                                    category="Berita"
+                                    :date="formatDateTime(item.published_at)"
+                                    :author="item.penulis || 'Humas DPMD'"
+                                    :tags="item.tags"
                                     :image="getImageUrl(item.foto_utama)"
                                 />
                             </Link>
                         </div>
 
-                        <!-- Item ke-5: Lihat berita lainnya -->
+                        <!-- Item ke-5: Lihat berita lainnya.
+                             Default: solid biru. Hover: bg putih + stroke biru +
+                             teks biru (ikon ikut karena pakai stroke="currentColor"),
+                             plus efek angkat & shadow yang sama seperti CardNews
+                             (transition-all + hover:-translate-y + hover:shadow-xl).
+                             border-2 border-blue-700 dipasang dari awal (bukan cuma
+                             saat hover) supaya ukuran tombol tidak "loncat" saat
+                             border baru muncul di state hover. -->
                         <Link
                             href="/berita"
-                            class="flex items-center justify-center gap-1.5 mt-5 py-3 rounded-lg bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 transition-colors"
+                            class="flex items-center justify-center gap-1.5 mt-5 py-3 rounded-lg border-2 border-blue-700 bg-blue-700 text-sm font-semibold text-white transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-white hover:text-blue-700 hover:shadow-xl"
                         >
                             Lihat Berita Lainnya
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
