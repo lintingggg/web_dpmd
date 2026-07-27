@@ -39,8 +39,8 @@ function isParentActive(children?: { href: string }[]) {
                 class="px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
                 :class="[
                     isActive(item.href)
-                        ? 'bg-[#F8FAFC] text-[#0F172A] shadow-sm'
-                        : 'text-[#646A79] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+                        ? 'bg-[#0F1B3D] text-white shadow-lg shadow-[#0F1B3D]/30'
+                        : 'text-[#646A79] hover:bg-[#0F1B3D] hover:text-white hover:shadow-lg hover:shadow-[#0F1B3D]/30'
                 ]"
             >
 
@@ -62,9 +62,9 @@ function isParentActive(children?: { href: string }[]) {
                 <button
                     class="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
                     :class="[
-                        isParentActive(item.children)
-                            ? 'bg-[#F8FAFC] text-[#0F172A] shadow-sm'
-                            : 'text-[#646A79] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+                        isParentActive(item.children) || activeDropdown===item.label
+                            ? 'bg-[#0F1B3D] text-white shadow-lg shadow-[#0F1B3D]/30'
+                            : 'text-[#646A79] hover:bg-[#0F1B3D] hover:text-white hover:shadow-lg hover:shadow-[#0F1B3D]/30'
                     ]"
                 >
 
