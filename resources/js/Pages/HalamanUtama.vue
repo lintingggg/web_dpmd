@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { 
   IconMapPin, 
   IconMail, 
@@ -22,6 +22,7 @@ import {
 import { initHomeAnimations } from '../animations/homeAnimations';
 import Navbar from '../Components/Navbar/Navbar.vue';
 import Footer from '../Components/Footer.vue';
+import PrimaryButton from '../Components/PrimaryButton.vue';
 
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -30,6 +31,7 @@ const props = defineProps<{
   pengumumanList: any[];
   beritaTerkini?: any[];
   galeriHighlight?: any[];
+  pengaturanBeranda?: any;
 }>();
 
 const page = usePage();
@@ -62,14 +64,39 @@ const form = ref({
 });
 
 // Social Media Tabs State
-const activeSocialTab = ref('instagram');
-const socialTabs = [
-  { id: 'twitter', name: 'Twitter (X)', icon: IconBrandX, color: 'text-black' },
-  { id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' },
-  { id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' },
-  { id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' },
-  { id: 'tiktok', name: 'Tik Tok', icon: IconBrandTiktok, color: 'text-black' },
-];
+const socialTabs = computed(() => {
+  const tabs = [];
+  if (kontak.value.show_instagram !== false && (kontak.value.instagram_embed_1 || kontak.value.instagram_embed_2)) 
+    tabs.push({ id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' });
+  
+  if (kontak.value.show_tiktok !== false && (kontak.value.tiktok_embed_1 || kontak.value.tiktok_embed_2)) 
+    tabs.push({ id: 'tiktok', name: 'TikTok', icon: IconBrandTiktok, color: 'text-black' });
+    
+  if (kontak.value.show_youtube !== false && (kontak.value.youtube_embed_1 || kontak.value.youtube_embed_2)) 
+    tabs.push({ id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' });
+    
+  if (kontak.value.show_facebook !== false && (kontak.value.facebook_embed_1 || kontak.value.facebook_embed_2)) 
+    tabs.push({ id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' });
+    
+  if (kontak.value.show_twitter !== false && (kontak.value.twitter_embed_1 || kontak.value.twitter_embed_2)) 
+    tabs.push({ id: 'twitter', name: 'X (Twitter)', icon: IconBrandX, color: 'text-black' });
+    
+  return tabs;
+});
+
+const activeSocialTab = ref('');
+
+// Set default active tab
+watch(socialTabs, (newTabs) => {
+  if (newTabs.length > 0 && !newTabs.find(t => t.id === activeSocialTab.value)) {
+    activeSocialTab.value = newTabs[0].id;
+  }
+}, { immediate: true });
+
+
+const openLink = (url: string) => {
+  window.open(url, '_blank');
+};
 
 const submitForm = () => {
   if(!form.value.nama || !form.value.email || !form.value.pesan) {
@@ -119,10 +146,10 @@ onUnmounted(() => {
         <!-- TEXT CONTENT -->
         <div class="lg:w-5/12 flex flex-col justify-center z-10">
           <h1 class="text-4xl lg:text-[2.75rem] font-extrabold text-[#0F172A] leading-[1.15] mb-6 overflow-hidden">
-            <span class="inline-block hero-title-inner">Membangun Desa Bangkalan yang Mandiri dan Sejahtera.</span>
+            <span class="inline-block hero-title-inner">{{ props.pengaturanBeranda?.hero_title || 'Membangun Desa Bangkalan yang Mandiri dan Sejahtera.' }}</span>
           </h1>
-          <p class="text-[#646A79] text-lg mb-10 leading-relaxed hero-fade-up font-medium">
-            Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan berkomitmen penuh dalam mendorong kemajuan potensi desa di seluruh wilayah Bangkalan.
+          <p class="text-[#646A79] text-lg mb-10 leading-relaxed hero-fade-up font-medium whitespace-pre-line">
+            {{ props.pengaturanBeranda?.hero_description || 'Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan berkomitmen penuh dalam mendorong kemajuan potensi desa di seluruh wilayah Bangkalan.' }}
           </p>
         </div>
 
@@ -133,17 +160,17 @@ onUnmounted(() => {
             
             <!-- Image 1 (Left/Back) -->
             <div class="absolute left-[0%] top-[15%] w-2/5 aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-[#FFFFFF] hero-img-1 z-0 -rotate-6">
-              <img src="/assets/Pengukuhan TP. PKK Kecamatan Kabupaten Bangkalan.jpg.jpeg" alt="Kegiatan PKK 1" class="w-full h-full object-cover" />
+              <img :src="props.pengaturanBeranda?.hero_image_1 ? '/storage/' + props.pengaturanBeranda.hero_image_1 : '/assets/Pengukuhan TP. PKK Kecamatan Kabupaten Bangkalan.jpg.jpeg'" alt="Kegiatan 1" class="w-full h-full object-cover" />
             </div>
 
             <!-- Image 2 (Right/Back) -->
             <div class="absolute right-[0%] top-[30%] w-2/5 aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-[#FFFFFF] hero-img-2 z-0 rotate-6">
-              <img src="/assets/PKK Mengikuti Seminar Bagi Perempuan Dalam Menghadapi Era Digital.jpg.jpeg" alt="Kegiatan PKK 2" class="w-full h-full object-cover" />
+              <img :src="props.pengaturanBeranda?.hero_image_2 ? '/storage/' + props.pengaturanBeranda.hero_image_2 : '/assets/PKK Mengikuti Seminar Bagi Perempuan Dalam Menghadapi Era Digital.jpg.jpeg'" alt="Kegiatan 2" class="w-full h-full object-cover" />
             </div>
 
             <!-- Image 3 (Center/Front) -->
             <div class="relative w-1/2 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFFFF] hero-img-3 z-10 translate-y-[-10%]">
-              <img src="/assets/Rapat Pleno PKK.jpg.jpeg" alt="Kegiatan PKK 3" class="w-full h-full object-cover" />
+              <img :src="props.pengaturanBeranda?.hero_image_3 ? '/storage/' + props.pengaturanBeranda.hero_image_3 : '/assets/Rapat Pleno PKK.jpg.jpeg'" alt="Kegiatan 3" class="w-full h-full object-cover" />
             </div>
 
           </div>
@@ -193,7 +220,7 @@ onUnmounted(() => {
     </section>
 
     <!-- PENGUMUMAN TERKINI -->
-    <!-- <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
         <div>
           <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Pengumuman Terkini</h2>
@@ -230,7 +257,7 @@ onUnmounted(() => {
       <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
         Belum ada pengumuman terbaru.
       </div>
-    </section> -->
+    </section>
 
     <!-- SOSIAL MEDIA -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">
@@ -269,34 +296,121 @@ onUnmounted(() => {
           
           <!-- Instagram Embed -->
           <div v-show="activeSocialTab === 'instagram'" class="w-full flex flex-col gap-6 slide-in-tab">
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <iframe src="https://www.instagram.com/p/DavD7dtzzJr/embed" width="100%" height="520" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
-                <iframe src="https://www.instagram.com/p/DavCU1vzIOK/embed" width="100%" height="520" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+             <div v-if="!kontak.instagram_embed_1 && !kontak.instagram_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten Instagram sedang dalam persiapan.</p>
+                 </div>
              </div>
-             <div class="flex justify-center mt-4">
-               <a href="https://www.instagram.com/dpmd_bangkalan/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all shadow-md hover:-translate-y-1">
+             <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <div v-if="kontak.instagram_embed_1" v-html="kontak.instagram_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.instagram_embed_2" v-html="kontak.instagram_embed_2" class="w-full flex justify-center"></div>
+             </div>
+             <div v-if="kontak.instagram_url" class="flex justify-center mt-4">
+               <PrimaryButton type="button" @click="openLink(kontak.instagram_url)">
+                 <IconBrandInstagram class="w-5 h-5 mr-1" />
                  Kunjungi Instagram Kami
-                 <IconArrowRight class="w-5 h-5" />
-               </a>
+               </PrimaryButton>
              </div>
           </div>
           
           <!-- TikTok Embed -->
           <div v-show="activeSocialTab === 'tiktok'" class="w-full flex flex-col gap-6 slide-in-tab">
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <iframe src="https://www.tiktok.com/embed/v2/7658293635275902228?lang=id-ID" style="width: 100%; max-width: 325px; height: 580px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
-                <iframe src="https://www.tiktok.com/embed/v2/7650272551016451348?lang=id-ID" style="width: 100%; max-width: 325px; height: 580px;" frameborder="0" scrolling="no" allow="encrypted-media;" allowfullscreen class="rounded-xl border border-gray-200 shadow-sm bg-white"></iframe>
+             <div v-if="!kontak.tiktok_embed_1 && !kontak.tiktok_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten TikTok sedang dalam persiapan.</p>
+                 </div>
              </div>
-             <div class="flex justify-center mt-4">
-               <a href="https://www.tiktok.com/@dinaspmdbangkalan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-800 transition-all shadow-md hover:-translate-y-1">
+             <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <div v-if="kontak.tiktok_embed_1" v-html="kontak.tiktok_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.tiktok_embed_2" v-html="kontak.tiktok_embed_2" class="w-full flex justify-center"></div>
+             </div>
+             <div v-if="kontak.tiktok_url" class="flex justify-center mt-4">
+               <PrimaryButton type="button" @click="openLink(kontak.tiktok_url)">
+                 <IconBrandTiktok class="w-5 h-5 mr-1" />
                  Kunjungi TikTok Kami
-                 <IconArrowRight class="w-5 h-5" />
-               </a>
+               </PrimaryButton>
+             </div>
+          </div>
+
+          <!-- YouTube Embed -->
+          <div v-show="activeSocialTab === 'youtube'" class="w-full flex flex-col gap-6 slide-in-tab">
+             <div v-if="!kontak.youtube_embed_1 && !kontak.youtube_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten YouTube sedang dalam persiapan.</p>
+                 </div>
+             </div>
+             <div v-else class="grid grid-cols-1 gap-6 w-full justify-items-center">
+                <div v-if="kontak.youtube_embed_1" v-html="kontak.youtube_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.youtube_embed_2" v-html="kontak.youtube_embed_2" class="w-full flex justify-center"></div>
+             </div>
+             <div v-if="kontak.youtube_url" class="flex justify-center mt-4">
+               <PrimaryButton type="button" @click="openLink(kontak.youtube_url)">
+                 <IconBrandYoutube class="w-5 h-5 mr-1" />
+                 Kunjungi YouTube Kami
+               </PrimaryButton>
+             </div>
+          </div>
+
+          <!-- Facebook Embed -->
+          <div v-show="activeSocialTab === 'facebook'" class="w-full flex flex-col gap-6 slide-in-tab">
+             <div v-if="!kontak.facebook_embed_1 && !kontak.facebook_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten Facebook sedang dalam persiapan.</p>
+                 </div>
+             </div>
+             <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <div v-if="kontak.facebook_embed_1" v-html="kontak.facebook_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.facebook_embed_2" v-html="kontak.facebook_embed_2" class="w-full flex justify-center"></div>
+             </div>
+             <div v-if="kontak.facebook_url" class="flex justify-center mt-4">
+               <PrimaryButton type="button" @click="openLink(kontak.facebook_url)">
+                 <IconBrandFacebook class="w-5 h-5 mr-1" />
+                 Kunjungi Facebook Kami
+               </PrimaryButton>
+             </div>
+          </div>
+
+          <!-- Twitter Embed -->
+          <div v-show="activeSocialTab === 'twitter'" class="w-full flex flex-col gap-6 slide-in-tab">
+             <div v-if="!kontak.twitter_embed_1 && !kontak.twitter_embed_2" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
+                 <div class="text-center p-8">
+                   <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
+                     <IconFileDescription class="w-8 h-8 text-gray-400" />
+                   </div>
+                   <h3 class="text-xl font-bold text-[#0F172A] mb-2">Belum Ada Konten</h3>
+                   <p class="text-[#646A79]">Konten Twitter/X sedang dalam persiapan.</p>
+                 </div>
+             </div>
+             <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
+                <div v-if="kontak.twitter_embed_1" v-html="kontak.twitter_embed_1" class="w-full flex justify-center"></div>
+                <div v-if="kontak.twitter_embed_2" v-html="kontak.twitter_embed_2" class="w-full flex justify-center"></div>
+             </div>
+             <div v-if="kontak.twitter_url" class="flex justify-center mt-4">
+               <PrimaryButton type="button" @click="openLink(kontak.twitter_url)">
+                 <IconBrandX class="w-5 h-5 mr-1" />
+                 Kunjungi X (Twitter) Kami
+               </PrimaryButton>
              </div>
           </div>
 
           <!-- Other Empty States -->
-          <div v-show="!['instagram', 'tiktok'].includes(activeSocialTab)" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[500px]">
+          <div v-show="!['instagram', 'tiktok', 'youtube', 'facebook', 'twitter'].includes(activeSocialTab)" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[500px]">
              <div class="text-center p-8">
                <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
                  <IconFileDescription class="w-8 h-8 text-gray-400" />

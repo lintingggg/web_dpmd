@@ -35,6 +35,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('admin.pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('admin.pengumuman.destroy');
 
+    Route::get('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'edit'])->name('admin.pengaturan-beranda');
+    Route::post('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'update'])->name('admin.pengaturan-beranda.update');
+    
     Route::get('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
     Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
     Route::get('/profil-dinas/{section?}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'edit'])->name('admin.profil-dinas');
@@ -66,13 +69,16 @@ Route::prefix('bidang-tugas')->group(function () {
 });
 
 // Rute Profil Dinas
-Route::get('/visi-misi', [ProfilController::class, 'visiMisi']);
-Route::get('/tugas-pokok-fungsi', [ProfilController::class, 'tugasFungsi']);
-Route::get('/struktur-organisasi', [ProfilController::class, 'strukturOrganisasi']);
-Route::get('/sambutan-kepala-dinas', [ProfilController::class, 'sambutanKadis']);
-Route::get('/motto-pelayanan', [ProfilController::class, 'motto']);
-Route::get('/maklumat-pelayanan', [ProfilController::class, 'maklumat']);
-Route::get('/kode-etik-pelayanan', [ProfilController::class, 'kodeEtik']);
+Route::prefix('profil')->group(function () {
+    Route::get('/visi-misi', [ProfilController::class, 'visiMisi']);
+    Route::get('/tugas-pokok-fungsi', [ProfilController::class, 'tugasFungsi']);
+    Route::get('/struktur-organisasi', [ProfilController::class, 'strukturOrganisasi']);
+    Route::get('/sambutan-kepala-dinas', [ProfilController::class, 'sambutanKadis']);
+    Route::get('/motto-pelayanan', [ProfilController::class, 'motto']);
+    Route::get('/maklumat-pelayanan', [ProfilController::class, 'maklumat']);
+    Route::get('/kode-etik-pelayanan', [ProfilController::class, 'kodeEtik']);
+
+});
 
 // Rute Berita
 Route::get('/berita', [FrontendBeritaController::class, 'index']);
@@ -85,3 +91,7 @@ Route::get('/dokumen-dan-peraturan', [DokumenController::class, 'index']);
 Route::get('/galeri', [FrontendGaleriController::class, 'index']);
 
 require __DIR__.'/auth.php';
+// Global 404 Fallback
+Route::fallback(function () {
+    return Inertia::render('ProfilDinas/Error404');
+});

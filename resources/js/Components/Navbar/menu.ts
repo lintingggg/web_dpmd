@@ -22,31 +22,31 @@ export const menu: NavItem[] = [
         children: [
             {
                 label: "Sambutan Kepala Dinas",
-                href: "/sambutan-kepala-dinas",
+                href: "/profil/sambutan-kepala-dinas",
             },
             {
                 label: "Visi & Misi",
-                href: "/visi-misi",
+                href: "/profil/visi-misi",
             },
             {
                 label: "Tugas Pokok & Fungsi",
-                href: "/tugas-pokok-fungsi",
+                href: "/profil/tugas-pokok-fungsi",
             },
             {
                 label: "Struktur Organisasi",
-                href: "/struktur-organisasi",
+                href: "/profil/struktur-organisasi",
             },
             {
                 label: "Motto Pelayanan",
-                href: "/motto-pelayanan",
+                href: "/profil/motto-pelayanan",
             },
             {
                 label: "Maklumat Pelayanan",
-                href: "/maklumat-pelayanan",
+                href: "/profil/maklumat-pelayanan",
             },
             {
                 label: "Kode Etik Pelayanan",
-                href: "/kode-etik-pelayanan",
+                href: "/profil/kode-etik-pelayanan",
             },
         ],
     },
