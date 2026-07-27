@@ -7,6 +7,13 @@ import SearchBar from '@/Components/SearchBar.vue';
 import CardNews from '@/Components/CardNews.vue';
 import Footer from '@/Components/Footer.vue';
 import UpButton from '@/Components/UpButton.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
+import { IconHome } from '@tabler/icons-vue';
+
+const breadcrumbItems = [
+    { label: 'Beranda', href: '/', icon: IconHome },
+    { label: 'Berita & Kegiatan' }
+];
 
 const props = defineProps<{
     beritaList: any;
@@ -86,10 +93,10 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
 
     <Navbar />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
-
-        <div class="max-w-7xl mx-auto mt-8">
+    <div class="min-h-screen bg-gray-50 px-4 md:px-8 pt-6 md:pt-8 pb-20 md:pb-32">
+        <div class="max-w-7xl mx-auto">
             <PageHeader
+                :breadcrumbs="breadcrumbItems"
                 title="Berita & Kegiatan"
                 description="Informasi terkini seputar program kerja, kegiatan desa, dan pengumuman resmi dari Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan."
             />

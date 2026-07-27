@@ -7,6 +7,13 @@ import PageHeader from '@/Components/PageHeader.vue';
 import SearchBar from '@/Components/SearchBar.vue';
 import TableDokumen from '@/Components/TableDokumen.vue';
 import UpButton from '@/Components/UpButton.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
+import { IconHome } from '@tabler/icons-vue';
+
+const breadcrumbItems = [
+    { label: 'Beranda', href: '/', icon: IconHome },
+    { label: 'Publikasi Dokumen' }
+];
 
 const props = defineProps<{
     dokumenList: any;
@@ -132,10 +139,11 @@ function gotoPage(page: number) {
     <div class="min-h-screen bg-gray-50 flex flex-col">
         <Navbar />
 
-        <div class="flex-grow p-4 md:p-8 pb-20 md:pb-32">
-            <div class="max-w-7xl mx-auto mt-8 w-full">
+        <div class="flex-grow px-4 md:px-8 pt-6 md:pt-8 pb-20 md:pb-32">
+            <div class="max-w-7xl mx-auto w-full">
 
                 <PageHeader
+                    :breadcrumbs="breadcrumbItems"
                     title="Publikasi Dokumen"
                     description="Akses berbagai dokumen resmi, peraturan, dan laporan perencanaan strategis DPMD Kabupaten Bangkalan secara publik."
                 />

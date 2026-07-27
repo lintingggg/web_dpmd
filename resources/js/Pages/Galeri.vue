@@ -4,6 +4,13 @@ import { Head, Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import Footer from '@/Components/Footer.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
+import { IconHome } from '@tabler/icons-vue';
+
+const breadcrumbItems = [
+    { label: 'Beranda', href: '/', icon: IconHome },
+    { label: 'Galeri Kegiatan' }
+];
 
 const props = defineProps<{
     galeriList: any;
@@ -30,9 +37,10 @@ const getImageUrl = (path: string) => {
     <div class="min-h-screen bg-gray-50 flex flex-col">
         <Navbar />
 
-        <div class="max-w-7xl mx-auto mt-8 flex-grow w-full p-4 md:p-8">
+        <div class="max-w-7xl mx-auto flex-grow w-full px-4 md:px-8 pt-6 md:pt-8 pb-12">
 
             <PageHeader
+                :breadcrumbs="breadcrumbItems"
                 title="Galeri Kegiatan"
                 description="Dokumentasi dan potret berbagai aktivitas, program kerja, serta acara resmi Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan."
             />
