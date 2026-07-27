@@ -116,6 +116,8 @@ class BeritaController extends Controller
                 }
                 $path = $request->file('thumbnail')->store('berita', 'public');
                 $validated['thumbnail'] = $path;
+            } else {
+                unset($validated['thumbnail']);
             }
 
             $validated['konten'] = Purifier::clean($validated['konten'], 'berita');

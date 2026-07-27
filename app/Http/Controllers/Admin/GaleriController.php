@@ -89,6 +89,8 @@ class GaleriController extends Controller
             if ($request->hasFile('foto')) {
                 $newPath = $request->file('foto')->store('galeri', 'public');
                 $validated['foto'] = $newPath;
+            } else {
+                unset($validated['foto']);
             }
 
             $validated['is_published'] = $request->boolean('is_published');
