@@ -7,11 +7,12 @@ import CardNews from '@/Components/CardNews.vue';
 import CardAnnouncement from '@/Components/CardAnnouncement.vue';
 import Footer from '@/Components/Footer.vue';
 import UpButton from '@/Components/UpButton.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { IconHome } from '@tabler/icons-vue';
 
 const breadcrumbItems = [
     { label: 'Beranda', href: '/', icon: IconHome },
-    { label: 'Berita & Kegiatan' },
+    { label: 'Berita & Kegiatan' }
 ];
 
 const props = defineProps<{
@@ -172,17 +173,13 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
 
     <Navbar />
 
-    <!-- Header Section: pola yang sama persis dengan VisiMisi.vue & Sambutan
-         Kepala Dinas (bukan lagi component <PageHeader>), supaya spacing-nya
-         1:1 konsisten di seluruh halaman -->
-    <section class="page-header">
-        <div class="container">
-            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
-            <h1>Berita & Kegiatan</h1>
-        </div>
-    </section>
-
-    <main class="container page-content">
+    <main class="min-h-screen bg-gray-50 px-4 md:px-8 pt-6 md:pt-8 pb-20 md:pb-32">
+        <div class="max-w-7xl mx-auto">
+            <PageHeader
+                :breadcrumbs="breadcrumbItems"
+                title="Berita & Kegiatan"
+                description="Informasi terkini seputar program kerja, kegiatan desa, dan pengumuman resmi dari Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan."
+            />
 
             <p class="text-left text-slate-700 mb-8 text-lg leading-relaxed">
                 Informasi terkini seputar program kerja, kegiatan desa, dan pengumuman resmi dari Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan.
@@ -450,8 +447,8 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
                     </div>
                 </div>
             </div>
-
-        </main>
+        </div>
+    </main>
 
     <Footer />
     <UpButton />

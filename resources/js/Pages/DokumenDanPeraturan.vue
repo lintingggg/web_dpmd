@@ -7,6 +7,7 @@ import Breadcrumb from '@/Components/Breadcrumb.vue';
 import SearchBar from '@/Components/SearchBar.vue';
 import TableDokumen from '@/Components/TableDokumen.vue';
 import UpButton from '@/Components/UpButton.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { IconHome } from '@tabler/icons-vue';
 
 const props = defineProps<{
@@ -137,49 +138,13 @@ function gotoPage(page: number) {
 
     <Navbar />
 
-    <!-- Header Section: pola yang sama dengan Berita/Index.vue & VisiMisi.vue -->
-    <section class="page-header">
-        <div class="container">
-            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
-            <h1>Publikasi Dokumen</h1>
-        </div>
-    </section>
+    <main class="flex-grow px-4 md:px-8 pt-6 md:pt-8 pb-20 md:pb-32">
+        <div class="max-w-7xl mx-auto w-full">
 
-    <main class="container page-content">
-
-        <p class="text-left text-slate-700 mb-8 text-lg leading-relaxed">
-            Akses berbagai dokumen resmi, peraturan, dan laporan perencanaan strategis DPMD Kabupaten Bangkalan secara publik.
-        </p>
-
-        <div class="border-b border-gray-200 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
-                <button
-                    @click="changeTab('Perencanaan')"
-                    :class="[activeTab === 'Perencanaan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
-                >
-                    Dokumen Perencanaan
-                </button>
-                <button
-                    @click="changeTab('Peraturan')"
-                    :class="[activeTab === 'Peraturan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
-                >
-                    Produk Peraturan
-                </button>
-                <button
-                    @click="changeTab('Lainnya')"
-                    :class="[activeTab === 'Lainnya' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
-                >
-                    Dokumen Lainnya
-                </button>
-            </nav>
-
-            <div class="w-full md:w-80 mb-2 md:mb-0 relative">
-                <SearchBar
-                    v-model="searchQuery"
-                    @focus="isDropdownOpen = true"
-                    @blur="handleBlur"
-                    @keydown.enter="saveToHistory"
-                    placeholder="Cari dokumen..."
+            <PageHeader
+                    :breadcrumbs="breadcrumbItems"
+                    title="Publikasi Dokumen"
+                    description="Akses berbagai dokumen resmi, peraturan, dan laporan perencanaan strategis DPMD Kabupaten Bangkalan secara publik."
                 />
 
                 <div v-if="isDropdownOpen && searchHistory.length > 0" class="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 py-1 text-sm">
@@ -205,8 +170,6 @@ function gotoPage(page: number) {
                         </li>
                     </ul>
                 </div>
-            </div>
-        </div>
 
         <div class="doc-table-wrapper p-2 md:p-4 doc-table">
             <TableDokumen v-if="dataDokumen.length > 0" :data="dataDokumen" />
@@ -277,7 +240,7 @@ function gotoPage(page: number) {
                 </button>
             </div>
         </div>
-
+        </div>
     </main>
 
     <Footer />

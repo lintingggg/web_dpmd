@@ -4,7 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import Breadcrumb from '@/Components/Breadcrumb.vue';
 import Footer from '@/Components/Footer.vue';
-import UpButton from '@/Components/UpButton.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { IconHome } from '@tabler/icons-vue';
 
 const props = defineProps<{
@@ -57,15 +57,13 @@ function onImageError(event: Event) {
 
     <Navbar />
 
-    <!-- Header Section: pola yang sama dengan Berita/Dokumen/VisiMisi -->
-    <section class="page-header">
-        <div class="container">
-            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
-            <h1>Galeri Kegiatan</h1>
-        </div>
-    </section>
+    <main class="max-w-7xl mx-auto flex-grow w-full px-4 md:px-8 pt-6 md:pt-8 pb-12">
 
-    <main class="container page-content">
+        <PageHeader
+                :breadcrumbs="breadcrumbItems"
+                title="Galeri Kegiatan"
+                description="Dokumentasi dan potret berbagai aktivitas, program kerja, serta acara resmi Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan."
+            />
 
         <p class="text-left text-slate-700 mb-8 text-lg leading-relaxed">
             Dokumentasi dan potret berbagai aktivitas, program kerja, serta acara resmi Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan.
