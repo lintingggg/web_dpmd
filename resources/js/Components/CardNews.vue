@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, PropType } from 'vue';
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -64,7 +64,7 @@ const props = defineProps({
   image: { type: String, default: '' },
   date: { type: String, default: '' },
   author: { type: String, default: '' },
-  tags: { type: Array, default: () => [] },
+  tags: { type: Array as PropType<string[]>, default: () => [] },
   showButton: { type: Boolean, default: true },
   buttonText: { type: String, default: 'Selengkapnya' },
 });

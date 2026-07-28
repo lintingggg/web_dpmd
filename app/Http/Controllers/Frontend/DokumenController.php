@@ -35,7 +35,7 @@ class DokumenController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $dokumen = PublikasiDokumen::where('is_published', true)->findOrFail($id);
         

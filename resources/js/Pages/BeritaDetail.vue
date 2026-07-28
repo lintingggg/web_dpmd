@@ -272,6 +272,7 @@ const shareNews = async () => {
        terlalu tinggi di halaman detail */
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
