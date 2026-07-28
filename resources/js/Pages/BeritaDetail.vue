@@ -71,15 +71,20 @@ function onImageError(event: Event) {
 <template>
     <Head :title="pageTitle" />
 
-    <!-- Navbar dipindah ke LUAR div ber-padding, supaya nyatu penuh ke tepi
-         layar (pola yang sama seperti di halaman list berita / Index.vue).
-         Sebelumnya navbar ada di dalam div "p-4 md:p-8", jadi ikut ketarik
-         padding dan kelihatan "mengambang" terpisah dari tepi. -->
     <Navbar />
 
-    <div class="min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-32">
+    <!-- Header Section: pola sama persis dengan Index.vue, VisiMisi.vue & Galeri.vue.
+         Breadcrumb dipindah kesini (sebelumnya dihitung di script tapi tidak
+         pernah dirender), supaya konsisten dengan halaman lain -->
+    <section class="page-header">
+        <div class="container">
+            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
+            <h1>{{ berita.judul }}</h1>
+        </div>
+    </section>
 
-        <div class="max-w-6xl mx-auto mt-8">
+    <div class="bg-gray-50 pb-20 md:pb-32">
+        <div class="container page-content">
 
             <!-- Baris atas: kembali & bagikan -->
             <div class="flex items-center justify-between mb-6">
@@ -135,9 +140,9 @@ function onImageError(event: Event) {
                     </div>
 
                     <!-- Judul + garis aksen -->
-                    <h1 class="font-serif text-3xl md:text-[2.15rem] leading-tight font-bold text-slate-900 mb-4">
+                    <h2 class="font-serif text-3xl md:text-[2.15rem] leading-tight font-bold text-slate-900 mb-4">
                         {{ berita.judul }}
-                    </h1>
+                    </h2>
                     <div class="w-14 h-1 bg-blue-700 rounded-full mb-6"></div>
 
                     <!-- Gambar utama -->
@@ -212,3 +217,37 @@ function onImageError(event: Event) {
     <Footer />
     <UpButton />
 </template>
+
+<style scoped>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Page Header: sama persis dengan Index.vue, VisiMisi.vue & Galeri.vue */
+.page-header {
+    background-color: #FFFFFF;
+    padding: 20px 0 30px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0;
+    /* Judul berita bisa panjang, batasi 2 baris biar header tidak
+       terlalu tinggi di halaman detail */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Main Layout */
+.page-content {
+    margin: 40px auto 60px;
+}
+</style>
