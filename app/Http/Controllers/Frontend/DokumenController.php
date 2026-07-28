@@ -17,11 +17,21 @@ class DokumenController extends Controller
         if ($request->has('kategori') && $request->kategori !== '') {
             $query->where('kategori', $request->kategori);
         }
+        
         $dokumenList = $query->latest()->paginate(10)->withQueryString();
 
         return Inertia::render('DokumenDanPeraturan', [
             'dokumenList' => $dokumenList,
             'filters' => request()->only(['kategori']),
+        ]);
+    }
+
+    public function show($id)
+    {
+        $dokumen = PublikasiDokumen::where('is_published', true)->findOrFail($id);
+        
+        return Inertia::render('DokumenDetail', [
+            'dokumen' => $dokumen
         ]);
     }
 }

@@ -190,27 +190,9 @@ function gotoPage(page: number) {
         </div>
 
         <!-- Kontrol jumlah tampilan + paginasi (gaya tampilan sendiri, data dari backend) -->
-        <div v-if="dataDokumen.length > 0" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div v-if="dataDokumen.length > 0" class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
 
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-                <span>Tampilkan</span>
-                <div class="flex gap-1.5">
-                    <button
-                        v-for="n in perPageOptions"
-                        :key="n"
-                        @click="pilihJumlahTampilan(n)"
-                        :class="[
-                            itemsPerPage === n
-                                ? 'bg-slate-900 text-white font-semibold'
-                                : 'bg-gray-100 text-slate-700 hover:bg-gray-200',
-                            'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
-                        ]"
-                    >
-                        {{ n }}
-                    </button>
-                </div>
-                <span>per halaman</span>
-            </div>
+            
 
             <div class="flex items-center gap-1.5">
                 <button

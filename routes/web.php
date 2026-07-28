@@ -86,6 +86,7 @@ Route::get('/berita/{slug}', [FrontendBeritaController::class, 'show']);
 
 // Rute Dokumen
 Route::get('/dokumen-dan-peraturan', [DokumenController::class, 'index']);
+Route::get('/dokumen-dan-peraturan/{id}', [DokumenController::class, 'show']);
 
 // Rute Galeri
 Route::get('/galeri', [FrontendGaleriController::class, 'index']);
