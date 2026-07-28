@@ -104,6 +104,8 @@ class PublikasiDokumenController extends Controller
                 // Simpan file baru
                 $path = $request->file('file_dokumen')->store('dokumen', 'public');
                 $validated['file_dokumen'] = $path;
+            } else {
+                unset($validated['file_dokumen']);
             }
 
             $dokumen->update($validated);

@@ -22,7 +22,7 @@ const breadcrumbItems = [
 ];
 
 // --- STATE UTAMA (dari kode teman, tetap dipertahankan) ---
-const activeTab = ref(props.filters.kategori || 'Perencanaan');
+const activeTab = ref(props.filters.kategori || 'perencanaan');
 const searchQuery = ref(props.filters.search || '');
 const searchHistory = ref<string[]>([]);
 const isDropdownOpen = ref(false);
@@ -38,11 +38,21 @@ const dataDokumen = computed(() => {
             id: doc.id,
             no: index + 1 + ((props.dokumenList.current_page - 1) * props.dokumenList.per_page),
             judul: doc.judul,
-            tahun: doc.tahun,
-            link: doc.file_path ? `/storage/${doc.file_path}` : '#',
+            deskripsi: doc.deskripsi,
+            kategori: doc.kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (doc.kategori === 'peraturan' ? 'Produk Peraturan' : 'Dokumen Lainnya'),
+            tanggal: doc.tahun,
+            link: doc.file_dokumen ? `/storage/${doc.file_dokumen}` : '#',
         };
     });
 });
+
+const openDocument = (row: any) => {
+    if (row.link && row.link !== '#') {
+        window.open(row.link, '_blank');
+    } else {
+        alert('File dokumen belum dilampirkan.');
+    }
+};
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -172,7 +182,7 @@ function gotoPage(page: number) {
                 </div>
 
         <div class="doc-table-wrapper p-2 md:p-4 doc-table">
-            <TableDokumen v-if="dataDokumen.length > 0" :data="dataDokumen" />
+            <TableDokumen v-if="dataDokumen.length > 0" :dataDokumen="dataDokumen" @lihatDetail="openDocument" />
             <div v-else class="p-12 text-center text-gray-500">
                 <p class="text-base font-medium">Dokumen tidak ditemukan</p>
                 <p class="text-sm text-gray-400 mt-1">Coba gunakan kata kunci lain atau periksa kategori dokumen lainnya.</p>
