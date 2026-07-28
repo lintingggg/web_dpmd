@@ -54,8 +54,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('admin.berita.update');
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('admin.berita.destroy');
     
-    Route::get('/galeri', [GaleriController::class, 'index'])->name('admin.galeri');
-    Route::post('/galeri', [GaleriController::class, 'store'])->name('admin.galeri.store');
+    Route::get('/album', [\App\Http\Controllers\Admin\AlbumController::class, 'index'])->name('admin.album');
+    Route::post('/album', [\App\Http\Controllers\Admin\AlbumController::class, 'store'])->name('admin.album.store');
+    Route::put('/album/{album}', [\App\Http\Controllers\Admin\AlbumController::class, 'update'])->name('admin.album.update');
+    Route::delete('/album/{album}', [\App\Http\Controllers\Admin\AlbumController::class, 'destroy'])->name('admin.album.destroy');
+
+    Route::get('/album/{album}/galeri', [GaleriController::class, 'index'])->name('admin.galeri');
+    Route::post('/album/{album}/galeri', [GaleriController::class, 'store'])->name('admin.galeri.store');
     Route::put('/galeri/{galeri}', [GaleriController::class, 'update'])->name('admin.galeri.update');
     Route::delete('/galeri/{galeri}', [GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
 });
@@ -90,6 +95,7 @@ Route::get('/dokumen-dan-peraturan/{id}', [DokumenController::class, 'show']);
 
 // Rute Galeri
 Route::get('/galeri', [FrontendGaleriController::class, 'index']);
+Route::get('/galeri/{id}', [FrontendGaleriController::class, 'show']);
 
 require __DIR__.'/auth.php';
 // Global 404 Fallback

@@ -157,28 +157,76 @@ function gotoPage(page: number) {
                     description="Akses berbagai dokumen resmi, peraturan, dan laporan perencanaan strategis DPMD Kabupaten Bangkalan secara publik."
                 />
 
-                <div v-if="isDropdownOpen && searchHistory.length > 0" class="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 py-1 text-sm">
-                    <div class="px-3 py-1 text-xs font-semibold text-gray-400 select-none">Pencarian Terakhir</div>
-                    <ul>
-                        <li
-                            v-for="(item, index) in searchHistory"
-                            :key="index"
-                            class="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer text-gray-700 transition-colors"
-                            @mousedown="selectHistory(item)"
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex space-x-2 bg-gray-100 p-1 rounded-lg overflow-x-auto w-full md:w-auto">
+                        <button
+                            @click="changeTab('perencanaan')"
+                            :class="['px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors', activeTab === 'perencanaan' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700']"
                         >
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            Dokumen Perencanaan
+                        </button>
+                        <button
+                            @click="changeTab('peraturan')"
+                            :class="['px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors', activeTab === 'peraturan' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700']"
+                        >
+                            Produk Peraturan
+                        </button>
+                        <button
+                            @click="changeTab('lainnya')"
+                            :class="['px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors', activeTab === 'lainnya' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700']"
+                        >
+                            Dokumen Lainnya
+                        </button>
+                        <button
+                            @click="changeTab('')"
+                            :class="['px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors', activeTab === '' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700']"
+                        >
+                            Semua
+                        </button>
+                    </div>
+                    
+                    <div class="relative w-full md:w-72">
+                        <div class="relative">
+                            <input
+                                type="text"
+                                v-model="searchQuery"
+                                @focus="isDropdownOpen = true"
+                                @blur="handleBlur"
+                                @keydown.enter="saveToHistory"
+                                placeholder="Cari dokumen..."
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all text-sm"
+                            />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <span class="truncate">{{ item }}</span>
                             </div>
-                            <button @mousedown.stop="deleteHistoryItem(index)" class="text-gray-400 hover:text-red-500 p-1 rounded">
-                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </li>
-                    </ul>
+                        </div>
+                        
+                        <div v-if="isDropdownOpen && searchHistory.length > 0" class="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 py-1 text-sm">
+                            <div class="px-3 py-1 text-xs font-semibold text-gray-400 select-none">Pencarian Terakhir</div>
+                            <ul>
+                                <li
+                                    v-for="(item, index) in searchHistory"
+                                    :key="index"
+                                    class="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer text-gray-700 transition-colors"
+                                    @mousedown="selectHistory(item)"
+                                >
+                                    <div class="flex items-center space-x-2 truncate">
+                                        <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        <span class="truncate">{{ item }}</span>
+                                    </div>
+                                    <button @mousedown.stop="deleteHistoryItem(index)" class="text-gray-400 hover:text-red-500 p-1 rounded">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
         <div class="doc-table-wrapper p-2 md:p-4 doc-table">

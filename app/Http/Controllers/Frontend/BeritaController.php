@@ -32,12 +32,28 @@ class BeritaController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // Get 3 recent news for sidebar/related
-        $beritaTerkini = Berita::where('is_published', true)
-            ->where('id', '!=', $berita->id)
-            ->latest('published_at')
-            ->take(3)
-            ->get();
+        // Get 4 related news by tags, or fallback to latest
+        $beritaTerkiniQuery = Berita::where('is_published', true)
+            ->where('id', '!=', $berita->id);
+
+        if (!empty($berita->tags) && is_array($berita->tags) && count($berita->tags) > 0) {
+            $beritaTerkiniQuery->where(function ($q) use ($berita) {
+                foreach ($berita->tags as $tag) {
+                    $q->orWhereJsonContains('tags', $tag);
+                }
+            });
+        }
+
+        $beritaTerkini = $beritaTerkiniQuery->latest('published_at')->take(4)->get();
+
+        // If no related news found, fallback to latest
+        if ($beritaTerkini->isEmpty()) {
+            $beritaTerkini = Berita::where('is_published', true)
+                ->where('id', '!=', $berita->id)
+                ->latest('published_at')
+                ->take(4)
+                ->get();
+        }
 
         return Inertia::render('BeritaDetail', [
             'berita' => $berita,

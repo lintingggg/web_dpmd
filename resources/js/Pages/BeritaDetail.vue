@@ -66,6 +66,24 @@ function onImageError(event: Event) {
         img.src = FALLBACK_IMAGE;
     }
 }
+
+const shareNews = async () => {
+    const shareData = {
+        title: props.berita.judul,
+        text: 'Baca berita ini: ' + props.berita.judul,
+        url: window.location.href,
+    };
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(window.location.href);
+            alert('Tautan berita berhasil disalin ke clipboard!');
+        }
+    } catch (err) {
+        console.error('Gagal membagikan berita:', err);
+    }
+};
 </script>
 
 <template>
@@ -95,7 +113,8 @@ function onImageError(event: Event) {
 
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors"
+                    @click="shareNews"
+                    class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-blue-700 transition-colors cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3" />
@@ -135,15 +154,15 @@ function onImageError(event: Event) {
                     </div>
 
                     <!-- Judul + garis aksen -->
-                    <h1 class="font-serif text-3xl md:text-[2.15rem] leading-tight font-bold text-slate-900 mb-4">
+                    <h1 class="font-['Plus_Jakarta_Sans'] text-3xl md:text-[2.15rem] leading-tight font-bold text-[#0f172a] mb-4">
                         {{ berita.judul }}
                     </h1>
-                    <div class="w-14 h-1 bg-blue-700 rounded-full mb-6"></div>
+                    <div class="w-14 h-1 bg-blue-600 rounded-full mb-6"></div>
 
                     <!-- Gambar utama -->
                     <div class="rounded-xl overflow-hidden mb-8 shadow-sm">
                         <img
-                            :src="getImageUrl(berita.foto_utama)"
+                            :src="getImageUrl(berita.thumbnail)"
                             :alt="berita.judul"
                             @error="onImageError"
                             class="w-full h-auto object-cover aspect-[16/9]"
@@ -152,19 +171,44 @@ function onImageError(event: Event) {
 
                     <!-- Isi berita -->
                     <article
-                        class="prose prose-slate max-w-none prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-justify"
+                        class="prose prose-slate max-w-none prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-justify font-['Plus_Jakarta_Sans']"
                         v-html="berita.konten"
                     ></article>
+
+                    <!-- Tags -->
+                    <div v-if="berita.tags && berita.tags.length > 0" class="mt-8 pt-6 border-t border-gray-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
+                            <span class="text-sm font-semibold text-gray-700">Tags Berita:</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                v-for="tag in berita.tags"
+                                :key="tag"
+                                class="px-3 py-1 bg-gray-100 text-blue-700 text-xs font-semibold rounded-full"
+                            >
+                                #{{ tag }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ===================== SIDEBAR: ARTIKEL TERKAIT ===================== -->
                 <aside class="lg:col-span-1">
                     <div class="lg:sticky lg:top-8">
-                        <div class="flex items-center gap-2 mb-5">
-                            <span class="w-1.5 h-5 bg-blue-700 rounded-full"></span>
-                            <h2 class="text-sm font-bold tracking-wide text-slate-800 uppercase">
-                                Berita Terkini
-                            </h2>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-5 bg-blue-600 rounded-full"></span>
+                                <h2 class="text-sm font-bold tracking-wide text-slate-800 uppercase font-['Plus_Jakarta_Sans']">
+                                    Berita Terkait
+                                </h2>
+                            </div>
+                            <Link href="/berita" class="text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors">
+                                Semua Berita &rarr;
+                            </Link>
                         </div>
 
                         <!-- List vertikal, maksimal 4 berita, pakai komponen CardNews -->
@@ -180,28 +224,10 @@ function onImageError(event: Event) {
                                     :date="formatDateTime(item.published_at)"
                                     :author="item.penulis || 'Humas DPMD'"
                                     :tags="item.tags"
-                                    :image="getImageUrl(item.foto_utama)"
+                                    :image="getImageUrl(item.thumbnail)"
                                 />
                             </Link>
                         </div>
-
-                        <!-- Item ke-5: Lihat berita lainnya.
-                             Default: solid biru. Hover: bg putih + stroke biru +
-                             teks biru (ikon ikut karena pakai stroke="currentColor"),
-                             plus efek angkat & shadow yang sama seperti CardNews
-                             (transition-all + hover:-translate-y + hover:shadow-xl).
-                             border-2 border-blue-700 dipasang dari awal (bukan cuma
-                             saat hover) supaya ukuran tombol tidak "loncat" saat
-                             border baru muncul di state hover. -->
-                        <Link
-                            href="/berita"
-                            class="flex items-center justify-center gap-1.5 mt-5 py-3 rounded-lg border-2 border-blue-700 bg-blue-700 text-sm font-semibold text-white transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-white hover:text-blue-700 hover:shadow-xl"
-                        >
-                            Lihat Berita Lainnya
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 18l6-6-6-6" />
-                            </svg>
-                        </Link>
                     </div>
                 </aside>
 
