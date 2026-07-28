@@ -7,7 +7,7 @@ import CardNews from '@/Components/CardNews.vue';
 import CardAnnouncement from '@/Components/CardAnnouncement.vue';
 import Footer from '@/Components/Footer.vue';
 import UpButton from '@/Components/UpButton.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import SearchBar from '@/Components/SearchBar.vue';
 import { IconHome } from '@tabler/icons-vue';
 
 const breadcrumbItems = [
@@ -22,7 +22,7 @@ const props = defineProps<{
     pengumuman?: any;
     // daftar keyword/tag yang benar-benar dipakai di berita (sumbernya sama
     // dengan available_tags di halaman admin), dipakai buat pill filter di
-    // kanan search bar -> BUKAN kategori hardcode
+    // bawah search bar -> BUKAN kategori hardcode
     availableTags?: string[];
 }>();
 
@@ -51,10 +51,9 @@ const searchQuery = ref(props.filters?.search || '');
 const tagList = computed(() => ['Semua', ...(props.availableTags || [])]);
 const activeTag = ref(props.filters?.tag || 'Semua');
 
-// Kalau tag kebanyakan buat ditaruh semua sejajar di dalam search bar,
-// cuma tampilkan beberapa dulu, sisanya disembunyikan di balik tombol
-// titik-titik (dropdown).
-const TAG_VISIBLE_LIMIT = 4;
+// Kalau tag kebanyakan buat ditaruh semua sejajar, cuma tampilkan beberapa
+// dulu, sisanya disembunyikan di balik tombol titik-titik (dropdown).
+const TAG_VISIBLE_LIMIT = 5;
 const visibleTags = computed(() => tagList.value.slice(0, TAG_VISIBLE_LIMIT));
 const overflowTags = computed(() => tagList.value.slice(TAG_VISIBLE_LIMIT));
 
@@ -173,88 +172,85 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
 
     <Navbar />
 
-    <main class="min-h-screen bg-gray-50 px-4 md:px-8 pt-6 md:pt-8 pb-20 md:pb-32">
-        <div class="max-w-7xl mx-auto">
-            <PageHeader
-                :breadcrumbs="breadcrumbItems"
-                title="Berita & Kegiatan"
-                description="Informasi terkini seputar program kerja, kegiatan desa, dan pengumuman resmi dari Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan."
-            />
+    <!-- Header Section: pola sama persis dengan VisiMisi.vue & Galeri.vue -->
+    <section class="page-header">
+        <div class="container">
+            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
+            <h1>Berita & Kegiatan</h1>
+        </div>
+    </section>
+
+    <main class="container page-content">
+        <div class="py-2">
 
             <p class="text-left text-slate-700 mb-8 text-lg leading-relaxed">
                 Informasi terkini seputar program kerja, kegiatan desa, dan pengumuman resmi dari Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan.
             </p>
 
-            <div
-                ref="tagDropdownWrapper"
-                class="relative flex items-center gap-2 w-full bg-white border border-gray-200 rounded-full shadow-sm pl-5 pr-2 py-2 mb-8"
-            >
-                <!-- Search: dibuat manual (bukan component SearchBar) supaya
-                     nyatu jadi satu shape sama pill keyword di kanannya,
-                     sesuai referensi desain -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m21 21-4.3-4.3" />
-                </svg>
-                <input
+            <!-- Search bar: disamakan dengan halaman Dokumen, pakai komponen SearchBar yang sama -->
+            <div class="mb-4">
+                <SearchBar
                     v-model="searchQuery"
-                    type="text"
                     placeholder="Cari berita atau kegiatan..."
-                    class="flex-1 min-w-0 bg-transparent border-none outline-none text-sm text-slate-700 placeholder:text-gray-400 py-1.5"
                 />
+            </div>
 
-                <!-- Pill keyword/tag: isinya dari tagList (data asli dari database),
-                     bukan kategori hardcode. Baru muncul kalau controller
-                     mengirim prop availableTags yang tidak kosong. -->
-                <div v-if="tagList.length > 1" class="flex items-center gap-1.5 flex-shrink-0">
+            <!-- Pill keyword/tag: isinya dari tagList (data asli dari database),
+                 bukan kategori hardcode. Baru muncul kalau controller
+                 mengirim prop availableTags yang tidak kosong. Ditaruh di
+                 baris terpisah di bawah search bar. -->
+            <div
+                v-if="tagList.length > 1"
+                ref="tagDropdownWrapper"
+                class="relative flex items-center gap-1.5 flex-wrap mb-8"
+            >
+                <button
+                    v-for="tag in visibleTags"
+                    :key="tag"
+                    @click="pilihTag(tag)"
+                    :class="[
+                        activeTag === tag
+                            ? 'bg-slate-900 text-white font-semibold'
+                            : 'bg-gray-100 text-slate-700 hover:bg-gray-200',
+                        'whitespace-nowrap px-4 py-2 rounded-full text-sm transition-colors'
+                    ]"
+                >
+                    {{ tag }}
+                </button>
+
+                <!-- Overflow: kalau tag kebanyakan buat sejajar, sisanya
+                     disembunyikan di balik tombol titik-titik -->
+                <div v-if="overflowTags.length" class="relative">
                     <button
-                        v-for="tag in visibleTags"
-                        :key="tag"
-                        @click="pilihTag(tag)"
+                        @click="toggleTagDropdown"
                         :class="[
-                            activeTag === tag
-                                ? 'bg-slate-900 text-white font-semibold'
-                                : 'bg-gray-100 text-slate-700 hover:bg-gray-200',
-                            'whitespace-nowrap px-4 py-2 rounded-full text-sm transition-colors'
+                            overflowTags.includes(activeTag) ? 'bg-slate-900 text-white' : 'bg-gray-100 text-slate-500 hover:bg-gray-200',
+                            'w-9 h-9 flex items-center justify-center rounded-full transition-colors'
                         ]"
+                        aria-label="Lihat keyword lainnya"
                     >
-                        {{ tag }}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="5" cy="12" r="2" />
+                            <circle cx="12" cy="12" r="2" />
+                            <circle cx="19" cy="12" r="2" />
+                        </svg>
                     </button>
 
-                    <!-- Overflow: kalau tag kebanyakan buat sejajar, sisanya
-                         disembunyikan di balik tombol titik-titik -->
-                    <div v-if="overflowTags.length" class="relative">
+                    <div
+                        v-if="showTagDropdown"
+                        class="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-20"
+                    >
                         <button
-                            @click="toggleTagDropdown"
+                            v-for="tag in overflowTags"
+                            :key="tag"
+                            @click="pilihTagDariDropdown(tag)"
                             :class="[
-                                overflowTags.includes(activeTag) ? 'bg-slate-900 text-white' : 'bg-gray-100 text-slate-500 hover:bg-gray-200',
-                                'w-9 h-9 flex items-center justify-center rounded-full transition-colors'
+                                activeTag === tag ? 'text-slate-900 font-semibold bg-gray-50' : 'text-slate-600 hover:bg-gray-50',
+                                'block w-full text-left px-4 py-2 text-sm transition-colors'
                             ]"
-                            aria-label="Lihat keyword lainnya"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="5" cy="12" r="2" />
-                                <circle cx="12" cy="12" r="2" />
-                                <circle cx="19" cy="12" r="2" />
-                            </svg>
+                            {{ tag }}
                         </button>
-
-                        <div
-                            v-if="showTagDropdown"
-                            class="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-20"
-                        >
-                            <button
-                                v-for="tag in overflowTags"
-                                :key="tag"
-                                @click="pilihTagDariDropdown(tag)"
-                                :class="[
-                                    activeTag === tag ? 'text-slate-900 font-semibold bg-gray-50' : 'text-slate-600 hover:bg-gray-50',
-                                    'block w-full text-left px-4 py-2 text-sm transition-colors'
-                                ]"
-                            >
-                                {{ tag }}
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -359,9 +355,7 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
             <!-- Kontrol jumlah tampilan + paginasi (poin 5: mitigasi jumlah konten yang banyak) -->
             <div v-if="beritaList.links && beritaList.links.length > 3" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-                <!-- Total count: "Menampilkan X-Y dari Z berita" -> sebelumnya
-                     cuma ada di halaman admin, sekarang dibawa juga ke publik
-                     supaya user tau ada berapa banyak berita total -->
+                <!-- Total count: "Menampilkan X-Y dari Z berita" -->
                 <p class="text-sm text-gray-500">
                     Menampilkan <span class="font-semibold text-slate-900">{{ beritaList.from || 0 }}-{{ beritaList.to || 0 }}</span> dari <span class="font-semibold text-slate-900">{{ beritaList.total }}</span> berita
                 </p>
@@ -447,6 +441,7 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
                     </div>
                 </div>
             </div>
+
         </div>
     </main>
 
@@ -461,7 +456,7 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
     padding: 0 20px;
 }
 
-/* Page Header */
+/* Page Header: sama persis dengan VisiMisi.vue & Galeri.vue */
 .page-header {
     background-color: #FFFFFF;
     padding: 20px 0 30px;
