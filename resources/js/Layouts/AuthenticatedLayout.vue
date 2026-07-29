@@ -100,11 +100,11 @@ import GlobalToast from '@/Components/GlobalToast.vue';
                         <span class="material-symbols-outlined transition-colors" :style="route().current('admin.berita') ? 'font-variation-settings: \'FILL\' 1;' : ''">newspaper</span>
                         Berita
                     </Link>
-                    <Link :href="route('admin.galeri')" 
+                    <Link :href="route('admin.album')" 
                         class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.galeri') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                        :class="route().current('admin.album') || route().current('admin.galeri') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
                     >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.galeri') ? 'font-variation-settings: \'FILL\' 1;' : ''">collections</span>
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.album') || route().current('admin.galeri') ? 'font-variation-settings: \'FILL\' 1;' : ''">collections</span>
                         Galeri Dokumentasi
                     </Link>
                 </div>

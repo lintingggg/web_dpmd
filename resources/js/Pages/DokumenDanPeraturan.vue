@@ -1,27 +1,34 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { Head, router, Link } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
-import PageHeader from '@/Components/PageHeader.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
 import SearchBar from '@/Components/SearchBar.vue';
 import TableDokumen from '@/Components/TableDokumen.vue';
 import UpButton from '@/Components/UpButton.vue';
+import { IconHome } from '@tabler/icons-vue';
 
 const props = defineProps<{
     dokumenList: any;
     filters: any;
+    kategoriList?: string[];
 }>();
 
-// --- STATE UTAMA (dari kode teman, tetap dipertahankan) ---
-const activeTab = ref(props.filters.kategori || 'Perencanaan');
-const searchQuery = ref(props.filters.search || '');
+// Breadcrumb: pola yang sama dengan Berita/Index.vue & VisiMisi.vue
+const breadcrumbItems = [
+    { label: 'Beranda', href: '/', icon: IconHome },
+    { label: 'Publikasi Dokumen' },
+];
+
+// --- STATE UTAMA ---
+const activeCategory = ref(props.filters?.kategori || '');
+const searchQuery = ref(props.filters?.search || '');
 const searchHistory = ref<string[]>([]);
 const isDropdownOpen = ref(false);
 
-// --- STATE TAMBAHAN untuk gaya pagination custom (mengikuti tampilan sendiri) ---
-const itemsPerPage = ref<number | null>(props.filters.per_page ? Number(props.filters.per_page) : null);
-const perPageOptions = [20, 35, 50];
+// Sidebar kategori: "Semua Kategori" + daftar asli dari backend
+const categoryList = computed(() => ['Semua', 'perencanaan', 'peraturan', 'lainnya']);
 
 // Mapping data dari backend ke format TableDokumen
 const dataDokumen = computed(() => {
@@ -30,20 +37,22 @@ const dataDokumen = computed(() => {
             id: doc.id,
             no: index + 1 + ((props.dokumenList.current_page - 1) * props.dokumenList.per_page),
             judul: doc.judul,
+            deskripsi: doc.deskripsi,
+            kategori: doc.kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (doc.kategori === 'peraturan' ? 'Produk Peraturan' : 'Dokumen Lainnya'),
+            tanggal: doc.tahun,
             tahun: doc.tahun,
-            link: doc.file_path ? `/storage/${doc.file_path}` : '#',
+            link: doc.file_dokumen ? `/storage/${doc.file_dokumen}` : (doc.file_path ? `/storage/${doc.file_path}` : '#'),
         };
     });
 });
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
-// --- FETCH DATA KE BACKEND (tetap pakai router Inertia, bukan dummy) ---
+// --- FETCH DATA KE BACKEND ---
 const fetchFiltered = (page: number | null = null) => {
     router.get('/dokumen-dan-peraturan', {
-        kategori: activeTab.value,
-        search: searchQuery.value,
-        per_page: itemsPerPage.value,
+        kategori: activeCategory.value !== 'Semua' && activeCategory.value !== '' ? activeCategory.value : undefined,
+        search: searchQuery.value || undefined,
         page: page,
     }, { preserveState: true, preserveScroll: true, replace: true });
 };
@@ -55,10 +64,10 @@ watch(searchQuery, () => {
     }, 500);
 });
 
-const changeTab = (tabName: string) => {
-    activeTab.value = tabName;
-    searchQuery.value = '';
-    isDropdownOpen.value = false;
+const pilihKategori = (kategori: string) => {
+    const value = kategori === 'Semua' ? '' : kategori;
+    if (activeCategory.value === value) return;
+    activeCategory.value = value;
     fetchFiltered(1);
 };
 
@@ -103,13 +112,7 @@ const handleBlur = () => {
     }, 200);
 };
 
-// --- KONTROL "TAMPILKAN N PER HALAMAN" (gaya tampilan sendiri) ---
-function pilihJumlahTampilan(jumlah: number) {
-    itemsPerPage.value = itemsPerPage.value === jumlah ? null : jumlah;
-    fetchFiltered(1);
-}
-
-// --- KONTROL PAGINASI BULAT (gaya tampilan sendiri), tapi datanya dari backend ---
+// --- KONTROL PAGINASI BULAT ---
 const currentPage = computed(() => props.dokumenList.current_page || 1);
 const lastPage = computed(() => props.dokumenList.last_page || 1);
 
@@ -126,159 +129,169 @@ function gotoPage(page: number) {
 </script>
 
 <template>
-    <Head title="Publikasi Dokumen" />
+    <Head title="Publikasi Dokumen - DPMD Bangkalan" />
 
-    <!-- Navbar dipindah keluar dari container berpadding, biar full-width & nyatu di atas -->
-    <div class="min-h-screen bg-gray-50 flex flex-col">
-        <Navbar />
+    <Navbar />
 
-        <div class="flex-grow p-4 md:p-8 pb-20 md:pb-32">
-            <div class="max-w-7xl mx-auto mt-8 w-full">
+    <section class="page-header">
+        <div class="container">
+            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
+            <h1>Publikasi Dokumen</h1>
+        </div>
+    </section>
 
-                <PageHeader
-                    title="Publikasi Dokumen"
-                    description="Akses berbagai dokumen resmi, peraturan, dan laporan perencanaan strategis DPMD Kabupaten Bangkalan secara publik."
-                />
+    <main class="container page-content">
+        <p class="text-left text-slate-700 mb-8 text-lg leading-relaxed">
+            Akses berbagai dokumen resmi, peraturan, dan laporan perencanaan strategis DPMD Kabupaten Bangkalan secara publik.
+        </p>
 
-                <div class="border-b border-gray-200 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
-                    <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
-                        <button
-                            @click="changeTab('Perencanaan')"
-                            :class="[activeTab === 'Perencanaan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
-                        >
-                            Dokumen Perencanaan
-                        </button>
-                        <button
-                            @click="changeTab('Peraturan')"
-                            :class="[activeTab === 'Peraturan' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
-                        >
-                            Produk Peraturan
-                        </button>
-                        <button
-                            @click="changeTab('Lainnya')"
-                            :class="[activeTab === 'Lainnya' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'whitespace-nowrap py-4 px-1 border-b-2 text-sm md:text-base font-medium transition-colors']"
-                        >
-                            Dokumen Lainnya
-                        </button>
-                    </nav>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+            <div class="lg:col-span-3">
 
-                    <div class="w-full md:w-80 mb-2 md:mb-0 relative">
-                        <SearchBar
-                            v-model="searchQuery"
-                            @focus="isDropdownOpen = true"
-                            @blur="handleBlur"
-                            @keydown.enter="saveToHistory"
-                            placeholder="Cari dokumen..."
-                        />
+                <!-- Search Bar -->
+                <div class="relative w-full mb-5">
+                    <SearchBar
+                        v-model="searchQuery"
+                        placeholder="Cari dokumen..."
+                        @focus="isDropdownOpen = true"
+                        @blur="handleBlur"
+                        @keyup.enter="saveToHistory"
+                    />
 
-                        <div v-if="isDropdownOpen && searchHistory.length > 0" class="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 py-1 text-sm">
-                            <div class="px-3 py-1 text-xs font-semibold text-gray-400 select-none">Pencarian Terakhir</div>
-                            <ul>
-                                <li
-                                    v-for="(item, index) in searchHistory"
-                                    :key="index"
-                                    class="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer text-gray-700 transition-colors"
-                                    @mousedown="selectHistory(item)"
-                                >
-                                    <div class="flex items-center space-x-2 truncate">
-                                        <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg>
-                                        <span class="truncate">{{ item }}</span>
-                                    </div>
-                                    <button @mousedown.stop="deleteHistoryItem(index)" class="text-gray-400 hover:text-red-500 p-1 rounded">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
+                    <div v-if="isDropdownOpen && searchHistory.length > 0" class="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 py-1 text-sm">
+                        <div class="px-3 py-1 text-xs font-semibold text-gray-400 select-none">Pencarian Terakhir</div>
+                        <ul>
+                            <li
+                                v-for="(item, index) in searchHistory"
+                                :key="index"
+                                class="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer text-gray-700 transition-colors"
+                                @mousedown="selectHistory(item)"
+                            >
+                                <div class="flex items-center space-x-2 truncate">
+                                    <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <span class="truncate">{{ item }}</span>
+                                </div>
+                                <button @mousedown.stop="deleteHistoryItem(index)" class="text-gray-400 hover:text-red-500 p-1 rounded">
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
+                <p class="text-sm text-gray-500 mb-4">
+                    Ditemukan <span class="font-semibold text-slate-900">{{ dokumenList.total || 0 }}</span> dokumen
+                </p>
+
+                <!-- Document Table -->
                 <div class="doc-table-wrapper p-2 md:p-4 doc-table">
-                    <TableDokumen v-if="dataDokumen.length > 0" :data="dataDokumen" />
+                    <TableDokumen v-if="dataDokumen.length > 0" :dataDokumen="dataDokumen" />
                     <div v-else class="p-12 text-center text-gray-500">
                         <p class="text-base font-medium">Dokumen tidak ditemukan</p>
                         <p class="text-sm text-gray-400 mt-1">Coba gunakan kata kunci lain atau periksa kategori dokumen lainnya.</p>
                     </div>
                 </div>
 
-                <!-- Kontrol jumlah tampilan + paginasi (gaya tampilan sendiri, data dari backend) -->
-                <div v-if="dataDokumen.length > 0" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <!-- Pagination -->
+                <div v-if="dataDokumen.length > 0" class="mt-8 flex items-center justify-center gap-1.5">
+                    <button
+                        @click="gotoPage(currentPage - 1)"
+                        :disabled="currentPage === 1"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                        aria-label="Halaman sebelumnya"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
 
-                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                        <span>Tampilkan</span>
-                        <div class="flex gap-1.5">
+                    <button
+                        v-for="page in pageNumbers"
+                        :key="page"
+                        @click="gotoPage(page)"
+                        :class="[
+                            currentPage === page
+                                ? 'bg-slate-900 text-white font-semibold'
+                                : 'text-slate-600 hover:bg-gray-100',
+                            'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
+                        ]"
+                    >
+                        {{ page }}
+                    </button>
+
+                    <button
+                        @click="gotoPage(currentPage + 1)"
+                        :disabled="currentPage === lastPage"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                        aria-label="Halaman berikutnya"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="lg:col-span-1">
+                <div class="lg:sticky lg:top-24 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <h2 class="text-sm font-bold tracking-wide text-slate-800 uppercase mb-3">
+                        Kategori
+                    </h2>
+                    <ul class="flex flex-col">
+                        <li v-for="kategori in categoryList" :key="kategori">
                             <button
-                                v-for="n in perPageOptions"
-                                :key="n"
-                                @click="pilihJumlahTampilan(n)"
+                                type="button"
+                                @click="pilihKategori(kategori)"
                                 :class="[
-                                    itemsPerPage === n
-                                        ? 'bg-slate-900 text-white font-semibold'
-                                        : 'bg-gray-100 text-slate-700 hover:bg-gray-200',
-                                    'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
+                                    (activeCategory === kategori || (activeCategory === '' && kategori === 'Semua'))
+                                        ? 'text-[#2563eb] font-semibold border-[#2563eb]'
+                                        : 'text-slate-600 border-transparent hover:text-slate-900',
+                                    'w-full text-left py-2.5 text-sm border-l-2 pl-3 -ml-px transition-colors capitalize'
                                 ]"
                             >
-                                {{ n }}
+                                {{ kategori === 'Semua' ? 'Semua Kategori' : (kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (kategori === 'peraturan' ? 'Produk Peraturan' : 'Lainnya')) }}
                             </button>
-                        </div>
-                        <span>per halaman</span>
-                    </div>
-
-                    <div class="flex items-center gap-1.5">
-                        <button
-                            @click="gotoPage(currentPage - 1)"
-                            :disabled="currentPage === 1"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
-                            aria-label="Halaman sebelumnya"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M15 18l-6-6 6-6" />
-                            </svg>
-                        </button>
-
-                        <button
-                            v-for="page in pageNumbers"
-                            :key="page"
-                            @click="gotoPage(page)"
-                            :class="[
-                                currentPage === page
-                                    ? 'bg-slate-900 text-white font-semibold'
-                                    : 'text-slate-600 hover:bg-gray-100',
-                                'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors'
-                            ]"
-                        >
-                            {{ page }}
-                        </button>
-
-                        <button
-                            @click="gotoPage(currentPage + 1)"
-                            :disabled="currentPage === lastPage"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-slate-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
-                            aria-label="Halaman berikutnya"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 18l6-6-6-6" />
-                            </svg>
-                        </button>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
-
-            </div>
+            </aside>
         </div>
+    </main>
 
-        <Footer />
-        <UpButton />
-    </div>
+    <Footer />
+    <UpButton />
 </template>
 
 <style scoped>
-/* Container tabel dokumen: disamakan dengan gaya card footer
-   (radius besar + shadow soft 3-layer, tanpa border solid) supaya
-   konsisten dengan elemen lain di halaman. */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.page-header {
+    background-color: #FFFFFF;
+    padding: 20px 0 30px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0;
+}
+
+.page-content {
+    margin-bottom: 60px;
+}
+
 .doc-table-wrapper {
     background: #ffffff;
     border-radius: 24px;
@@ -286,38 +299,5 @@ function gotoPage(page: number) {
         0 -8px 20px -12px rgba(15, 23, 42, 0.08),
         0 24px 48px -20px rgba(15, 23, 42, 0.14),
         0 4px 12px -4px rgba(15, 23, 42, 0.05);
-}
-
-/* Animasi hover pada baris dokumen: border memerah, judul berubah warna,
-   dan tombol download berubah dari outline jadi solid terisi. */
-.doc-table :deep(tbody tr) {
-    position: relative;
-    transition: background-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.doc-table :deep(tbody tr:hover) {
-    background-color: #fef2f2;
-    box-shadow: inset 0 0 0 1px #fecdd3;
-    cursor: pointer;
-}
-
-.doc-table :deep(tbody tr td) {
-    transition: color 0.25s ease;
-}
-
-.doc-table :deep(tbody tr:hover td:nth-child(2)) {
-    color: #dc2626;
-    font-weight: 600;
-}
-
-.doc-table :deep(tbody tr td:last-child a) {
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
-}
-
-.doc-table :deep(tbody tr:hover td:last-child a) {
-    background-color: #dc2626;
-    border-color: #dc2626;
-    color: #ffffff;
-    transform: scale(1.05);
 }
 </style>

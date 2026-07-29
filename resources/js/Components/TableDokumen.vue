@@ -1,4 +1,5 @@
 <script setup>
+import { Link } from '@inertiajs/vue3';
 defineProps({
     dataDokumen: {
         type: Array,
@@ -58,15 +59,23 @@ const emit = defineEmits(['lihatDetail']);
                     </td>
                     <td style="padding: 14px 16px; font-size: 13px; font-weight: 500; color: #646a79;">{{ row.tanggal }}</td>
                     <td style="padding: 14px 16px;">
-                        <button
-                            style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1.5px solid #e3e5e7; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #0f172a; background: transparent; cursor: pointer; transition: all 0.15s ease; font-family: 'Plus Jakarta Sans', sans-serif;"
-                            @click="$emit('lihatDetail', row)"
-                            @mouseenter="$event.currentTarget.style.background = '#0f172a'; $event.currentTarget.style.color = '#ffffff'; $event.currentTarget.style.borderColor = '#0f172a';"
-                            @mouseleave="$event.currentTarget.style.background = 'transparent'; $event.currentTarget.style.color = '#0f172a'; $event.currentTarget.style.borderColor = '#e3e5e7';"
-                        >
-                            <span class="material-symbols-outlined" style="font-size: 14px;">open_in_new</span>
-                            Lihat Detail
-                        </button>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <a
+                                :href="row.link"
+                                :download="row.judul + '.pdf'"
+                                style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1.5px solid #0f172a; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #ffffff; background: #0f172a; cursor: pointer; transition: all 0.15s ease; text-decoration: none;"
+                            >
+                                <span class="material-symbols-outlined" style="font-size: 14px;">download</span>
+                                Download
+                            </a>
+                            <Link
+                                :href="`/dokumen-dan-peraturan/${row.id}`"
+                                style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1.5px solid #e3e5e7; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #0f172a; background: transparent; cursor: pointer; transition: all 0.15s ease; text-decoration: none;"
+                            >
+                                <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span>
+                                Detail
+                            </Link>
+                        </div>
                     </td>
                 </tr>
             </tbody>

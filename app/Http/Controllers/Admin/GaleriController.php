@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Galeri;
+use App\Models\Album;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
 class GaleriController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, Album $album)
     {
-        $query = Galeri::query();
+        $query = $album->galeris();
 
         if ($request->filled('search')) {
             $query->where('judul', 'like', '%' . $request->search . '%');
@@ -30,21 +31,23 @@ class GaleriController extends Controller
         $galeri = $query->latest()->paginate(8)->withQueryString();
 
         return Inertia::render('Admin/Galeri', [
+            'album' => $album,
             'galeri' => $galeri,
             'filters' => $request->only(['search', 'status']),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Album $album)
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:500',
             'deskripsi' => 'nullable|string',
             'tanggal_kegiatan' => 'nullable|date',
             'is_published' => 'boolean',
+            'tipe' => 'required|in:foto,video',
             'foto' => [
                 $request->boolean('is_published') ? 'required' : 'nullable',
-                'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'
+                'file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi', 'max:51200' // Increased max size to 50MB for video
             ],
         ]);
 
@@ -56,11 +59,12 @@ class GaleriController extends Controller
             }
 
             $validated['is_published'] = $request->boolean('is_published');
+            $validated['album_id'] = $album->id;
 
             Galeri::create($validated);
             DB::commit();
 
-            return redirect()->back()->with('message', 'Entri galeri berhasil ditambahkan');
+            return redirect()->back()->with('message', 'Media berhasil ditambahkan ke album');
         } catch (\Throwable $e) {
             DB::rollBack();
             if (isset($path)) Storage::disk('public')->delete($path);
@@ -75,10 +79,10 @@ class GaleriController extends Controller
             'deskripsi' => 'nullable|string',
             'tanggal_kegiatan' => 'nullable|date',
             'is_published' => 'boolean',
-            // If already published and no new photo provided, the existing photo must exist if they keep it published
+            'tipe' => 'required|in:foto,video',
             'foto' => [
                 ($request->boolean('is_published') && !$galeri->foto) ? 'required' : 'nullable',
-                'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'
+                'file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi', 'max:51200'
             ],
         ]);
 
@@ -89,6 +93,8 @@ class GaleriController extends Controller
             if ($request->hasFile('foto')) {
                 $newPath = $request->file('foto')->store('galeri', 'public');
                 $validated['foto'] = $newPath;
+            } else {
+                unset($validated['foto']);
             }
 
             $validated['is_published'] = $request->boolean('is_published');
@@ -101,7 +107,7 @@ class GaleriController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('message', 'Entri galeri berhasil diperbarui');
+            return redirect()->back()->with('message', 'Media berhasil diperbarui');
         } catch (\Throwable $e) {
             DB::rollBack();
             if (isset($newPath)) Storage::disk('public')->delete($newPath);
@@ -120,7 +126,7 @@ class GaleriController extends Controller
             $galeri->delete();
             DB::commit();
 
-            return redirect()->back()->with('message', 'Entri galeri berhasil dihapus');
+            return redirect()->back()->with('message', 'Media berhasil dihapus');
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;

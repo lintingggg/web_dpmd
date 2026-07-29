@@ -11,12 +11,27 @@ class GaleriController extends Controller
 {
     public function index()
     {
-        $galeriList = Galeri::where('is_published', true)
-            ->whereNotNull('foto')
-            ->latest('tanggal_kegiatan')
+        $albums = \App\Models\Album::where('is_published', true)
+            ->latest()
             ->paginate(8);
 
         return Inertia::render('Galeri', [
+            'albums' => $albums,
+        ]);
+    }
+
+    public function show($id)
+    {
+        $album = \App\Models\Album::where('is_published', true)->findOrFail($id);
+        
+        $galeriList = Galeri::where('album_id', $id)
+            ->where('is_published', true)
+            ->whereNotNull('foto')
+            ->latest('tanggal_kegiatan')
+            ->paginate(12);
+
+        return Inertia::render('GaleriDetail', [
+            'album' => $album,
             'galeriList' => $galeriList,
         ]);
     }

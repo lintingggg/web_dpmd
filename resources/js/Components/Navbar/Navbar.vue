@@ -67,7 +67,7 @@ onBeforeUnmount(() => {
     >
 
         <div
-            class="max-w-7xl mx-auto h-20 px-5 flex items-center justify-between"
+            class="max-w-7xl mx-auto h-20 px-5 flex items-center justify-between gap-8"
         >
 
             <!-- Logo -->
@@ -75,15 +75,10 @@ onBeforeUnmount(() => {
 
             <!-- Desktop -->
             <div
-                class="hidden lg:flex flex-1 justify-center ml-8 lg:ml-16"
+                class="hidden lg:flex items-center gap-8 ml-auto"
             >
                 <NavbarMenu />
             </div>
-
-            <!-- Right Space Desktop -->
-            <div
-                class="hidden lg:block w-32"
-            ></div>
 
             <!-- Mobile -->
             <button

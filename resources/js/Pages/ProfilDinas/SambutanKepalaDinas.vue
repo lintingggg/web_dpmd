@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const breadcrumbItems = [
     { label: 'Beranda', href: '/', icon: IconHome },
-    { label: 'Profil Dinas' },
+    { label: 'Profil Dinas', href: '/error404'  },
     { label: 'Sambutan Kepala Dinas' }
 ];
 </script>
