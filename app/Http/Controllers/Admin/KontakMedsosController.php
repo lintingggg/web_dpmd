@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use App\Models\PengaturanKontak;
 
@@ -62,12 +63,45 @@ class KontakMedsosController extends Controller
             'twitter_embed_1' => 'nullable|string',
             'twitter_embed_2' => 'nullable|string',
         ], [
+            // Custom validation messages
+
             'koordinat_map.regex' => 'Format koordinat tidak valid. Contoh yang benar: -7.0270059, 112.7483669',
             'telepon.regex' => 'Format nomor telepon tidak valid. Hanya boleh berisi angka, spasi, tanda tambah (+), tanda hubung (-), atau kurung.',
             'telepon.min' => 'Nomor telepon terlalu pendek (minimal 9 karakter).',
             'whatsapp.regex' => 'Format nomor WhatsApp tidak valid. Hanya boleh berisi angka, spasi, tanda tambah (+), tanda hubung (-), atau kurung.',
             'whatsapp.min' => 'Nomor WhatsApp terlalu pendek (minimal 9 karakter).',
         ]);
+
+        // Explicitly cast boolean fields in case they are sent as strings
+        $validated['show_instagram'] = filter_var($request->show_instagram, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_tiktok'] = filter_var($request->show_tiktok, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_youtube'] = filter_var($request->show_youtube, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_facebook'] = filter_var($request->show_facebook, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_twitter'] = filter_var($request->show_twitter, FILTER_VALIDATE_BOOLEAN);
+
+        if ($validated['show_facebook'] ?? false) {
+            if (empty($validated['facebook_embed_1']) && empty($validated['facebook_embed_2']) && empty($validated['facebook_url'])) {
+                throw ValidationException::withMessages([
+                    'facebook_embed_1' => ['Isi kode embed Facebook atau tambahkan tautan Facebook jika Facebook ditampilkan di Widget.'],
+                ]);
+            }
+        }
+
+        if ($validated['show_youtube'] ?? false) {
+            if (empty($validated['youtube_embed_1']) && empty($validated['youtube_embed_2'])) {
+                throw ValidationException::withMessages([
+                    'youtube_embed_1' => ['Isi kode embed YouTube jika YouTube ditampilkan di Widget.'],
+                ]);
+            }
+        }
+
+        if ($validated['show_twitter'] ?? false) {
+            if (empty($validated['twitter_embed_1']) && empty($validated['twitter_embed_2'])) {
+                throw ValidationException::withMessages([
+                    'twitter_embed_1' => ['Isi kode embed X (Twitter) jika X (Twitter) ditampilkan di Widget.'],
+                ]);
+            }
+        }
 
         PengaturanKontak::updateOrCreate(
             ['id' => 1],

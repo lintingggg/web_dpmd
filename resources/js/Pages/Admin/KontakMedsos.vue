@@ -39,11 +39,11 @@ const form = useForm({
     twitter_embed_2: props.kontak?.twitter_embed_2 || '',
 
     // Toggles
-    show_instagram: props.kontak?.show_instagram ?? true,
-    show_tiktok: props.kontak?.show_tiktok ?? true,
-    show_youtube: props.kontak?.show_youtube ?? true,
-    show_facebook: props.kontak?.show_facebook ?? true,
-    show_twitter: props.kontak?.show_twitter ?? true,
+    show_instagram: Boolean(props.kontak?.show_instagram ?? true),
+    show_tiktok: Boolean(props.kontak?.show_tiktok ?? true),
+    show_youtube: Boolean(props.kontak?.show_youtube ?? true),
+    show_facebook: Boolean(props.kontak?.show_facebook ?? true),
+    show_twitter: Boolean(props.kontak?.show_twitter ?? true),
 });
 
 // State Tab
@@ -372,15 +372,15 @@ const submit = (tabContext) => {
                             </label>
                         </div>
                         
-                        <div v-if="form.show_instagram" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-show="form.show_instagram" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Instagram 1</label>
-                                <textarea v-model="form.instagram_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link Instagram 1</label>
+                                <textarea v-model="form.instagram_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed atau link Instagram (https://instagram.com/p/...)"></textarea>
                                 <div v-if="form.errors.instagram_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_embed_1 }}</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Instagram 2</label>
-                                <textarea v-model="form.instagram_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link Instagram 2</label>
+                                <textarea v-model="form.instagram_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed atau link Instagram (https://instagram.com/p/...)"></textarea>
                                 <div v-if="form.errors.instagram_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_embed_2 }}</div>
                             </div>
                         </div>
@@ -399,15 +399,15 @@ const submit = (tabContext) => {
                             </label>
                         </div>
                         
-                        <div v-if="form.show_tiktok" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-show="form.show_tiktok" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed TikTok 1</label>
-                                <textarea v-model="form.tiktok_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link TikTok 1</label>
+                                <textarea v-model="form.tiktok_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed atau link video/photo TikTok (https://tiktok.com/@.../video/...)"></textarea>
                                 <div v-if="form.errors.tiktok_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_embed_1 }}</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed TikTok 2</label>
-                                <textarea v-model="form.tiktok_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link TikTok 2</label>
+                                <textarea v-model="form.tiktok_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed atau link video/photo TikTok (https://tiktok.com/@.../video/...)"></textarea>
                                 <div v-if="form.errors.tiktok_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_embed_2 }}</div>
                             </div>
                         </div>
@@ -426,15 +426,15 @@ const submit = (tabContext) => {
                             </label>
                         </div>
                         
-                        <div v-if="form.show_youtube" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-show="form.show_youtube" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed YouTube 1</label>
-                                <textarea v-model="form.youtube_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link YouTube 1</label>
+                                <textarea v-model="form.youtube_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link (https://youtube.com/...)"></textarea>
                                 <div v-if="form.errors.youtube_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_embed_1 }}</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed YouTube 2</label>
-                                <textarea v-model="form.youtube_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link YouTube 2</label>
+                                <textarea v-model="form.youtube_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link (https://youtube.com/...)"></textarea>
                                 <div v-if="form.errors.youtube_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_embed_2 }}</div>
                             </div>
                         </div>
@@ -453,15 +453,15 @@ const submit = (tabContext) => {
                             </label>
                         </div>
                         
-                        <div v-if="form.show_facebook" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-show="form.show_facebook" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Facebook 1</label>
-                                <textarea v-model="form.facebook_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link Facebook 1</label>
+                                <textarea v-model="form.facebook_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link posting Facebook (https://facebook.com/...)"></textarea>
                                 <div v-if="form.errors.facebook_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_embed_1 }}</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Facebook 2</label>
-                                <textarea v-model="form.facebook_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link Facebook 2</label>
+                                <textarea v-model="form.facebook_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link posting Facebook (https://facebook.com/...)"></textarea>
                                 <div v-if="form.errors.facebook_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_embed_2 }}</div>
                             </div>
                         </div>
@@ -480,15 +480,15 @@ const submit = (tabContext) => {
                             </label>
                         </div>
                         
-                        <div v-if="form.show_twitter" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-show="form.show_twitter" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Twitter 1</label>
-                                <textarea v-model="form.twitter_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link X (Twitter) 1</label>
+                                <textarea v-model="form.twitter_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link tweet (https://x.com/...)"></textarea>
                                 <div v-if="form.errors.twitter_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_1 }}</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed Twitter 2</label>
-                                <textarea v-model="form.twitter_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link X (Twitter) 2</label>
+                                <textarea v-model="form.twitter_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link tweet (https://x.com/...)"></textarea>
                                 <div v-if="form.errors.twitter_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_2 }}</div>
                             </div>
                         </div>
