@@ -1,21 +1,16 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { ToastProvider } from '@idds/vue';
 import '@idds/vue/index.css';
 
 const showingNavigationDropdown = ref(false);
 const profilDinasOpen = ref(false);
 const bidangTugasOpen = ref(false);
 const page = usePage();
-
-import GlobalToast from '@/Components/GlobalToast.vue';
 </script>
 
 <template>
-    <ToastProvider>
-        <GlobalToast />
-        <div class="bg-[#f9f9f9] font-['Plus_Jakarta_Sans'] text-[#1a1c1c] antialiased flex h-screen overflow-hidden">
+    <div class="bg-[#f9f9f9] font-['Plus_Jakarta_Sans'] text-[#1a1c1c] antialiased flex h-screen overflow-hidden">
             
             <!-- SideNavBar -->
             <nav class="fixed left-0 top-0 h-screen w-72 flex flex-col p-6 bg-[#0f172a] shadow-xl z-50 text-white">
@@ -34,6 +29,22 @@ import GlobalToast from '@/Components/GlobalToast.vue';
                         Dashboard
                     </Link>
 
+                    <Link :href="route('admin.pengaturan-beranda')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.pengaturan-beranda') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                    >
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.pengaturan-beranda') ? 'font-variation-settings: \'FILL\' 1;' : ''">view_carousel</span>
+                        Banner Utama
+                    </Link>
+
+                    <Link :href="route('admin.berita')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.berita') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                    >
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.berita') ? 'font-variation-settings: \'FILL\' 1;' : ''">newspaper</span>
+                        Berita
+                    </Link>
+
                     <Link :href="route('admin.pengumuman.index')" 
                         class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
                         :class="route().current('admin.pengumuman.*') || route().current('admin.pengumuman.index') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
@@ -41,20 +52,23 @@ import GlobalToast from '@/Components/GlobalToast.vue';
                         <span class="material-symbols-outlined transition-colors" :style="route().current('admin.pengumuman.*') || route().current('admin.pengumuman.index') ? 'font-variation-settings: \'FILL\' 1;' : ''">campaign</span>
                         Pengumuman
                     </Link>
-                     <Link :href="route('admin.kontak-medsos')" 
-                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.kontak-medsos') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                    
+                    <Link :href="route('admin.album')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.album') || route().current('admin.galeri') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
                     >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.kontak-medsos') ? 'font-variation-settings: \'FILL\' 1;' : ''">contact_phone</span>
-                        Kontak & Medsos
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.album') || route().current('admin.galeri') ? 'font-variation-settings: \'FILL\' 1;' : ''">collections</span>
+                        Galeri Dokumentasi
                     </Link>
-                    <Link :href="route('admin.pengaturan-beranda')" 
-                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.pengaturan-beranda') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+
+                    <Link :href="route('admin.publikasi-dokumen')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.publikasi-dokumen') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
                     >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.pengaturan-beranda') ? 'font-variation-settings: \'FILL\' 1;' : ''">home</span>
-                        Hero Section Beranda
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.publikasi-dokumen') ? 'font-variation-settings: \'FILL\' 1;' : ''">folder_open</span>
+                        Publikasi Dokumen
                     </Link>
+
                     <div>
                         <button @click="profilDinasOpen = !profilDinasOpen" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
                             <span class="material-symbols-outlined group-hover:text-white transition-colors">account_balance</span>
@@ -72,6 +86,7 @@ import GlobalToast from '@/Components/GlobalToast.vue';
                             <Link :href="route('admin.profil-dinas', { section: 'motto' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Motto Pelayanan</Link>
                         </div>
                     </div>
+                    
                     <div>
                         <button @click="bidangTugasOpen = !bidangTugasOpen" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
                             <span class="material-symbols-outlined group-hover:text-white transition-colors">assignment</span>
@@ -86,26 +101,13 @@ import GlobalToast from '@/Components/GlobalToast.vue';
                             <Link :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Sekretariat</Link>
                         </div>
                     </div>
-                    <Link :href="route('admin.publikasi-dokumen')" 
-                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.publikasi-dokumen') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+
+                    <Link :href="route('admin.kontak-medsos')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.kontak-medsos') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
                     >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.publikasi-dokumen') ? 'font-variation-settings: \'FILL\' 1;' : ''">folder_open</span>
-                        Publikasi Dokumen
-                    </Link>
-                    <Link :href="route('admin.berita')" 
-                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.berita') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
-                    >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.berita') ? 'font-variation-settings: \'FILL\' 1;' : ''">newspaper</span>
-                        Berita
-                    </Link>
-                    <Link :href="route('admin.album')" 
-                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.album') || route().current('admin.galeri') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
-                    >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.album') || route().current('admin.galeri') ? 'font-variation-settings: \'FILL\' 1;' : ''">collections</span>
-                        Galeri Dokumentasi
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.kontak-medsos') ? 'font-variation-settings: \'FILL\' 1;' : ''">contact_phone</span>
+                        Kontak & Medsos
                     </Link>
                 </div>
 
@@ -144,6 +146,5 @@ import GlobalToast from '@/Components/GlobalToast.vue';
 
             </main>
         </div>
-    </ToastProvider>
 </template>
 

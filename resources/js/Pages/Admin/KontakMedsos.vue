@@ -75,9 +75,62 @@ watch([hariBuka, hariTutup, jamBuka, jamTutup], () => {
     form.jam_kerja = `${hariBuka.value} - ${hariTutup.value}, ${jamBuka.value} - ${jamTutup.value} WIB`;
 }, { immediate: true });
 
-const submit = () => {
-    form.post(route('admin.kontak-medsos.update'), {
-        preserveScroll: true
+const submit = (tabContext) => {
+    form.transform((data) => {
+        if (tabContext === 'kontak') {
+            return {
+                alamat: data.alamat,
+                email: data.email,
+                telepon: data.telepon,
+                whatsapp: data.whatsapp,
+                jam_kerja: data.jam_kerja,
+                koordinat_map: data.koordinat_map
+            };
+        } else if (tabContext === 'sosmed') {
+            return {
+                facebook_url: data.facebook_url,
+                instagram_url: data.instagram_url,
+                youtube_url: data.youtube_url,
+                twitter_url: data.twitter_url,
+                tiktok_url: data.tiktok_url,
+                show_facebook: data.show_facebook,
+                show_instagram: data.show_instagram,
+                show_youtube: data.show_youtube,
+                show_twitter: data.show_twitter,
+                show_tiktok: data.show_tiktok
+            };
+        } else if (tabContext === 'embed') {
+            return {
+                instagram_embed_1: data.instagram_embed_1,
+                instagram_embed_2: data.instagram_embed_2,
+                tiktok_embed_1: data.tiktok_embed_1,
+                tiktok_embed_2: data.tiktok_embed_2,
+                youtube_embed_1: data.youtube_embed_1,
+                youtube_embed_2: data.youtube_embed_2,
+                facebook_embed_1: data.facebook_embed_1,
+                facebook_embed_2: data.facebook_embed_2,
+                twitter_embed_1: data.twitter_embed_1,
+                twitter_embed_2: data.twitter_embed_2
+            };
+        }
+        return data;
+    }).post(route('admin.kontak-medsos.update'), {
+        preserveScroll: true,
+        onError: (errors) => {
+            if (errors.alamat || errors.email || errors.telepon || errors.whatsapp || errors.jam_kerja || errors.koordinat_map) {
+                activeTab.value = 'kontak';
+            } else if (errors.facebook_url || errors.instagram_url || errors.youtube_url || errors.twitter_url || errors.tiktok_url) {
+                activeTab.value = 'sosmed';
+            } else {
+                activeTab.value = 'embed';
+            }
+            
+            toast({
+                state: 'destructive',
+                title: 'Validasi Gagal',
+                description: 'Ada kesalahan pada isian Anda. Silakan periksa bagian yang ditandai merah.'
+            });
+        }
     });
 };
 </script>
@@ -95,24 +148,23 @@ const submit = () => {
                     </h2>
                     <p class="text-[14px] font-medium text-[#646a79]">Kelola informasi kontak dinas dan tautan akun media sosial resmi.</p>
                 </div>
-                
-                <button 
-                    @click="submit"
-                    :disabled="form.processing"
-                    class="bg-[#0f172a] hover:bg-[#222a3d] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
-                >
-                    <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                    <span v-else class="material-symbols-outlined text-[18px]">save</span>
-                    Simpan Perubahan
-                </button>
             </div>
         </div>
 
         <!-- Tabs Navigation -->
         <div class="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-xl border border-[#e3e5e7] shadow-sm">
-            <button @click="activeTab = 'kontak'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all', activeTab === 'kontak' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">Informasi Kontak</button>
-            <button @click="activeTab = 'sosmed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all', activeTab === 'sosmed' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">Tautan Profil Media Sosial</button>
-            <button @click="activeTab = 'embed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all', activeTab === 'embed' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">Widget Beranda (Embed)</button>
+            <button @click="activeTab = 'kontak'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all flex items-center gap-2', activeTab === 'kontak' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">
+                Informasi Kontak
+                <span v-if="form.errors.alamat || form.errors.email || form.errors.telepon || form.errors.whatsapp || form.errors.jam_kerja || form.errors.koordinat_map" class="w-2 h-2 rounded-full bg-red-500"></span>
+            </button>
+            <button @click="activeTab = 'sosmed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all flex items-center gap-2', activeTab === 'sosmed' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">
+                Tautan Profil Media Sosial
+                <span v-if="form.errors.facebook_url || form.errors.instagram_url || form.errors.youtube_url || form.errors.twitter_url || form.errors.tiktok_url" class="w-2 h-2 rounded-full bg-red-500"></span>
+            </button>
+            <button @click="activeTab = 'embed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all flex items-center gap-2', activeTab === 'embed' ? 'bg-[#0f172a] text-white shadow-md' : 'text-[#646a79] hover:bg-[#f3f4f6] hover:text-[#0f172a]']">
+                Widget Beranda (Embed)
+                <span v-if="form.errors.instagram_embed_1 || form.errors.instagram_embed_2 || form.errors.tiktok_embed_1 || form.errors.tiktok_embed_2 || form.errors.youtube_embed_1 || form.errors.youtube_embed_2 || form.errors.facebook_embed_1 || form.errors.facebook_embed_2 || form.errors.twitter_embed_1 || form.errors.twitter_embed_2" class="w-2 h-2 rounded-full bg-red-500"></span>
+            </button>
         </div>
 
         <div class="w-full">
@@ -152,7 +204,7 @@ const submit = () => {
                             <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Telepon Kantor</label>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9499a3]">call</span>
-                                <input v-model="form.telepon" type="text" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="(031) xxx" />
+                                <input v-model="form.telepon" type="tel" pattern="[\+0-9\s\-\(\)]+" title="Format: Angka, spasi, +, -, ()" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="(031) xxx" />
                             </div>
                             <div v-if="form.errors.telepon" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.telepon }}</div>
                         </div>
@@ -162,8 +214,10 @@ const submit = () => {
                         <div>
                             <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">WhatsApp Layanan</label>
                             <div class="relative">
-                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9499a3]">forum</span>
-                                <input v-model="form.whatsapp" type="text" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="081xxx" />
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-[#9499a3] text-[20px]">forum</span>
+                                </div>
+                                <input v-model="form.whatsapp" type="tel" pattern="[\+0-9\s\-\(\)]+" title="Format: Angka, spasi, +, -, ()" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="081xxx" />
                             </div>
                             <div v-if="form.errors.whatsapp" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.whatsapp }}</div>
                         </div>
@@ -205,6 +259,18 @@ const submit = () => {
                         <div v-if="form.errors.koordinat_map" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.koordinat_map }}</div>
                         <p class="text-[12px] text-[#9499a3] mt-1.5 font-medium">Format: Latitude, Longitude (Contoh: -7.0270059, 112.7483669). Digunakan untuk menampilkan peta di website.</p>
                     </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-[#e3e5e7] flex justify-end">
+                    <button 
+                        @click="submit('kontak')"
+                        :disabled="form.processing"
+                        class="bg-[#0f172a] hover:bg-[#222a3d] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+                    >
+                        <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                        <span v-else class="material-symbols-outlined text-[18px]">save</span>
+                        Simpan Informasi Kontak
+                    </button>
                 </div>
             </div>
 
@@ -265,6 +331,18 @@ const submit = () => {
                         </div>
                         <div v-if="form.errors.tiktok_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_url }}</div>
                     </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-[#e3e5e7] flex justify-end">
+                    <button 
+                        @click="submit('sosmed')"
+                        :disabled="form.processing"
+                        class="bg-[#0f172a] hover:bg-[#222a3d] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+                    >
+                        <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                        <span v-else class="material-symbols-outlined text-[18px]">save</span>
+                        Simpan Profil Sosmed
+                    </button>
                 </div>
             </div>
 
@@ -416,6 +494,18 @@ const submit = () => {
                         </div>
                     </div>
 
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-[#e3e5e7] flex justify-end">
+                    <button 
+                        @click="submit('embed')"
+                        :disabled="form.processing"
+                        class="bg-[#0f172a] hover:bg-[#222a3d] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+                    >
+                        <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                        <span v-else class="material-symbols-outlined text-[18px]">save</span>
+                        Simpan Widget Embed
+                    </button>
                 </div>
             </div>
         </div>

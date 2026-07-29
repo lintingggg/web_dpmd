@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { 
   IconMapPin, 
   IconMail, 
@@ -56,16 +56,16 @@ const isMobileProfilOpen = ref(false);
 const isMobileBidangOpen = ref(false);
 
 // Data BeritaTerkini sekarang berasal dari props database
-const form = ref({
+const form = reactive({
   nama: '',
   email: '',
   subjek: '',
   pesan: ''
-});
+} as any);
 
 // Social Media Tabs State
 const socialTabs = computed(() => {
-  const tabs = [];
+  const tabs: Array<{id: string, name: string, icon: any, color: string}> = [];
   if (kontak.value.show_instagram !== false && (kontak.value.instagram_embed_1 || kontak.value.instagram_embed_2)) 
     tabs.push({ id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' });
   
@@ -84,11 +84,11 @@ const socialTabs = computed(() => {
   return tabs;
 });
 
-const activeSocialTab = ref('');
+const activeSocialTab = ref<string>('');
 
 // Set default active tab
 watch(socialTabs, (newTabs) => {
-  if (newTabs.length > 0 && !newTabs.find(t => t.id === activeSocialTab.value)) {
+  if (newTabs.length > 0 && newTabs.filter(t => t.id === activeSocialTab.value).length === 0) {
     activeSocialTab.value = newTabs[0].id;
   }
 }, { immediate: true });
@@ -99,18 +99,21 @@ const openLink = (url: string) => {
 };
 
 const submitForm = () => {
-  if(!form.value.nama || !form.value.email || !form.value.pesan) {
+  if(!form.nama || !form.email || !form.pesan) {
     alert('Mohon lengkapi form kontak!');
     return;
   }
   
-  const subject = form.value.subjek ? encodeURIComponent(form.value.subjek) : encodeURIComponent('Pesan dari Website DPMD');
-  const body = encodeURIComponent(`Nama: ${form.value.nama}\nEmail: ${form.value.email}\n\nPesan:\n${form.value.pesan}`);
+  const subject = form.subjek ? encodeURIComponent(form.subjek) : encodeURIComponent('Pesan dari Website DPMD');
+  const body = encodeURIComponent(`Nama: ${form.nama}\nEmail: ${form.email}\n\nPesan:\n${form.pesan}`);
   const targetEmail = kontak.value.email || 'dpmd@bangkalankab.go.id';
   
   window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
   
-  form.value = { nama: '', email: '', subjek: '', pesan: '' };
+  form.nama = '';
+  form.email = '';
+  form.subjek = '';
+  form.pesan = '';
 };
 
 // Close dropdowns on outside click for better UX
@@ -148,9 +151,10 @@ onUnmounted(() => {
           <h1 class="text-4xl lg:text-[2.75rem] font-extrabold text-[#0F172A] leading-[1.15] mb-6 overflow-hidden">
             <span class="inline-block hero-title-inner">{{ props.pengaturanBeranda?.hero_title || 'Membangun Desa Bangkalan yang Mandiri dan Sejahtera.' }}</span>
           </h1>
-          <p class="text-[#646A79] text-lg mb-10 leading-relaxed hero-fade-up font-medium whitespace-pre-line">
-            {{ props.pengaturanBeranda?.hero_description || 'Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan berkomitmen penuh dalam mendorong kemajuan potensi desa di seluruh wilayah Bangkalan.' }}
-          </p>
+          <div 
+            class="text-[#646A79] text-lg mb-10 leading-relaxed hero-fade-up font-medium"
+            v-html="props.pengaturanBeranda?.hero_description || 'Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan berkomitmen penuh dalam mendorong kemajuan potensi desa di seluruh wilayah Bangkalan.'"
+          ></div>
         </div>
 
         <!-- IMAGE COLLAGE -->
@@ -410,7 +414,7 @@ onUnmounted(() => {
           </div>
 
           <!-- Other Empty States -->
-          <div v-show="!['instagram', 'tiktok', 'youtube', 'facebook', 'twitter'].includes(activeSocialTab)" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[500px]">
+          <div v-show="['instagram', 'tiktok', 'youtube', 'facebook', 'twitter'].indexOf(activeSocialTab) === -1" class="w-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[500px]">
              <div class="text-center p-8">
                <div class="inline-flex items-center justify-center p-4 bg-gray-50 rounded-full mb-4">
                  <IconFileDescription class="w-8 h-8 text-gray-400" />
@@ -463,7 +467,7 @@ onUnmounted(() => {
         
         <!-- Kolom Kanan: Form Kontak -->
         <div class="p-10 lg:p-14 lg:w-1/2 bg-white flex flex-col justify-center kontak-kanan">
-          <h3 class="text-2xl font-bold text-[#0F172A] mb-8">Kirim Pesan via WhatsApp</h3>
+          <h3 class="text-2xl font-bold text-[#0F172A] mb-8">Kirim Pesan via Email</h3>
           <form @submit.prevent="submitForm" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>

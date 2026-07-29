@@ -9,7 +9,8 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 // Set Tema Default
-import { setBrandTheme } from '@idds/vue';
+import { setBrandTheme, ToastProvider } from '@idds/vue';
+import GlobalToast from '@/Components/GlobalToast.vue';
 setBrandTheme('panrb')
 
 const appName = import.meta.env.VITE_APP_NAME || 'DPMD Bangkalan';
@@ -22,7 +23,11 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
+        return createApp({
+            render: () => h(ToastProvider, null, {
+                default: () => [h(App, props), h(GlobalToast)]
+            })
+        })
             .use(plugin)
             .use(ZiggyVue)
             .mount(el);

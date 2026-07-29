@@ -29,8 +29,8 @@ class KontakMedsosController extends Controller
         $validated = $request->validate([
             'alamat'        => 'nullable|string|max:500',
             'email'         => 'nullable|email|max:255',
-            'telepon'       => 'nullable|string|max:30',
-            'whatsapp'      => 'nullable|string|max:30',
+            'telepon'       => ['nullable', 'string', 'min:9', 'max:20', 'regex:/^[\+0-9\s\-\(\)]+$/'],
+            'whatsapp'      => ['nullable', 'string', 'min:9', 'max:20', 'regex:/^[\+0-9\s\-\(\)]+$/'],
             'jam_kerja'     => 'nullable|string|max:100',
             'koordinat_map' => ['nullable', 'string', 'regex:/^-?\d+(\.\d+)?,\s?-?\d+(\.\d+)?$/'],
             'facebook_url'  => 'nullable|url|max:255',
@@ -47,32 +47,26 @@ class KontakMedsosController extends Controller
             'show_twitter' => 'boolean',
 
             // Embeds
-            'instagram_embed_1' => 'required_if:show_instagram,true|nullable|string',
-            'instagram_embed_2' => 'required_if:show_instagram,true|nullable|string',
+            'instagram_embed_1' => 'nullable|string',
+            'instagram_embed_2' => 'nullable|string',
             
-            'tiktok_embed_1' => 'required_if:show_tiktok,true|nullable|string',
-            'tiktok_embed_2' => 'required_if:show_tiktok,true|nullable|string',
+            'tiktok_embed_1' => 'nullable|string',
+            'tiktok_embed_2' => 'nullable|string',
             
-            'youtube_embed_1' => 'required_if:show_youtube,true|nullable|string',
-            'youtube_embed_2' => 'required_if:show_youtube,true|nullable|string',
+            'youtube_embed_1' => 'nullable|string',
+            'youtube_embed_2' => 'nullable|string',
             
-            'facebook_embed_1' => 'required_if:show_facebook,true|nullable|string',
-            'facebook_embed_2' => 'required_if:show_facebook,true|nullable|string',
+            'facebook_embed_1' => 'nullable|string',
+            'facebook_embed_2' => 'nullable|string',
             
-            'twitter_embed_1' => 'required_if:show_twitter,true|nullable|string',
-            'twitter_embed_2' => 'required_if:show_twitter,true|nullable|string',
+            'twitter_embed_1' => 'nullable|string',
+            'twitter_embed_2' => 'nullable|string',
         ], [
             'koordinat_map.regex' => 'Format koordinat tidak valid. Contoh yang benar: -7.0270059, 112.7483669',
-            'instagram_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika Instagram ditampilkan.',
-            'instagram_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika Instagram ditampilkan.',
-            'tiktok_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika TikTok ditampilkan.',
-            'tiktok_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika TikTok ditampilkan.',
-            'youtube_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika YouTube ditampilkan.',
-            'youtube_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika YouTube ditampilkan.',
-            'facebook_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika Facebook ditampilkan.',
-            'facebook_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika Facebook ditampilkan.',
-            'twitter_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika X (Twitter) ditampilkan.',
-            'twitter_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika X (Twitter) ditampilkan.',
+            'telepon.regex' => 'Format nomor telepon tidak valid. Hanya boleh berisi angka, spasi, tanda tambah (+), tanda hubung (-), atau kurung.',
+            'telepon.min' => 'Nomor telepon terlalu pendek (minimal 9 karakter).',
+            'whatsapp.regex' => 'Format nomor WhatsApp tidak valid. Hanya boleh berisi angka, spasi, tanda tambah (+), tanda hubung (-), atau kurung.',
+            'whatsapp.min' => 'Nomor WhatsApp terlalu pendek (minimal 9 karakter).',
         ]);
 
         PengaturanKontak::updateOrCreate(

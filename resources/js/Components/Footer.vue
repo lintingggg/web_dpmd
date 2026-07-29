@@ -7,11 +7,14 @@ import {
   IconBrandInstagram,
   IconBrandYoutube,
   IconBrandTwitter,
+  IconBrandX,
+  IconBrandTiktok,
   IconBrandWhatsapp,
   IconChevronRight,
   IconMapPin,
   IconPhone,
   IconMail,
+  IconClock,
 } from "@tabler/icons-vue";
 
 // Logo diambil dari folder public/assets (bukan resources/assets),
@@ -28,7 +31,8 @@ const socialLinks = computed(() => {
   if (kontak.value.instagram_url) links.push({ label: "Instagram", href: kontak.value.instagram_url, icon: IconBrandInstagram });
   if (kontak.value.facebook_url) links.push({ label: "Facebook", href: kontak.value.facebook_url, icon: IconBrandFacebook });
   if (kontak.value.youtube_url) links.push({ label: "YouTube", href: kontak.value.youtube_url, icon: IconBrandYoutube });
-  if (kontak.value.twitter_url) links.push({ label: "Twitter", href: kontak.value.twitter_url, icon: IconBrandTwitter });
+  if (kontak.value.twitter_url) links.push({ label: "X (Twitter)", href: kontak.value.twitter_url, icon: IconBrandX });
+  if (kontak.value.tiktok_url) links.push({ label: "TikTok", href: kontak.value.tiktok_url, icon: IconBrandTiktok });
   if (kontak.value.whatsapp) links.push({ label: "WhatsApp", href: `https://wa.me/${kontak.value.whatsapp.replace(/[^0-9]/g, '')}`, icon: IconBrandWhatsapp });
   return links;
 });
@@ -174,6 +178,14 @@ onBeforeUnmount(() => {
               <div class="kontak-value">
                 <span class="kontak-label">Email</span>
                 <span class="kontak-text">{{ kontak.email }}</span>
+              </div>
+            </div>
+
+            <div class="kontak-item" v-if="kontak?.jam_kerja">
+              <span class="kontak-icon"><IconClock :size="17" /></span>
+              <div class="kontak-value">
+                <span class="kontak-label">Jam Layanan</span>
+                <span class="kontak-text">{{ kontak.jam_kerja }}</span>
               </div>
             </div>
 
@@ -346,7 +358,8 @@ onBeforeUnmount(() => {
   font-size: 13px;
   font-weight: 500;
   color: #6b7080;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.4;
   margin-bottom: clamp(6px, 3vw, 26px);
 }
 </style>
