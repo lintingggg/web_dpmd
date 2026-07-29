@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use App\Models\PengaturanKontak;
 
@@ -47,33 +48,54 @@ class KontakMedsosController extends Controller
             'show_twitter' => 'boolean',
 
             // Embeds
-            'instagram_embed_1' => 'required_if:show_instagram,true|nullable|string',
-            'instagram_embed_2' => 'required_if:show_instagram,true|nullable|string',
+            'instagram_embed_1' => 'nullable|string',
+            'instagram_embed_2' => 'nullable|string',
             
-            'tiktok_embed_1' => 'required_if:show_tiktok,true|nullable|string',
-            'tiktok_embed_2' => 'required_if:show_tiktok,true|nullable|string',
+            'tiktok_embed_1' => 'nullable|string',
+            'tiktok_embed_2' => 'nullable|string',
             
-            'youtube_embed_1' => 'required_if:show_youtube,true|nullable|string',
-            'youtube_embed_2' => 'required_if:show_youtube,true|nullable|string',
+            'youtube_embed_1' => 'nullable|string',
+            'youtube_embed_2' => 'nullable|string',
             
-            'facebook_embed_1' => 'required_if:show_facebook,true|nullable|string',
-            'facebook_embed_2' => 'required_if:show_facebook,true|nullable|string',
+            'facebook_embed_1' => 'nullable|string',
+            'facebook_embed_2' => 'nullable|string',
             
-            'twitter_embed_1' => 'required_if:show_twitter,true|nullable|string',
-            'twitter_embed_2' => 'required_if:show_twitter,true|nullable|string',
+            'twitter_embed_1' => 'nullable|string',
+            'twitter_embed_2' => 'nullable|string',
         ], [
             'koordinat_map.regex' => 'Format koordinat tidak valid. Contoh yang benar: -7.0270059, 112.7483669',
-            'instagram_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika Instagram ditampilkan.',
-            'instagram_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika Instagram ditampilkan.',
-            'tiktok_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika TikTok ditampilkan.',
-            'tiktok_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika TikTok ditampilkan.',
-            'youtube_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika YouTube ditampilkan.',
-            'youtube_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika YouTube ditampilkan.',
-            'facebook_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika Facebook ditampilkan.',
-            'facebook_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika Facebook ditampilkan.',
-            'twitter_embed_1.required_if' => 'Kode Embed 1 wajib diisi jika X (Twitter) ditampilkan.',
-            'twitter_embed_2.required_if' => 'Kode Embed 2 wajib diisi jika X (Twitter) ditampilkan.',
         ]);
+
+        // Explicitly cast boolean fields in case they are sent as strings
+        $validated['show_instagram'] = filter_var($request->show_instagram, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_tiktok'] = filter_var($request->show_tiktok, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_youtube'] = filter_var($request->show_youtube, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_facebook'] = filter_var($request->show_facebook, FILTER_VALIDATE_BOOLEAN);
+        $validated['show_twitter'] = filter_var($request->show_twitter, FILTER_VALIDATE_BOOLEAN);
+
+        if ($validated['show_facebook'] ?? false) {
+            if (empty($validated['facebook_embed_1']) && empty($validated['facebook_embed_2']) && empty($validated['facebook_url'])) {
+                throw ValidationException::withMessages([
+                    'facebook_embed_1' => ['Isi kode embed Facebook atau tambahkan tautan Facebook jika Facebook ditampilkan di Widget.'],
+                ]);
+            }
+        }
+
+        if ($validated['show_youtube'] ?? false) {
+            if (empty($validated['youtube_embed_1']) && empty($validated['youtube_embed_2'])) {
+                throw ValidationException::withMessages([
+                    'youtube_embed_1' => ['Isi kode embed YouTube jika YouTube ditampilkan di Widget.'],
+                ]);
+            }
+        }
+
+        if ($validated['show_twitter'] ?? false) {
+            if (empty($validated['twitter_embed_1']) && empty($validated['twitter_embed_2'])) {
+                throw ValidationException::withMessages([
+                    'twitter_embed_1' => ['Isi kode embed X (Twitter) jika X (Twitter) ditampilkan di Widget.'],
+                ]);
+            }
+        }
 
         PengaturanKontak::updateOrCreate(
             ['id' => 1],

@@ -66,19 +66,25 @@ const form = ref({
 // Social Media Tabs State
 const socialTabs = computed(() => {
   const tabs = [];
-  if (kontak.value.show_instagram !== false && (kontak.value.instagram_embed_1 || kontak.value.instagram_embed_2)) 
+  
+  const isShow = (val: any) => {
+    if (val === undefined || val === null) return true; // Default to true if not set yet
+    return val === 1 || val === '1' || val === true || val === 'true';
+  };
+
+  if (isShow(kontak.value.show_instagram) && (kontak.value.instagram_embed_1 || kontak.value.instagram_embed_2)) 
     tabs.push({ id: 'instagram', name: 'Instagram', icon: IconBrandInstagram, color: 'text-[#E4405F]' });
   
-  if (kontak.value.show_tiktok !== false && (kontak.value.tiktok_embed_1 || kontak.value.tiktok_embed_2)) 
+  if (isShow(kontak.value.show_tiktok) && (kontak.value.tiktok_embed_1 || kontak.value.tiktok_embed_2)) 
     tabs.push({ id: 'tiktok', name: 'TikTok', icon: IconBrandTiktok, color: 'text-black' });
     
-  if (kontak.value.show_youtube !== false && (kontak.value.youtube_embed_1 || kontak.value.youtube_embed_2)) 
+  if (isShow(kontak.value.show_youtube) && (kontak.value.youtube_embed_1 || kontak.value.youtube_embed_2)) 
     tabs.push({ id: 'youtube', name: 'YouTube', icon: IconBrandYoutube, color: 'text-[#FF0000]' });
     
-  if (kontak.value.show_facebook !== false && (kontak.value.facebook_embed_1 || kontak.value.facebook_embed_2)) 
+  if (isShow(kontak.value.show_facebook) && (kontak.value.facebook_embed_1 || kontak.value.facebook_embed_2 || kontak.value.facebook_url)) 
     tabs.push({ id: 'facebook', name: 'Facebook', icon: IconBrandFacebook, color: 'text-[#1877F2]' });
     
-  if (kontak.value.show_twitter !== false && (kontak.value.twitter_embed_1 || kontak.value.twitter_embed_2)) 
+  if (isShow(kontak.value.show_twitter) && (kontak.value.twitter_embed_1 || kontak.value.twitter_embed_2)) 
     tabs.push({ id: 'twitter', name: 'X (Twitter)', icon: IconBrandX, color: 'text-black' });
     
   return tabs;
@@ -93,6 +99,126 @@ watch(socialTabs, (newTabs) => {
   }
 }, { immediate: true });
 
+watch(activeSocialTab, (newTab) => {
+  if (newTab === 'twitter') {
+    setTimeout(() => {
+      if ((window as any).twttr && (window as any).twttr.widgets) {
+        (window as any).twttr.widgets.load();
+      }
+    }, 100);
+  }
+  if (newTab === 'facebook') {
+    setTimeout(() => {
+      if ((window as any).FB && (window as any).FB.XFBML) {
+        (window as any).FB.XFBML.parse();
+      }
+    }, 100);
+  }
+});
+
+const renderEmbed = (input: string) => {
+  if (!input) return '';
+  const str = input.trim();
+  
+  let extractedUrl = str;
+  if (str.startsWith('<')) {
+    // If it's already an iframe, return as is
+    if (str.match(/<iframe/i)) {
+      return str; 
+    }
+    
+    // For Facebook and Twitter, if they provide HTML (like blockquote or div), 
+    // we should return it directly because we have their SDKs loaded.
+    if (str.match(/twitter-tweet/i) || str.match(/fb-post|fb-video|fb-page/i) || str.includes('fb-xfbml-parse-ignore')) {
+      return str;
+    }
+    
+    // Extract Instagram link from blockquote
+    const igMatch = str.match(/href=["'](https:\/\/(?:www\.)?instagram\.com\/[^"']+)["']/);
+    if (igMatch) extractedUrl = igMatch[1];
+
+    
+    // Extract TikTok link
+    const tkMatch = str.match(/cite=["'](https:\/\/(?:www\.)?tiktok\.com\/[^"']+)["']/);
+    if (tkMatch) extractedUrl = tkMatch[1];
+    
+    // If we didn't extract anything and it's raw HTML, just return it
+    if (extractedUrl === str) {
+      return str;
+    }
+  }
+  
+  if (extractedUrl.includes('instagram.com/')) {
+    let url = extractedUrl.split('?')[0]; 
+    if (!url.endsWith('/')) url += '/';
+    return `<iframe src="${url}embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" class="rounded-xl border border-gray-200 max-w-[400px]"></iframe>`;
+  }
+  
+  if (extractedUrl.includes('tiktok.com/')) {
+    const match = extractedUrl.match(/video\/(\d+)|photo\/(\d+)/);
+    const id = match ? (match[1] || match[2]) : null;
+    if (id) {
+      return `<iframe src="https://www.tiktok.com/embed/v2/${id}" width="100%" height="600" frameborder="0" scrolling="no" allow="encrypted-media;" class="rounded-xl border border-gray-200 max-w-[400px]"></iframe>`;
+    }
+  }
+
+  if (extractedUrl.includes('youtube.com/') || extractedUrl.includes('youtu.be/')) {
+    let videoId = '';
+    if (extractedUrl.includes('youtu.be/')) {
+      videoId = extractedUrl.split('youtu.be/')[1].split('?')[0];
+    } else if (extractedUrl.includes('youtube.com/watch')) {
+      try {
+        const urlObj = new URL(extractedUrl);
+        videoId = urlObj.searchParams.get('v') || '';
+      } catch (e) {}
+    } else if (extractedUrl.includes('youtube.com/shorts/')) {
+      videoId = extractedUrl.split('youtube.com/shorts/')[1].split('?')[0];
+    }
+    if (videoId) {
+      return `<iframe src="https://www.youtube.com/embed/${videoId}" width="100%" height="400" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-xl border border-gray-200 max-w-[400px]"></iframe>`;
+    }
+  }
+
+  if (extractedUrl.includes('facebook.com/')) {
+    let url = extractedUrl.trim();
+    
+    // Facebook Embed API (both iframe and SDK) strictly rejects mobile share shortlinks (share/r, share/v, share/p).
+    // It returns a blank white screen. We must warn the user to use the canonical URL.
+    if (/\/(?:share\/[rvp])\//i.test(url)) {
+      return `
+        <div class="w-full flex items-center justify-center bg-[#fff8e1] rounded-2xl border border-[#ffe082] min-h-[400px] max-w-[400px] p-6 text-center">
+          <div>
+            <div class="inline-flex items-center justify-center p-3 bg-[#ffecb3] rounded-full mb-4">
+              <span class="material-symbols-outlined text-[#f57c00] text-3xl">warning</span>
+            </div>
+            <h3 class="text-lg font-bold text-[#f57c00] mb-2">Tautan Facebook Tidak Mendukung Embed</h3>
+            <p class="text-[#5d4037] text-sm">
+              Tautan pendek dari tombol bagikan HP (<strong>share/r</strong>, <strong>share/v</strong>) diblokir oleh Facebook untuk fitur embed.<br><br>
+              Mohon salin <strong>URL asli (dari address bar browser di komputer)</strong> atau gunakan <strong>Kode Embed Iframe</strong> dari Facebook.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+    
+    // determine if it's a page or post
+    const isPage = !/\/(?:posts|photos|videos|reel|share\/p|share\/v|watch)\/|\/(?:permalink|story|photo|video)\.php|fbid=/i.test(url);
+    if (isPage) {
+      return `<iframe src="https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(url)}&tabs=timeline&width=500&height=600" width="100%" height="600" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" class="rounded-xl border border-gray-200 max-w-[400px]"></iframe>`;
+    }
+    
+    const isVideo = /\/(?:videos|reel|reels|watch|share\/v|share\/r)\/|\/(?:video)\.php/i.test(url);
+    if (isVideo) {
+      return `<iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=500" width="100%" height="700" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" class="rounded-xl border border-gray-200 max-w-[400px]"></iframe>`;
+    }
+    
+    // For all other posts, use the post.php iframe endpoint
+    return `<iframe src="https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url)}&show_text=true&width=500" width="100%" height="600" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" class="rounded-xl border border-gray-200 max-w-[400px]"></iframe>`;
+  }
+
+  // Remove the old Twitter URL iframe fallback here so Twitter ONLY renders native embeds
+  return extractedUrl;
+};
 
 const openLink = (url: string) => {
   window.open(url, '_blank');
@@ -125,6 +251,36 @@ onMounted(() => {
   document.addEventListener('click', closeDropdowns);
   // Initialize GSAP animations
   initHomeAnimations();
+
+  // Load Twitter SDK if not loaded
+  if (!document.getElementById('twitter-wjs')) {
+    const script = document.createElement('script');
+    script.id = 'twitter-wjs';
+    script.src = 'https://platform.twitter.com/widgets.js';
+    script.async = true;
+    script.onload = () => {
+      if (activeSocialTab.value === 'twitter' && (window as any).twttr) {
+        (window as any).twttr.widgets.load();
+      }
+    };
+    document.body.appendChild(script);
+  }
+
+  // Load Facebook SDK if not loaded
+  if (!document.getElementById('facebook-jssdk')) {
+    const script = document.createElement('script');
+    script.id = 'facebook-jssdk';
+    script.src = 'https://connect.facebook.net/id_ID/sdk.js#xfbml=1&version=v17.0';
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = 'anonymous';
+    script.onload = () => {
+      if (activeSocialTab.value === 'facebook' && (window as any).FB) {
+        (window as any).FB.XFBML.parse();
+      }
+    };
+    document.body.appendChild(script);
+  }
 });
 
 onUnmounted(() => {
@@ -306,8 +462,8 @@ onUnmounted(() => {
                  </div>
              </div>
              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <div v-if="kontak.instagram_embed_1" v-html="kontak.instagram_embed_1" class="w-full flex justify-center"></div>
-                <div v-if="kontak.instagram_embed_2" v-html="kontak.instagram_embed_2" class="w-full flex justify-center"></div>
+                <div v-if="kontak.instagram_embed_1" v-html="renderEmbed(kontak.instagram_embed_1)" class="w-full flex justify-center"></div>
+                <div v-if="kontak.instagram_embed_2" v-html="renderEmbed(kontak.instagram_embed_2)" class="w-full flex justify-center"></div>
              </div>
              <div v-if="kontak.instagram_url" class="flex justify-center mt-4">
                <PrimaryButton type="button" @click="openLink(kontak.instagram_url)">
@@ -329,8 +485,8 @@ onUnmounted(() => {
                  </div>
              </div>
              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <div v-if="kontak.tiktok_embed_1" v-html="kontak.tiktok_embed_1" class="w-full flex justify-center"></div>
-                <div v-if="kontak.tiktok_embed_2" v-html="kontak.tiktok_embed_2" class="w-full flex justify-center"></div>
+                <div v-if="kontak.tiktok_embed_1" v-html="renderEmbed(kontak.tiktok_embed_1)" class="w-full flex justify-center"></div>
+                <div v-if="kontak.tiktok_embed_2" v-html="renderEmbed(kontak.tiktok_embed_2)" class="w-full flex justify-center"></div>
              </div>
              <div v-if="kontak.tiktok_url" class="flex justify-center mt-4">
                <PrimaryButton type="button" @click="openLink(kontak.tiktok_url)">
@@ -352,8 +508,8 @@ onUnmounted(() => {
                  </div>
              </div>
              <div v-else class="grid grid-cols-1 gap-6 w-full justify-items-center">
-                <div v-if="kontak.youtube_embed_1" v-html="kontak.youtube_embed_1" class="w-full flex justify-center"></div>
-                <div v-if="kontak.youtube_embed_2" v-html="kontak.youtube_embed_2" class="w-full flex justify-center"></div>
+                <div v-if="kontak.youtube_embed_1" v-html="renderEmbed(kontak.youtube_embed_1)" class="w-full flex justify-center"></div>
+                <div v-if="kontak.youtube_embed_2" v-html="renderEmbed(kontak.youtube_embed_2)" class="w-full flex justify-center"></div>
              </div>
              <div v-if="kontak.youtube_url" class="flex justify-center mt-4">
                <PrimaryButton type="button" @click="openLink(kontak.youtube_url)">
@@ -375,8 +531,8 @@ onUnmounted(() => {
                  </div>
              </div>
              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <div v-if="kontak.facebook_embed_1" v-html="kontak.facebook_embed_1" class="w-full flex justify-center"></div>
-                <div v-if="kontak.facebook_embed_2" v-html="kontak.facebook_embed_2" class="w-full flex justify-center"></div>
+                <div v-if="kontak.facebook_embed_1" v-html="renderEmbed(kontak.facebook_embed_1)" class="w-full flex justify-center"></div>
+                <div v-if="kontak.facebook_embed_2" v-html="renderEmbed(kontak.facebook_embed_2)" class="w-full flex justify-center"></div>
              </div>
              <div v-if="kontak.facebook_url" class="flex justify-center mt-4">
                <PrimaryButton type="button" @click="openLink(kontak.facebook_url)">
@@ -398,8 +554,8 @@ onUnmounted(() => {
                  </div>
              </div>
              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full justify-items-center">
-                <div v-if="kontak.twitter_embed_1" v-html="kontak.twitter_embed_1" class="w-full flex justify-center"></div>
-                <div v-if="kontak.twitter_embed_2" v-html="kontak.twitter_embed_2" class="w-full flex justify-center"></div>
+                <div v-if="kontak.twitter_embed_1" v-html="renderEmbed(kontak.twitter_embed_1)" class="w-full flex justify-center"></div>
+                <div v-if="kontak.twitter_embed_2" v-html="renderEmbed(kontak.twitter_embed_2)" class="w-full flex justify-center"></div>
              </div>
              <div v-if="kontak.twitter_url" class="flex justify-center mt-4">
                <PrimaryButton type="button" @click="openLink(kontak.twitter_url)">
