@@ -22,10 +22,42 @@ import {
 import { initHomeAnimations } from '../animations/homeAnimations';
 import Navbar from '../Components/Navbar/Navbar.vue';
 import Footer from '../Components/Footer.vue';
+import UpButton from '../Components/UpButton.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
+import CardNews from '../Components/CardNews.vue'; // tambahkan ini
 
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+
+const FALLBACK_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'>
+  <rect width='600' height='400' fill='#e5e7eb'/>
+  <g fill='#9ca3af'>
+    <path d='M255 165h90l15 25h35a10 10 0 0 1 10 10v95a10 10 0 0 1-10 10H235a10 10 0 0 1-10-10v-95a10 10 0 0 1 10-10h35z' fill='none' stroke='#9ca3af' stroke-width='6'/>
+    <circle cx='300' cy='245' r='28' fill='none' stroke='#9ca3af' stroke-width='6'/>
+  </g>
+  <text x='300' y='320' font-family='sans-serif' font-size='18' fill='#9ca3af' text-anchor='middle'>Gambar tidak tersedia</text>
+</svg>`;
+const FALLBACK_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(FALLBACK_SVG)}`;
+
+const getImageUrl = (berita: any) => {
+    if (berita.thumbnail_url) return berita.thumbnail_url;
+    if (berita.thumbnail) {
+        return berita.thumbnail.startsWith('http') ? berita.thumbnail : '/storage/' + berita.thumbnail;
+    }
+    return FALLBACK_IMAGE;
+};
+
+// Sama seperti Index.vue & Detail.vue: fallback ke konten (strip HTML + potong)
+// kalau ringkasan/deskripsi/excerpt kosong
+const getDescription = (berita: any) => {
+    if (berita.ringkasan) return berita.ringkasan;
+    if (berita.deskripsi) return berita.deskripsi;
+    if (berita.excerpt) return berita.excerpt;
+    if (berita.konten) {
+        return berita.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...';
+    }
+    return '';
+};
 
 const props = defineProps<{
   pengumumanList: any[];
@@ -41,7 +73,9 @@ const kontak = computed(() => (page.props.kontak as any) || {});
 const formatDate = (dateString: string) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+  const tanggal = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+  const jam = new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit' }).format(date);
+  return `${tanggal} • ${jam.replace(':', '.')}`;
 };
 
 // State for mobile menu
@@ -193,26 +227,21 @@ onUnmounted(() => {
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 card-container" v-if="beritaTerkini && beritaTerkini.length > 0">
-        <div v-for="berita in beritaTerkini" :key="berita.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col card-item hover:-translate-y-1">
-          <div class="relative h-48 overflow-hidden bg-gray-100">
-            <img v-if="berita.thumbnail" :src="berita.thumbnail_url || (berita.thumbnail.startsWith('http') ? berita.thumbnail : '/storage/' + berita.thumbnail)" :alt="berita.judul" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-            <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
-              <span class="material-symbols-outlined text-4xl">image</span>
-            </div>
-          </div>
-          <div class="p-6 flex-1 flex flex-col">
-            <div class="flex items-center text-gray-500 text-xs mb-3 font-medium">
-              <IconCalendar class="w-4 h-4 mr-1.5" />
-              {{ formatDate(berita.published_at) }}
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
-              <a :href="`/berita/${berita.slug}`" class="hover:text-blue-600 transition-colors">{{ berita.judul }}</a>
-            </h3>
-            <p class="text-gray-600 text-sm line-clamp-2 mb-4 flex-1">
-              {{ (berita.konten ? berita.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...' : '') }}
-            </p>
-          </div>
-        </div>
+        <Link
+          v-for="berita in beritaTerkini"
+          :key="berita.id"
+          :href="`/berita/${berita.slug}`"
+          class="block h-full rounded-3xl transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-xl cursor-pointer card-item"
+        >
+          <CardNews
+            :title="berita.judul"
+            :description="getDescription(berita)"
+            :date="formatDate(berita.published_at)"
+            :author="berita.penulis || 'Humas DPMD'"
+            :tags="berita.tags"
+            :image="getImageUrl(berita)"
+          />
+        </Link>
       </div>
       <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
         Belum ada berita terbaru.
@@ -498,5 +527,7 @@ onUnmounted(() => {
 
     <!-- FOOTER -->
     <Footer />
+
+    <UpButton />
   </div>
 </template>

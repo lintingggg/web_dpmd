@@ -1,8 +1,7 @@
 <template>
   <div class="w-full h-full flex flex-col rounded-3xl bg-white border border-gray-100 shadow-sm overflow-hidden">
 
-    <!-- Gambar: flex-1 supaya ikut membesar saat kartu di-stretch grid
-         (mis. side card disamakan tinggi dengan hero) -->
+    <!-- Gambar -->
     <div class="relative flex-1 min-h-[180px]">
       <img
         :src="resolvedImage"
@@ -12,19 +11,17 @@
       >
     </div>
 
-    <!-- Konten: shrink-0 supaya tinggi teks tetap natural, ruang ekstra
-         dari stretching diserap gambar di atas -->
+    <!-- Konten -->
     <div class="flex flex-col shrink-0 p-5">
       <h3 class="text-base font-bold line-clamp-2 min-h-[3rem] text-neutral-900 mb-1.5">
         {{ title }}
       </h3>
 
-      <p v-if="description" class="text-sm text-neutral-500 line-clamp-1 mb-3">
+      <p v-if="description" class="text-sm text-neutral-500 line-clamp-2 mb-3">
         {{ description }}
       </p>
 
-      <!-- Tagging (poin 3): sebelumnya cuma ada di hero, sekarang CardNews
-           juga support -> muncul di side card, grid bawah, & sidebar detail -->
+      <!-- Tagging -->
       <div v-if="tags?.length" class="flex flex-wrap gap-1.5 mb-3">
         <span
           v-for="tag in tags"
@@ -33,10 +30,10 @@
         >#{{ tag }}</span>
       </div>
 
-      <!-- Footer: penulis + tanggal (poin 4) + tombol panah bulat -->
+      <!-- Footer: tanggal saja (nama admin/author dihapus) + tombol panah bulat -->
       <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
         <span class="text-xs tracking-wide text-slate-500 truncate">
-          <template v-if="author">{{ author }} • </template>{{ date }}
+          {{ date }}
         </span>
 
         <button
@@ -63,14 +60,12 @@ const props = defineProps({
   description: { type: String, default: '' },
   image: { type: String, default: '' },
   date: { type: String, default: '' },
-  author: { type: String, default: '' },
+  author: { type: String, default: '' }, // masih diterima biar tidak break parent, tapi tidak ditampilkan
   tags: { type: Array as PropType<string[]>, default: () => [] },
   showButton: { type: Boolean, default: true },
   buttonText: { type: String, default: 'Selengkapnya' },
 });
 
-// Placeholder inline SVG (data URI) -> tidak pernah 404 karena tidak minta
-// apa pun ke server.
 const FALLBACK_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'>
   <rect width='600' height='400' fill='#e5e7eb'/>
   <g fill='#9ca3af'>
