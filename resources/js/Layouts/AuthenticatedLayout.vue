@@ -41,12 +41,19 @@ import GlobalToast from '@/Components/GlobalToast.vue';
                         <span class="material-symbols-outlined transition-colors" :style="route().current('admin.pengumuman.*') || route().current('admin.pengumuman.index') ? 'font-variation-settings: \'FILL\' 1;' : ''">campaign</span>
                         Pengumuman
                     </Link>
-                    <Link :href="route('admin.kontak-medsos')" 
+                     <Link :href="route('admin.kontak-medsos')" 
                         class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
                         :class="route().current('admin.kontak-medsos') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
                     >
                         <span class="material-symbols-outlined transition-colors" :style="route().current('admin.kontak-medsos') ? 'font-variation-settings: \'FILL\' 1;' : ''">contact_phone</span>
                         Kontak & Medsos
+                    </Link>
+                    <Link :href="route('admin.pengaturan-beranda')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.pengaturan-beranda') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                    >
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.pengaturan-beranda') ? 'font-variation-settings: \'FILL\' 1;' : ''">home</span>
+                        Hero Section Beranda
                     </Link>
                     <div>
                         <button @click="profilDinasOpen = !profilDinasOpen" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
