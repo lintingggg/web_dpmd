@@ -380,7 +380,7 @@ onUnmounted(() => {
     </section>
 
     <!-- PENGUMUMAN TERKINI -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
+    <!-- <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
         <div>
           <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Pengumuman Terkini</h2>
@@ -417,7 +417,7 @@ onUnmounted(() => {
       <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
         Belum ada pengumuman terbaru.
       </div>
-    </section>
+    </section> -->
 
     <!-- SOSIAL MEDIA -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">

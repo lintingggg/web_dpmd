@@ -158,15 +158,6 @@ const shareNews = async () => {
                         </span>
                     </div>
 
-                    <!-- Judul + garis aksen -->
-                    <h1 class="font-['Plus_Jakarta_Sans'] text-3xl md:text-[2.15rem] leading-tight font-bold text-[#0f172a] mb-4">
-                        {{ berita.judul }}
-                    </h1>
-                    <div class="w-14 h-1 bg-blue-600 rounded-full mb-6"></div>
-                    <h2 class="font-serif text-3xl md:text-[2.15rem] leading-tight font-bold text-slate-900 mb-4">
-                        {{ berita.judul }}
-                    </h2>
-                    <div class="w-14 h-1 bg-blue-700 rounded-full mb-6"></div>
 
                     <!-- Gambar utama -->
                     <div class="rounded-xl overflow-hidden mb-8 shadow-sm">

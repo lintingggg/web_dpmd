@@ -49,7 +49,7 @@ class ProfilDinasController extends Controller
         $rules = match($section) {
             'sambutan'  => [
                 'kadis_nama'    => 'nullable|string|max:255',
-                'kadis_nip'     => 'nullable|string|max:50',
+                'kadis_nip'     => ['nullable', 'string', 'min:18', 'max:50', 'regex:/^[0-9\s]+$/'],
                 'sambutan_teks' => 'nullable|string',
                 'kadis_foto'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             ],
@@ -76,7 +76,12 @@ class ProfilDinasController extends Controller
             default => [],
         };
 
-        $validated = $request->validate($rules);
+        $messages = [
+            'kadis_nip.regex' => 'NIP hanya boleh berisi angka dan spasi.',
+            'kadis_nip.min' => 'NIP harus berisi minimal 18 karakter.',
+        ];
+
+        $validated = $request->validate($rules, $messages);
 
         // Sanitasi HTML
         $htmlFields = [

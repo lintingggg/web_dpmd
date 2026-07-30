@@ -11,20 +11,9 @@ const breadcrumbItems = [
   { label: 'Sekretariat' },
 ];
 
-const dasarFungsi = {
-  deskripsi: "Sekretariat mempunyai tugas melaksanakan pengelolaan surat menyurat, kearsipan, administrasi kepegawaian, keuangan, perlengkapan dan rumah tangga kantor serta pengkoordinasian penyusunan rencana program, evaluasi dan pelaporan.",
-  kalimatPengantar: "Dalam melaksanakan tugas tersebut, Sekretariat menyelenggarakan fungsi:",
-  listFungsi: [
-    "Pelaksanaan pengkoordinasian penyusunan rencana program dan kegiatan;",
-    "Pelayanan administrasi umum, ketatausahaan, kearsipan dan dokumentasi dalam rangka menunjang kelancaran pelaksanaan tugas;",
-    "Pengelolaan administrasi keuangan dan urusan kepegawaian;",
-    "Pengelolaan urusan rumah tangga, perlengkapan dan inventaris kantor;",
-    "Pelayanan administrasi perjalanan dinas;",
-    "Pelaksanaan pengkoordinasian bidang-bidang di lingkup Dinas Pemberdayaan Masyarakat dan Desa;",
-    "Pengkoordinasian dan penyusunan laporan hasil pelaksanaan program dan kegiatan; dan",
-    "Pelaksanaan tugas kedinasan lain yang diberikan Kepala Dinas sesuai dengan bidang tugasnya."
-  ]
-};
+const props = defineProps<{
+    bidang: any;
+}>();
 </script>
 
 <template>
@@ -42,24 +31,14 @@ const dasarFungsi = {
     <main class="container page-content">
         <div class="py-2">
             
-            <p class="text-left text-slate-700 mb-10 text-lg leading-relaxed">
-                {{ dasarFungsi.deskripsi }}
-            </p>
-
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 mb-16">
                 <!-- Garis kecil -->
                 <hr class="w-16 h-1 bg-blue-500 border-0 rounded mb-6">
                 
                 <!-- Gambar setelah garis kecil -->
-                <img src="https://placehold.co/800x400?text=Sekretariat" alt="Sekretariat" class="w-full h-auto rounded-xl mb-8 object-cover bg-slate-100 min-h-[200px]" />
+                <img :src="bidang?.sekretariat_gambar ? '/storage/' + bidang.sekretariat_gambar : 'https://placehold.co/800x400?text=Sekretariat'" alt="Sekretariat" class="w-full h-auto rounded-xl mb-8 object-cover bg-slate-100 min-h-[200px]" />
 
-                <div class="text-slate-700 leading-relaxed text-lg text-left">
-                    <p class="mb-3 font-medium">{{ dasarFungsi.kalimatPengantar }}</p>
-                    <ol class="list-decimal pl-5 space-y-2">
-                      <li v-for="(fungsi, index) in dasarFungsi.listFungsi" :key="index">
-                        {{ fungsi }}
-                      </li>
-                    </ol>
+                <div class="text-slate-700 leading-relaxed text-lg text-left prose max-w-none" v-html="bidang?.sekretariat_konten || '<p>Belum ada konten untuk bidang ini.</p>'">
                 </div>
             </div>
 

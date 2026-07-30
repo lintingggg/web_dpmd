@@ -135,9 +135,10 @@ const formatDate = (dateString) => {
                             <div v-if="form.errors.kadis_nama" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kadis_nama }}</div>
                         </div>
                         <div>
-                            <label class="block text-[14px] font-bold text-[#373f50] mb-2">NIP / Jabatan Tambahan</label>
-                            <input v-model="form.kadis_nip" type="text" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
+                            <label class="block text-[14px] font-bold text-[#373f50] mb-2">NIP Kepala Dinas</label>
+                            <input v-model="form.kadis_nip" type="text" placeholder="Contoh: 19900101 202012 1 001" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
                             <div v-if="form.errors.kadis_nip" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kadis_nip }}</div>
+                            <p v-else class="text-[12px] text-[#9499a3] mt-1.5 font-medium">Hanya angka dan spasi (minimal 18 karakter).</p>
                         </div>
                     </div>
 

@@ -11,18 +11,9 @@ const breadcrumbItems = [
   { label: 'Lembaga Kemasyarakatan' },
 ];
 
-const dasarFungsi = {
-  deskripsi: "Bidang Kelembagaan dan Adat Istiadat mempunyai tugas melaksanakan penyusunan bahan perumusan kebijakan teknis, pembinaan kelembagaan desa, dan pelestarian adat istiadat serta budaya masyarakat desa.",
-  kalimatPengantar: "Dalam melaksanakan tugas tersebut, Bidang Kelembagaan dan Adat Istiadat menyelenggarakan fungsi:",
-  listFungsi: [
-    "Penyusunan bahan perumusan kebijakan teknis kelembagaan desa dan adat istiadat;",
-    "Pelaksanaan fasilitasi pembentukan dan pengembangan lembaga adat desa;",
-    "Pelaksanaan pembinaan nilai-nilai sosial budaya dan adat istiadat masyarakat desa;",
-    "Pelaksanaan inventarisasi dan pelestarian aset budaya serta adat istiadat desa;",
-    "Pelaksanaan koordinasi dengan tokoh adat dan lembaga terkait; dan",
-    "Pelaksanaan tugas kedinasan lain yang diberikan Kepala Dinas sesuai dengan bidang tugasnya."
-  ]
-};
+const props = defineProps<{
+    bidang: any;
+}>();
 </script>
 
 <template>
@@ -40,24 +31,14 @@ const dasarFungsi = {
     <main class="container page-content">
         <div class="py-2">
             
-            <p class="text-left text-slate-700 mb-10 text-lg leading-relaxed">
-                {{ dasarFungsi.deskripsi }}
-            </p>
-
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 mb-16">
                 <!-- Garis kecil -->
                 <hr class="w-16 h-1 bg-blue-500 border-0 rounded mb-6">
                 
                 <!-- Gambar setelah garis kecil -->
-                <img src="https://placehold.co/800x400?text=Pemberdayaan+Lembaga+Kemasyarakatan" alt="Pemberdayaan Lembaga Kemasyarakatan" class="w-full h-auto rounded-xl mb-8 object-cover bg-slate-100 min-h-[200px]" />
+                <img :src="bidang?.lembaga_gambar ? '/storage/' + bidang.lembaga_gambar : 'https://placehold.co/800x400?text=Pemberdayaan+Lembaga+Kemasyarakatan'" alt="Pemberdayaan Lembaga Kemasyarakatan" class="w-full h-auto rounded-xl mb-8 object-cover bg-slate-100 min-h-[200px]" />
 
-                <div class="text-slate-700 leading-relaxed text-lg text-left">
-                    <p class="mb-3 font-medium">{{ dasarFungsi.kalimatPengantar }}</p>
-                    <ol class="list-decimal pl-5 space-y-2">
-                      <li v-for="(fungsi, index) in dasarFungsi.listFungsi" :key="index">
-                        {{ fungsi }}
-                      </li>
-                    </ol>
+                <div class="text-slate-700 leading-relaxed text-lg text-left prose max-w-none" v-html="bidang?.lembaga_konten || '<p>Belum ada konten untuk bidang ini.</p>'">
                 </div>
             </div>
 
