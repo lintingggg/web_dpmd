@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pengaturan_kontak', function (Blueprint $table) {
-            $table->boolean('show_instagram')->default(true);
-            $table->boolean('show_tiktok')->default(true);
+        Schema::table('profil_dinas', function (Blueprint $table) {
+            $table->string('maklumat_dokumen')->nullable()->after('maklumat_teks');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pengaturan_kontak', function (Blueprint $table) {
-            $table->dropColumn(['show_instagram', 'show_tiktok']);
+        Schema::table('profil_dinas', function (Blueprint $table) {
+            $table->dropColumn('maklumat_dokumen');
         });
     }
 };

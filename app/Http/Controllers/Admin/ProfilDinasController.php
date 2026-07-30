@@ -69,6 +69,7 @@ class ProfilDinasController extends Controller
             ],
             'maklumat'  => [
                 'maklumat_teks' => 'nullable|string',
+                'maklumat_dokumen' => 'nullable|file|mimes:pdf|max:10240',
             ],
             'motto'     => [
                 'motto_teks' => 'nullable|string',
@@ -108,6 +109,13 @@ class ProfilDinasController extends Controller
                 Storage::disk('public')->delete($profil->struktur_gambar);
             }
             $validated['struktur_gambar'] = $request->file('struktur_gambar')->store('profil-dinas/struktur', 'public');
+        }
+
+        if ($request->hasFile('maklumat_dokumen')) {
+            if ($profil->maklumat_dokumen) {
+                Storage::disk('public')->delete($profil->maklumat_dokumen);
+            }
+            $validated['maklumat_dokumen'] = $request->file('maklumat_dokumen')->store('profil-dinas/dokumen', 'public');
         }
 
         // Simpan

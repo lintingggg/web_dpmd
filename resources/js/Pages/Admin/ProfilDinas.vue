@@ -47,6 +47,7 @@ const form = useForm({
 
     // Maklumat
     maklumat_teks: props.profil?.maklumat_teks || '',
+    maklumat_dokumen: null,
 
     // Motto
     motto_teks: props.profil?.motto_teks || '',
@@ -55,6 +56,7 @@ const form = useForm({
 // Photo Previews
 const fotoKadisPreview = ref(props.profil?.kadis_foto ? `/storage/${props.profil.kadis_foto}` : 'https://ui-avatars.com/api/?name=Kadis&background=c8cbd0&color=ffffff&size=128');
 const strukturPreview = ref(props.profil?.struktur_gambar ? `/storage/${props.profil.struktur_gambar}` : 'https://placehold.co/400x300/c8cbd0/ffffff?text=Bagan+Struktur');
+const maklumatDokumenName = ref(props.profil?.maklumat_dokumen ? 'Dokumen Tersimpan: ' + props.profil.maklumat_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
 
 const handleFileUpload = (e, field) => {
     const file = e.target.files[0];
@@ -62,6 +64,11 @@ const handleFileUpload = (e, field) => {
 
     form[field] = file;
     
+    if (field === 'maklumat_dokumen') {
+        maklumatDokumenName.value = file.name;
+        return;
+    }
+
     // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -236,7 +243,25 @@ const formatDate = (dateString) => {
                 <!-- MAKLUMAT -->
                 <div v-else-if="currentSection === 'maklumat'" class="space-y-6">
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Maklumat Pelayanan</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-[14px] font-bold text-[#373f50]">Dokumen Maklumat Pelayanan</label>
+                            <span class="text-[12px] font-medium text-[#646a79]">Hanya format PDF (Max 10MB)</span>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div @click="triggerFileInput('maklumat_dokumen_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
+                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
+                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
+                                </p>
+                                <p class="text-[12px] text-[#9499a3] font-bold text-blue-600 mt-2">{{ maklumatDokumenName }}</p>
+                                <input type="file" id="maklumat_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'maklumat_dokumen')" />
+                            </div>
+                        </div>
+                        <div v-if="form.errors.maklumat_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.maklumat_dokumen }}</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Teks Maklumat Pelayanan</label>
                         <TipTapEditor v-model="form.maklumat_teks" />
                         <div v-if="form.errors.maklumat_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.maklumat_teks }}</div>
                     </div>

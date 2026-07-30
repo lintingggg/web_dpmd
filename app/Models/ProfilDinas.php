@@ -24,5 +24,6 @@ class ProfilDinas extends Model
         'kode_etik_teks',
         'maklumat_teks',
         'motto_teks',
+        'maklumat_dokumen',
     ];
 }
