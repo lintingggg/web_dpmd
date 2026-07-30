@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 
+
 defineProps({
     status: {
         type: String,
@@ -29,301 +30,481 @@ const submit = () => {
 <template>
     <Head title="Admin Login - DPMD Kabupaten Bangkalan" />
 
-    <div style="font-family: 'Plus Jakarta Sans', sans-serif;" class="min-h-screen flex flex-col md:flex-row bg-white">
+    <div class="page">
 
-        <!-- ===== LEFT SIDE: Login Form ===== -->
-        <main class="w-full md:w-[50%] min-h-screen flex flex-col bg-white relative z-10">
+        <!-- LEFT PANEL  -->
+        <div class="side">
+            <div class="side-inner">
+                <!-- <div class="side-brand">
+                    <img
+                        src="/assets/logo-dpmd-bangkalan.png"
+                        alt="Logo Kabupaten Bangkalan"
+                        class="side-logo"/>
+                    <span>DPMD</span>
+                </div> -->
 
-            <!-- Top: Header Logo -->
-            <header class="flex items-center gap-3 px-8 md:px-16 pt-8 md:pt-10">
-                <img
-                    alt="Logo Kabupaten Bangkalan"
-                    class="h-11 w-11 object-contain flex-shrink-0"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjLxilI_cSxKSo4h1aaJThm8S1k7DCg0KOnsOqQej3IGqZKpnsNWvd84YWHm39prWNuO9EvpBxHT1MMlFEPWm0CkecLFX8wg9l-gmbibd8G3PXgfRCJJijOJLIPct-XmvjcHgLffB-8BG_HWEnlVeoAO3M__d83gQPynBWrHP7C3V3gXDCrwODkZCKXeI1B9zO1U7Ex1upUhKwP23p1VDep4naCOqSbWXi-P7s2tQDYK33NKS-U0Ga"
-                />
-                <div class="flex flex-col leading-tight">
-                    <span style="font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px;">Pemerintah Kabupaten Bangkalan</span>
-                    <span style="font-size: 10px; font-weight: 500; color: #646a79; letter-spacing: 1.5px;" class="uppercase">Dinas Pemberdayaan Masyarakat dan Desa</span>
+                <!-- Logo -->
+                <div class="side-logo-wrap">
+                    <div class="side-logo-ring">
+                        <img
+                        src="/assets/logo-dpmd-bangkalan.png"
+                        alt="Logo Kabupaten Bangkalan"
+                        class="side-logo"
+                        />
+                    </div>
                 </div>
-            </header>
 
-            <!-- Middle: Form (takes remaining vertical space, centered) -->
-            <div class="flex-1 flex flex-col justify-center px-8 md:px-16 py-10">
-                <div class="w-full max-w-[430px]">
+                <div class="side-text">
+                    <h2>Sistem Informasi DPMD</h2>
+                    <p>Portal administrasi Dinas Pemberdayaan Masyarakat dan Desa Kabupaten Bangkalan. Masuk untuk mengelola data desa dan program pemberdayaan masyarakat.</p>
+                </div>
+            </div>
 
-                    <!-- Heading -->
-                    <div class="mb-8">
-                        <h1 style="font-size: 36px; font-weight: 700; color: #0f172a; letter-spacing: -0.75px; line-height: 1.15;" class="mb-2">
-                            Admin Portal
-                        </h1>
-                        <p style="font-size: 16px; font-weight: 500; color: #646a79; line-height: 1.5;">
-                            Silakan masuk menggunakan kredensial admin Anda.
-                        </p>
+            <div class="side-glow"></div>
+        </div>
+
+        <!-- RIGHT PANEL — form -->
+        <div class="form-side">
+            <div class="form-wrap">
+
+                <div class="mobile-brand">
+                    <img
+                        alt="Logo Kabupaten Bangkalan"
+                        src="/assets/logo-dpmd-bangkalan.png"
+                    />
+                    <span>DPMD Kabupaten Bangkalan</span>
+                </div>
+
+                <div class="form-head">
+                    <h1>Selamat datang kembali</h1>
+                    <p>Masuk ke panel admin untuk melanjutkan.</p>
+                </div>
+
+                <div v-if="status" class="notice">
+                    {{ status }}
+                </div>
+
+                <form @submit.prevent="submit" class="form">
+
+                    <div class="field">
+                        <label for="email">Username atau email</label>
+                        <input
+                            v-model="form.email"
+                            type="email"
+                            id="email"
+                            placeholder="nama@dpmd.bangkalankab.go.id"
+                            required
+                            autofocus
+                        />
                     </div>
 
-                    <!-- Status message -->
-                    <div v-if="status" class="mb-5 p-4 rounded-2xl flex items-start gap-3" style="background: #eff6ff; border: 1px solid #bfdbfe;">
-                        <p style="font-size: 14px; font-weight: 500; color: #1e40af; line-height: 1.5;">
-                            {{ status }}
-                        </p>
-                    </div>
-
-                    <!-- Form -->
-                    <form @submit.prevent="submit" class="space-y-4">
-
-                        <!-- Email Field -->
-                        <div>
-                            <label
-                                for="email"
-                                style="display: block; font-size: 14px; font-weight: 500; color: #373f50; margin-bottom: 6px;"
-                            >
-                                Username atau Email
-                            </label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined"
-                                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #9499a3; pointer-events: none;"
-                                >person</span>
-                                <input
-                                    v-model="form.email"
-                                    type="email"
-                                    id="email"
-                                    placeholder="Masukkan username"
-                                    required
-                                    style="
-                                        width: 100%;
-                                        height: 48px;
-                                        padding-left: 48px;
-                                        padding-right: 16px;
-                                        background: #ffffff;
-                                        border: 1.5px solid #e3e5e7;
-                                        border-radius: 16px;
-                                        font-size: 14px;
-                                        font-weight: 500;
-                                        color: #0f172a;
-                                        outline: none;
-                                        transition: border-color 0.2s ease;
-                                        box-shadow: 0 1px 3px rgba(15,23,42,0.06);
-                                        font-family: 'Plus Jakarta Sans', sans-serif;
-                                    "
-                                    @focus="$event.target.style.borderColor = '#0f172a'"
-                                    @blur="$event.target.style.borderColor = '#e3e5e7'"
-                                />
-                            </div>
-                            <p v-if="form.errors.email" style="margin-top: 6px; font-size: 13px; color: #ba1a1a;">{{ form.errors.email }}</p>
-                        </div>
-
-                        <!-- Password Field -->
-                        <div>
-                            <label
-                                for="password"
-                                style="display: block; font-size: 14px; font-weight: 500; color: #373f50; margin-bottom: 6px;"
-                            >
-                                Kata Sandi
-                            </label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined"
-                                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #9499a3; pointer-events: none;"
-                                >lock</span>
-                                <input
-                                    v-model="form.password"
-                                    :type="showPassword ? 'text' : 'password'"
-                                    id="password"
-                                    placeholder="••••••••"
-                                    required
-                                    style="
-                                        width: 100%;
-                                        height: 48px;
-                                        padding-left: 48px;
-                                        padding-right: 52px;
-                                        background: #ffffff;
-                                        border: 1.5px solid #e3e5e7;
-                                        border-radius: 16px;
-                                        font-size: 14px;
-                                        font-weight: 500;
-                                        color: #0f172a;
-                                        outline: none;
-                                        transition: border-color 0.2s ease;
-                                        box-shadow: 0 1px 3px rgba(15,23,42,0.06);
-                                        font-family: 'Plus Jakarta Sans', sans-serif;
-                                    "
-                                    @focus="$event.target.style.borderColor = '#0f172a'"
-                                    @blur="$event.target.style.borderColor = '#e3e5e7'"
-                                />
-                                <button
-                                    type="button"
-                                    @click="togglePassword"
-                                    style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #9499a3; transition: color 0.2s ease; padding: 4px;"
-                                    @mouseenter="$event.currentTarget.style.color = '#0f172a'"
-                                    @mouseleave="$event.currentTarget.style.color = '#9499a3'"
-                                >
-                                    <span class="material-symbols-outlined" style="font-size: 20px;">
-                                        {{ showPassword ? 'visibility' : 'visibility_off' }}
-                                    </span>
-                                </button>
-                            </div>
-                            <p v-if="form.errors.password" style="margin-top: 6px; font-size: 13px; color: #ba1a1a;">{{ form.errors.password }}</p>
-                        </div>
-
-                        <!-- Remember Me & Forgot Password -->
-                        <div class="flex items-center justify-between" style="padding: 4px 0;">
-                            <label class="flex items-center gap-2 cursor-pointer" style="user-select: none;">
-                                <div class="relative flex items-center justify-center">
-                                    <input
-                                        v-model="form.remember"
-                                        type="checkbox"
-                                        class="peer"
-                                        style="
-                                            appearance: none;
-                                            -webkit-appearance: none;
-                                            width: 18px;
-                                            height: 18px;
-                                            border: 1.5px solid #c8cbd0;
-                                            border-radius: 4px;
-                                            background: #ffffff;
-                                            cursor: pointer;
-                                            transition: all 0.2s ease;
-                                            flex-shrink: 0;
-                                        "
-                                        @change="$event.target.style.background = $event.target.checked ? '#0f172a' : '#ffffff'; $event.target.style.borderColor = $event.target.checked ? '#0f172a' : '#c8cbd0';"
-                                    />
-                                    <span
-                                        class="material-symbols-outlined peer-checked:opacity-100 opacity-0 pointer-events-none absolute"
-                                        style="font-size: 13px; color: #ffffff; font-variation-settings: 'FILL' 1; transition: opacity 0.15s ease;"
-                                    >check</span>
-                                </div>
-                                <span style="font-size: 14px; font-weight: 500; color: #4d5464;">Ingat Saya</span>
-                            </label>
-                            <Link
-                                :href="route('password.request')"
-                                style="font-size: 14px; font-weight: 700; color: #0f172a; text-decoration: none;"
-                                @mouseenter="$event.target.style.textDecoration = 'underline'"
-                                @mouseleave="$event.target.style.textDecoration = 'none'"
-                            >
-                                Lupa kata sandi?
-                            </Link>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div style="padding-top: 4px;">
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                style="
-                                    width: 100%;
-                                    height: 48px;
-                                    background: #0f172a;
-                                    color: #ffffff;
-                                    border: none;
-                                    border-radius: 9999px;
-                                    font-size: 15px;
-                                    font-weight: 700;
-                                    letter-spacing: -0.3px;
-                                    cursor: pointer;
-                                    transition: background 0.2s ease, opacity 0.2s ease;
-                                    box-shadow: 0 4px 16px rgba(15,23,42,0.18);
-                                    font-family: 'Plus Jakarta Sans', sans-serif;
-                                "
-                                @mouseenter="!form.processing && ($event.target.style.background = '#222a3d')"
-                                @mouseleave="!form.processing && ($event.target.style.background = '#0f172a')"
-                            >
-                                {{ form.processing ? 'Memproses...' : 'Masuk' }}
+                    <div class="field">
+                        <label for="password">Kata sandi</label>
+                        <div class="password-box">
+                            <input
+                                v-model="form.password"
+                                :type="showPassword ? 'text' : 'password'"
+                                id="password"
+                                placeholder="Masukkan kata sandi"
+                                required
+                            />
+                            <button type="button" class="toggle" @click="togglePassword">
+                                {{ showPassword ? 'Sembunyikan' : 'Lihat' }}
                             </button>
                         </div>
+                    </div>
 
-                    </form>
+                    <p v-if="form.errors.email" class="error">{{ form.errors.email }}</p>
+                    <p v-if="form.errors.password" class="error">{{ form.errors.password }}</p>
+
+                    <div class="row">
+                        <label class="remember">
+                            <input v-model="form.remember" type="checkbox" />
+                            <span class="box"></span>
+                            <span>Ingat saya</span>
+                        </label>
+
+                        <Link :href="route('password.request')" class="forgot">
+                            Lupa kata sandi?
+                        </Link>
+                    </div>
+
+                    <button type="submit" class="submit" :disabled="form.processing || !form.email || !form.password">
+                        {{ form.processing ? 'Memproses...' : 'Masuk' }}
+                    </button>
+                </form>
+
+                <div class="help-row">
+                    Mengalami kendala akses akun?
+                    <a href="mailto:admin@dpmd.bangkalankab.go.id">Hubungi administrator</a>
                 </div>
+
+                <footer class="foot">
+                    <nav class="foot-links">
+                        <a href="#">Tentang Dinas</a>
+                        <a href="#">Bantuan</a>
+                        <a href="#">Kebijakan Privasi</a>
+                    </nav>
+                    <p>&copy; 2026 Dinas Pemberdayaan Masyarakat dan Desa &middot; Kabupaten Bangkalan</p>
+                </footer>
             </div>
-
-            <!-- Bottom: Footer -->
-            <footer class="px-8 md:px-16 pb-8 md:pb-10" style="border-top: 1px solid #e3e5e7; padding-top: 20px;">
-                <p style="font-size: 11px; font-weight: 500; color: #9499a3; letter-spacing: 0.2px; line-height: 1.6;">
-                    © 2024 Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan. All rights reserved.
-                </p>
-            </footer>
-
-        </main>
-
-        <!-- ===== RIGHT SIDE: Brand Visual ===== -->
-        <aside
-            class="hidden md:flex md:w-[50%] relative overflow-hidden flex-col items-center justify-center"
-            style="background: #0f172a; padding: 64px;"
-        >
-            <!-- Dot grid pattern -->
-            <div
-                class="absolute inset-0"
-                style="
-                    background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255,255,255,0.12) 1.5px, transparent 0);
-                    background-size: 28px 28px;
-                    pointer-events: none;
-                "
-            ></div>
-
-            <!-- Subtle radial glow -->
-            <div
-                class="absolute pointer-events-none"
-                style="
-                    top: 20%;
-                    right: -15%;
-                    width: 600px;
-                    height: 600px;
-                    background: radial-gradient(ellipse, rgba(55,63,80,0.7) 0%, transparent 70%);
-                    border-radius: 50%;
-                    filter: blur(60px);
-                "
-            ></div>
-
-            <!-- Center content -->
-            <div class="relative z-10 flex flex-col items-center text-center" style="max-width: 420px;">
-
-                <!-- Logo card -->
-                <div
-                    style="
-                        margin-bottom: 40px;
-                        padding: 24px;
-                        background: rgba(255,255,255,0.07);
-                        backdrop-filter: blur(16px);
-                        -webkit-backdrop-filter: blur(16px);
-                        border-radius: 28px;
-                        border: 1px solid rgba(255,255,255,0.12);
-                        box-shadow: 0 24px 64px rgba(0,0,0,0.4);
-                    "
-                >
-                    <img
-                        alt="Logo DPMD"
-                        style="width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtTE-ijsuPQ00aJdFJP59wqnt1BdYFiXyoZxYLDEcQpDYxrfayaFCzPrz6e_2R2Eso74ixSdN2rIs1ialJtxKXlMNxIU6AIZpYvBuQBtYn5BL9sEuydWhNaB0VNJWY4WXFHUEUpZ7vdsjsXz9x3ABvl0SMtTHKnT3vj55FEu_adf_Wp9OI6q5t0w98H6_uKN3EB_aPGpLwXWRfukBRpc3H5njJA8bUU05L64HGhSzUYhjPk9RSP7GJ"
-                    />
-                </div>
-
-                <!-- Tagline -->
-                <h2
-                    style="
-                        font-size: 48px;
-                        font-weight: 700;
-                        color: #ffffff;
-                        letter-spacing: -1px;
-                        line-height: 1.15;
-                        margin-bottom: 16px;
-                    "
-                >
-                    Membangun Desa Bangkalan yang Mandiri &amp; Sejahtera.
-                </h2>
-
-                <p style="font-size: 16px; font-weight: 500; color: #9499a3; line-height: 1.65;">
-                    Sistem Informasi Manajemen Terpadu untuk kemajuan masyarakat dan desa di Kabupaten Bangkalan.
-                </p>
-
-                <!-- Decorative dots -->
-                <div class="flex items-center gap-1.5" style="margin-top: 36px;">
-                    <div style="width: 40px; height: 3px; background: #4d5464; border-radius: 9999px;"></div>
-                    <div style="width: 8px; height: 3px; background: #4d5464; border-radius: 9999px;"></div>
-                    <div style="width: 8px; height: 3px; background: #4d5464; border-radius: 9999px;"></div>
-                </div>
-
-            </div>
-        </aside>
+        </div>
 
     </div>
 </template>
+
+<style scoped>
+.page {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e2e2e2;
+    --text: #262626;
+    --text-muted: #8e8e8e;
+    --green: #1e56a0;
+    --green-dark: #103973;
+    --green-tint: #eaf1fb;
+    --blue-light: #528be6;
+    --blue-dark: #103973;
+
+    min-height: 100vh;
+    display: flex;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
+
+/* LEFT PANEL */
+.side {
+    position: relative;
+    flex: 1 1 42%;
+    max-width: 560px;
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-light) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    overflow: hidden;
+}
+.side-glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    top: -140px;
+    right: -140px;
+    pointer-events: none;
+}
+.side-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.side-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+    margin-bottom: 36px;
+}
+.side-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+}
+.side-brand span {
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: 1px;
+}
+.side-logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+.side-logo-ring {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+.side-logo-big {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+}
+.side-text h2 {
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+.side-text p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* RIGHT PANEL */
+.form-side {
+    flex: 1 1 58%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+}
+.form-wrap {
+    width: 100%;
+    max-width: 380px;
+}
+
+.mobile-brand {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+.mobile-brand img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+.mobile-brand span {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.form-head {
+    margin-bottom: 24px;
+}
+.form-head h1 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.form-head p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+}
+
+.notice {
+    background: var(--green-tint);
+    border: 1px solid #cfe9db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--green-dark);
+    margin-bottom: 16px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.field input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.field input::placeholder {
+    color: #b3b3b3;
+    font-weight: 400;
+}
+.field input:focus {
+    border-color: var(--green);
+    background: #ffffff;
+}
+
+.password-box {
+    position: relative;
+}
+.password-box input {
+    padding-right: 72px;
+}
+.toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.error {
+    font-size: 12.5px;
+    color: #ed4956;
+    margin: -8px 0 0;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: -4px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+.remember input {
+    position: absolute;
+    opacity: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+.box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #c7c7c7;
+    border-radius: 4px;
+    background: #fff;
+    flex-shrink: 0;
+    position: relative;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.remember input:checked + .box {
+    background: var(--green);
+    border-color: var(--green);
+}
+.remember input:checked + .box::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 1.6px 1.6px 0;
+    transform: rotate(40deg);
+}
+.remember span:last-child {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.forgot {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    text-decoration: none;
+}
+.forgot:hover {
+    text-decoration: underline;
+}
+
+.submit {
+    height: 46px;
+    margin-top: 6px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+.submit:hover:not(:disabled) {
+    background: var(--green-dark);
+}
+.submit:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.help-row {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 24px;
+}
+.help-row a {
+    color: var(--green);
+    font-weight: 700;
+    text-decoration: none;
+}
+.help-row a:hover {
+    text-decoration: underline;
+}
+
+.foot {
+    margin-top: 32px;
+    text-align: center;
+}
+.foot-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.foot-links a {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+.foot-links a:hover {
+    text-decoration: underline;
+}
+.foot p {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+    .side {
+        display: none;
+    }
+    .mobile-brand {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+    .form-side {
+        padding: 40px 16px;
+    }
+}
+</style>
