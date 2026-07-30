@@ -353,6 +353,15 @@
     font-size: 11px;
     color: var(--text-muted);
 }
+/* =========== Reset Password Page =========== */
+.field-readonly {
+    background: #f1f3f5 !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+}
+.field-readonly:focus {
+    border-color: var(--border) !important;
+}
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 860px) {
