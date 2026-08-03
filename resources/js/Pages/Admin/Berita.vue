@@ -350,7 +350,7 @@ const executeDelete = () => {
                             <span class="material-symbols-outlined text-[24px] text-[#646a79] mb-1">image</span>
                             <p class="text-[12px] font-medium text-[#373f50] mb-1">
                                 <span v-if="form.thumbnail">{{ form.thumbnail.name }}</span>
-                                <span v-else>Pilih gambar (Maks 5MB)</span>
+                                <span v-else>Pilih gambar (Maks 1MB)</span>
                             </p>
                             <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                         </div>
