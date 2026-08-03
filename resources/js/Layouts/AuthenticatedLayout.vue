@@ -4,9 +4,11 @@ import { Link, usePage } from '@inertiajs/vue3';
 import '@idds/vue/index.css';
 
 const showingNavigationDropdown = ref(false);
-const profilDinasOpen = ref(false);
-const bidangTugasOpen = ref(false);
 const page = usePage();
+// Dropdown otomatis terbuka jika salah satu link di dalamnya sedang aktif/dipilih
+const profilDinasOpen = ref(route().current('admin.profil-dinas'));
+const bidangTugasOpen = ref(route().current('admin.bidang-tugas'));
+
 </script>
 
 <template>
@@ -70,35 +72,35 @@ const page = usePage();
                     </Link>
 
                     <div>
-                        <button @click="profilDinasOpen = !profilDinasOpen" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
+                        <button @click="profilDinasOpen = !profilDinasOpen; bidangTugasOpen = false" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
                             <span class="material-symbols-outlined group-hover:text-white transition-colors">account_balance</span>
                             Profil Dinas
                             <span class="material-symbols-outlined ml-auto text-[18px] transition-transform duration-200" :class="profilDinasOpen ? 'rotate-90' : ''">chevron_right</span>
                         </button>
                         <!-- Dropdown Content -->
-                        <div v-show="profilDinasOpen" class="pl-12 pr-4 space-y-1 mb-2">
-                            <Link :href="route('admin.profil-dinas', { section: 'sambutan' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Sambutan Kadis</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'visi-misi' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Visi & Misi</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'tupoksi' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Tugas Pokok & Fungsi</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'struktur' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Struktur Organisasi</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'kode-etik' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Kode Etik Pelayanan</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'maklumat' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Maklumat Pelayanan</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'motto' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Motto Pelayanan</Link>
+                        <div v-show="profilDinasOpen" class="pl-8 pr-4 space-y-1 mb-2">
+                            <Link :href="route('admin.profil-dinas', { section: 'sambutan' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'sambutan' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Sambutan Kadis</Link>
+                            <Link :href="route('admin.profil-dinas', { section: 'visi-misi' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'visi-misi' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Visi & Misi</Link>
+                            <Link :href="route('admin.profil-dinas', { section: 'tupoksi' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'tupoksi' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Tugas Pokok & Fungsi</Link>
+                            <Link :href="route('admin.profil-dinas', { section: 'struktur' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'struktur' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Struktur Organisasi</Link>
+                            <Link :href="route('admin.profil-dinas', { section: 'kode-etik' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'kode-etik' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Kode Etik Pelayanan</Link>
+                            <Link :href="route('admin.profil-dinas', { section: 'maklumat' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'maklumat' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Maklumat Pelayanan</Link>
+                            <Link :href="route('admin.profil-dinas', { section: 'motto' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.profil-dinas', { section: 'motto' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Motto Pelayanan</Link>
                         </div>
                     </div>
                     
                     <div>
-                        <button @click="bidangTugasOpen = !bidangTugasOpen" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
+                        <button @click="bidangTugasOpen = !bidangTugasOpen; profilDinasOpen = false" class="w-full flex items-center gap-4 font-bold text-left text-[#9499a3] hover:bg-[#222a3d] hover:text-white rounded-lg px-4 py-2 transition-all duration-200 active:scale-95 mb-2 group">
                             <span class="material-symbols-outlined group-hover:text-white transition-colors">assignment</span>
                             Bidang Tugas
                             <span class="material-symbols-outlined ml-auto text-[18px] transition-transform duration-200" :class="bidangTugasOpen ? 'rotate-90' : ''">chevron_right</span>
                         </button>
                         <!-- Dropdown Content -->
-                        <div v-show="bidangTugasOpen" class="pl-12 pr-4 space-y-1 mb-2">
-                            <Link :href="route('admin.bidang-tugas', { section: 'pemdes' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Pemerintahan Desa</Link>
-                            <Link :href="route('admin.bidang-tugas', { section: 'pemberdayaan' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Pemberdayaan Desa</Link>
-                            <Link :href="route('admin.bidang-tugas', { section: 'lembaga' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Lembaga Kemasyarakatan</Link>
-                            <Link :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-[14.5px] font-semibold text-[#9499a3] hover:text-white py-2 transition-colors">Sekretariat</Link>
+                        <div v-show="bidangTugasOpen" class="pl-8 pr-4 space-y-1 mb-2">
+                            <Link :href="route('admin.bidang-tugas', { section: 'pemdes' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.bidang-tugas', { section: 'pemdes' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Pemerintahan Desa</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'pemberdayaan' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.bidang-tugas', { section: 'pemberdayaan' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Pemberdayaan Desa</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'lembaga' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.bidang-tugas', { section: 'lembaga' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Lembaga Kemasyarakatan</Link>
+                            <Link :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-[14.5px] font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95" :class="route().current('admin.bidang-tugas', { section: 'sekretariat' }) ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'">Sekretariat</Link>
                         </div>
                     </div>
 
@@ -147,4 +149,3 @@ const page = usePage();
             </main>
         </div>
 </template>
-

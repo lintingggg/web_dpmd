@@ -150,7 +150,15 @@ function onImageError(event: Event) {
     }
 }
 
-const getDescription = (berita: any) => berita.ringkasan || berita.deskripsi || berita.excerpt || '';
+const getDescription = (berita: any) => {
+    if (berita.ringkasan) return berita.ringkasan;
+    if (berita.deskripsi) return berita.deskripsi;
+    if (berita.excerpt) return berita.excerpt;
+    if (berita.konten) {
+        return berita.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...';
+    }
+    return '';
+};
 
 // Tampilan "hero" (kartu unggulan besar) hanya di halaman pertama & tanpa pencarian/filter
 const showHero = computed(() => props.beritaList.current_page === 1 && dataBerita.value.length > 0 && !searchQuery.value && activeTag.value === 'Semua');
@@ -188,7 +196,7 @@ const pageLinks = computed(() => props.beritaList.links?.slice(1, -1) || []);
             </p>
 
             <!-- Search bar: disamakan dengan halaman Dokumen, pakai komponen SearchBar yang sama -->
-            <div class="mb-4">
+            <div class="mb-10">
                 <SearchBar
                     v-model="searchQuery"
                     placeholder="Cari berita atau kegiatan..."

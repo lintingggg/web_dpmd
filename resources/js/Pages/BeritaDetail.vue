@@ -15,8 +15,6 @@ const props = defineProps<{
 
 const pageTitle = computed(() => props.berita.judul);
 
-// Breadcrumb: pola yang sama dengan Index.vue & VisiMisi.vue. Judul berita
-// dipotong biar breadcrumb nggak kepanjangan kalau judulnya panjang.
 const breadcrumbItems = computed(() => [
     { label: 'Beranda', href: '/', icon: IconHome },
     { label: 'Berita & Kegiatan', href: '/berita' },
@@ -27,13 +25,12 @@ const breadcrumbItems = computed(() => [
     },
 ]);
 
-// Formatting helpers
 const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: '2-digit' });
 };
-// poin 4: sidebar "Berita Terkini" butuh jam juga, bukan cuma tanggal
+
 const formatDateTime = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -41,9 +38,6 @@ const formatDateTime = (dateString: string) => {
         + ' • ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 };
 
-// Placeholder inline SVG (data URI) -> tidak pernah 404 karena tidak minta
-// apa pun ke server. Sama persis dengan yang dipakai di Index.vue & CardNews.vue,
-// menggantikan via.placeholder.com yang sudah tidak reliable.
 const FALLBACK_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'>
   <rect width='600' height='400' fill='#e5e7eb'/>
   <g fill='#9ca3af'>
@@ -66,6 +60,18 @@ function onImageError(event: Event) {
         img.src = FALLBACK_IMAGE;
     }
 }
+
+// TAMBAHAN: sama persis dengan Index.vue, biar CardNews di sidebar juga
+// menampilkan deskripsi (fallback ke konten kalau ringkasan/deskripsi/excerpt kosong)
+const getDescription = (item: any) => {
+    if (item.ringkasan) return item.ringkasan;
+    if (item.deskripsi) return item.deskripsi;
+    if (item.excerpt) return item.excerpt;
+    if (item.konten) {
+        return item.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...';
+    }
+    return '';
+};
 
 const shareNews = async () => {
     const shareData = {
@@ -91,9 +97,6 @@ const shareNews = async () => {
 
     <Navbar />
 
-    <!-- Header Section: pola sama persis dengan Index.vue, VisiMisi.vue & Galeri.vue.
-         Breadcrumb dipindah kesini (sebelumnya dihitung di script tapi tidak
-         pernah dirender), supaya konsisten dengan halaman lain -->
     <section class="page-header">
         <div class="container">
             <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
@@ -104,7 +107,6 @@ const shareNews = async () => {
     <div class="bg-gray-50 pb-20 md:pb-32">
         <div class="container page-content">
 
-            <!-- Baris atas: kembali & bagikan -->
             <div class="flex items-center justify-between mb-6">
                 <Link
                     href="/berita"
@@ -132,13 +134,11 @@ const shareNews = async () => {
                 </button>
             </div>
 
-            <!-- Grid utama: konten kiri (2/3) + sidebar kanan (1/3) -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
 
                 <!-- ===================== KONTEN UTAMA ===================== -->
                 <div class="lg:col-span-2">
 
-                    <!-- Meta: tanggal & views -->
                     <div class="flex items-center gap-4 text-xs text-gray-400 mb-3">
                         <span class="flex items-center gap-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -158,8 +158,11 @@ const shareNews = async () => {
                         </span>
                     </div>
 
+                    <h1 class="font-['Plus_Jakarta_Sans'] text-3xl md:text-[2.15rem] leading-tight font-bold text-[#0f172a] mb-4">
+                        {{ berita.judul }}
+                    </h1>
+                    <div class="w-14 h-1 bg-blue-600 rounded-full mb-6"></div>
 
-                    <!-- Gambar utama -->
                     <div class="rounded-xl overflow-hidden mb-8 shadow-sm">
                         <img
                             :src="getImageUrl(berita.thumbnail)"
@@ -169,13 +172,11 @@ const shareNews = async () => {
                         />
                     </div>
 
-                    <!-- Isi berita -->
                     <article
                         class="prose prose-slate max-w-none text-justify prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-justify prose-div:text-justify font-['Plus_Jakarta_Sans']"
                         v-html="berita.konten"
                     ></article>
 
-                    <!-- Tags -->
                     <div v-if="berita.tags && berita.tags.length > 0" class="mt-8 pt-6 border-t border-gray-200">
                         <div class="flex items-center gap-2 mb-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -211,7 +212,6 @@ const shareNews = async () => {
                             </Link>
                         </div>
 
-                        <!-- List vertikal, maksimal 4 berita, pakai komponen CardNews -->
                         <div class="flex flex-col gap-5">
                             <Link
                                 v-for="item in beritaTerkini"
@@ -221,6 +221,7 @@ const shareNews = async () => {
                             >
                                 <CardNews
                                     :title="item.judul"
+                                    :description="getDescription(item)"
                                     :date="formatDateTime(item.published_at)"
                                     :author="item.penulis || 'Humas DPMD'"
                                     :tags="item.tags"
@@ -246,7 +247,6 @@ const shareNews = async () => {
     padding: 0 20px;
 }
 
-/* Page Header: sama persis dengan Index.vue, VisiMisi.vue & Galeri.vue */
 .page-header {
     background-color: #FFFFFF;
     padding: 20px 0 30px;
@@ -259,8 +259,6 @@ const shareNews = async () => {
     font-weight: 800;
     color: #0F172A;
     margin: 0;
-    /* Judul berita bisa panjang, batasi 2 baris biar header tidak
-       terlalu tinggi di halaman detail */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -268,7 +266,6 @@ const shareNews = async () => {
     overflow: hidden;
 }
 
-/* Main Layout */
 .page-content {
     margin: 40px auto 60px;
 }

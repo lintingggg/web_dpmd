@@ -30,7 +30,7 @@ onBeforeUnmount(() => {
 <template>
 
     <!-- Top Bar -->
-    <div class="bg-[#0F172A] text-white py-1.5 px-5 text-xs hidden md:block w-full font-['Plus_Jakarta_Sans',sans-serif]">
+    <div class="bg-[#0f1b3d] text-white py-1.5 px-5 text-xs hidden md:block w-full font-['Plus_Jakarta_Sans',sans-serif] border-b border-white/10">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <span class="flex items-center gap-1.5">
@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 
     <!-- Main Navbar -->
     <header
-        class="sticky top-0 z-40 transition-all duration-300 w-full bg-white font-['Plus_Jakarta_Sans',sans-serif]"
+        class="sticky top-0 z-40 transition-all duration-300 w-full bg-[#0f1b3d] font-['Plus_Jakarta_Sans',sans-serif]"
         :class="[
             isScrolled
                 ? 'shadow-md py-2'
@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
 
             <!-- Mobile -->
             <button
-                class="lg:hidden w-11 h-11 rounded-xl bg-[#0F172A] text-white flex items-center justify-center"
+                class="lg:hidden w-11 h-11 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
                 @click="mobileOpen=true"
             >
                 <IconMenu2
