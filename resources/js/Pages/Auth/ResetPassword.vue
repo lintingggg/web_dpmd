@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, useForm, Link } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
+import '../../../css/layout.css';
 
 const props = defineProps({
     email: {
@@ -36,7 +37,7 @@ const submit = () => {
         form.setError('password_confirmation', 'Konfirmasi kata sandi tidak cocok.');
         return;
     }
-    
+
     form.post(route('password.store'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
@@ -46,309 +47,108 @@ const submit = () => {
 <template>
     <Head title="Reset Kata Sandi - DPMD Kabupaten Bangkalan" />
 
-    <div style="font-family: 'Plus Jakarta Sans', sans-serif;" class="min-h-screen flex flex-col md:flex-row bg-white">
+    <div class="page">
 
-        <!-- ===== LEFT SIDE: Form ===== -->
-        <main class="w-full md:w-[50%] min-h-screen flex flex-col bg-white relative z-10">
+        <!-- LEFT PANEL — brand -->
+        <div class="side">
+            <div class="side-inner">
 
-            <!-- Top: Header Logo -->
-            <header class="flex items-center gap-3 px-8 md:px-16 pt-8 md:pt-10">
-                <img
-                    alt="Logo Kabupaten Bangkalan"
-                    class="h-11 w-11 object-contain flex-shrink-0"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjLxilI_cSxKSo4h1aaJThm8S1k7DCg0KOnsOqQej3IGqZKpnsNWvd84YWHm39prWNuO9EvpBxHT1MMlFEPWm0CkecLFX8wg9l-gmbibd8G3PXgfRCJJijOJLIPct-XmvjcHgLffB-8BG_HWEnlVeoAO3M__d83gQPynBWrHP7C3V3gXDCrwODkZCKXeI1B9zO1U7Ex1upUhKwP23p1VDep4naCOqSbWXi-P7s2tQDYK33NKS-U0Ga"
-                />
-                <div class="flex flex-col leading-tight">
-                    <span style="font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px;">Pemerintah Kabupaten Bangkalan</span>
-                    <span style="font-size: 10px; font-weight: 500; color: #646a79; letter-spacing: 1.5px;" class="uppercase">Dinas Pemberdayaan Masyarakat dan Desa</span>
+                <!-- Logo -->
+                <div class="side-logo-wrap">
+                    <div class="side-logo-ring">
+                        <img
+                            alt="Logo DPMD Kabupaten Bangkalan"
+                            class="side-logo-big"
+                            src="/assets/logo-dpmd-bangkalan.png"
+                        />
+                    </div>
                 </div>
-            </header>
 
-            <!-- Middle: Form (takes remaining vertical space, centered) -->
-            <div class="flex-1 flex flex-col justify-center px-8 md:px-16 py-10">
-                <div class="w-full max-w-[430px]">
+                <div class="side-text">
+                    <h2>Amankan Akun Anda</h2>
+                    <p>Buat kata sandi baru yang kuat untuk melindungi akses ke Sistem Informasi DPMD Kabupaten Bangkalan.</p>
+                </div>
+            </div>
 
-                    <!-- Heading -->
-                    <div class="mb-8">
-                        <h1 style="font-size: 36px; font-weight: 700; color: #0f172a; letter-spacing: -0.75px; line-height: 1.15;" class="mb-2">
-                            Reset Kata Sandi
-                        </h1>
-                        <p style="font-size: 15px; font-weight: 500; color: #646a79; line-height: 1.6;">
-                            Silakan masukkan kata sandi baru Anda di bawah ini untuk mengatur ulang akses ke sistem.
-                        </p>
+            <div class="side-glow"></div>
+        </div>
+
+        <!-- RIGHT PANEL — form -->
+        <div class="form-side">
+            <div class="form-wrap">
+
+                <div class="mobile-brand">
+                    <img
+                        alt="Logo Kabupaten Bangkalan"
+                        src="/assets/logo-dpmd-bangkalan.png"
+                    />
+                    <span>DPMD Kabupaten Bangkalan</span>
+                </div>
+
+                <div class="form-head">
+                    <h1>Reset Kata Sandi</h1>
+                    <p>Silakan masukkan kata sandi baru Anda di bawah ini untuk mengatur ulang akses ke sistem.</p>
+                </div>
+
+                <form @submit.prevent="submit" class="form">
+
+                    <div class="field">
+                        <label for="email">Alamat email</label>
+                        <input
+                            v-model="form.email"
+                            type="email"
+                            id="email"
+                            readonly
+                            class="field-readonly"
+                        />
+                        <p v-if="form.errors.email" class="error">{{ form.errors.email }}</p>
                     </div>
 
-                    <!-- Form -->
-                    <form @submit.prevent="submit" class="space-y-5">
-
-                        <!-- Email Field (Readonly visually but submits) -->
-                        <div>
-                            <label
-                                for="email"
-                                style="display: block; font-size: 14px; font-weight: 500; color: #373f50; margin-bottom: 6px;"
-                            >
-                                Alamat Email
-                            </label>
-                            <div class="relative opacity-70">
-                                <span
-                                    class="material-symbols-outlined"
-                                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #9499a3; pointer-events: none;"
-                                >mail</span>
-                                <input
-                                    v-model="form.email"
-                                    type="email"
-                                    id="email"
-                                    readonly
-                                    style="
-                                        width: 100%;
-                                        height: 48px;
-                                        padding-left: 48px;
-                                        padding-right: 16px;
-                                        background: #f8fafc;
-                                        border: 1.5px solid #e3e5e7;
-                                        border-radius: 16px;
-                                        font-size: 14px;
-                                        font-weight: 500;
-                                        color: #646a79;
-                                        outline: none;
-                                        cursor: not-allowed;
-                                        font-family: 'Plus Jakarta Sans', sans-serif;
-                                    "
-                                />
-                            </div>
-                            <p v-if="form.errors.email" style="margin-top: 6px; font-size: 13px; font-weight: 500; color: #ba1a1a;">{{ form.errors.email }}</p>
-                        </div>
-
-                        <!-- Password Field -->
-                        <div>
-                            <label
-                                for="password"
-                                style="display: block; font-size: 14px; font-weight: 500; color: #373f50; margin-bottom: 6px;"
-                            >
-                                Kata Sandi Baru
-                            </label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined"
-                                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #9499a3; pointer-events: none;"
-                                >lock_reset</span>
-                                <input
-                                    v-model="form.password"
-                                    :type="showPassword ? 'text' : 'password'"
-                                    id="password"
-                                    placeholder="••••••••"
-                                    required
-                                    autofocus
-                                    style="
-                                        width: 100%;
-                                        height: 48px;
-                                        padding-left: 48px;
-                                        padding-right: 52px;
-                                        background: #ffffff;
-                                        border: 1.5px solid #e3e5e7;
-                                        border-radius: 16px;
-                                        font-size: 14px;
-                                        font-weight: 500;
-                                        color: #0f172a;
-                                        outline: none;
-                                        transition: border-color 0.2s ease;
-                                        box-shadow: 0 1px 3px rgba(15,23,42,0.06);
-                                        font-family: 'Plus Jakarta Sans', sans-serif;
-                                    "
-                                    @focus="$event.target.style.borderColor = '#0f172a'"
-                                    @blur="$event.target.style.borderColor = '#e3e5e7'"
-                                />
-                                <button
-                                    type="button"
-                                    @click="togglePassword"
-                                    style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #9499a3; transition: color 0.2s ease; padding: 4px;"
-                                    @mouseenter="$event.currentTarget.style.color = '#0f172a'"
-                                    @mouseleave="$event.currentTarget.style.color = '#9499a3'"
-                                >
-                                    <span class="material-symbols-outlined" style="font-size: 20px;">
-                                        {{ showPassword ? 'visibility' : 'visibility_off' }}
-                                    </span>
-                                </button>
-                            </div>
-                            <p v-if="form.errors.password" style="margin-top: 6px; font-size: 13px; font-weight: 500; color: #ba1a1a;">{{ form.errors.password }}</p>
-                        </div>
-
-                        <!-- Password Confirmation Field -->
-                        <div>
-                            <label
-                                for="password_confirmation"
-                                style="display: block; font-size: 14px; font-weight: 500; color: #373f50; margin-bottom: 6px;"
-                            >
-                                Konfirmasi Kata Sandi
-                            </label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined"
-                                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #9499a3; pointer-events: none;"
-                                >lock_person</span>
-                                <input
-                                    v-model="form.password_confirmation"
-                                    :type="showPasswordConfirmation ? 'text' : 'password'"
-                                    id="password_confirmation"
-                                    placeholder="••••••••"
-                                    required
-                                    style="
-                                        width: 100%;
-                                        height: 48px;
-                                        padding-left: 48px;
-                                        padding-right: 52px;
-                                        background: #ffffff;
-                                        border: 1.5px solid #e3e5e7;
-                                        border-radius: 16px;
-                                        font-size: 14px;
-                                        font-weight: 500;
-                                        color: #0f172a;
-                                        outline: none;
-                                        transition: border-color 0.2s ease;
-                                        box-shadow: 0 1px 3px rgba(15,23,42,0.06);
-                                        font-family: 'Plus Jakarta Sans', sans-serif;
-                                    "
-                                    @focus="$event.target.style.borderColor = '#0f172a'"
-                                    @blur="$event.target.style.borderColor = '#e3e5e7'"
-                                />
-                                <button
-                                    type="button"
-                                    @click="togglePasswordConfirmation"
-                                    style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #9499a3; transition: color 0.2s ease; padding: 4px;"
-                                    @mouseenter="$event.currentTarget.style.color = '#0f172a'"
-                                    @mouseleave="$event.currentTarget.style.color = '#9499a3'"
-                                >
-                                    <span class="material-symbols-outlined" style="font-size: 20px;">
-                                        {{ showPasswordConfirmation ? 'visibility' : 'visibility_off' }}
-                                    </span>
-                                </button>
-                            </div>
-                            <p v-if="form.errors.password_confirmation" style="margin-top: 6px; font-size: 13px; font-weight: 500; color: #ba1a1a;">{{ form.errors.password_confirmation }}</p>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div style="padding-top: 10px;">
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                style="
-                                    width: 100%;
-                                    height: 48px;
-                                    background: #0f172a;
-                                    color: #ffffff;
-                                    border: none;
-                                    border-radius: 9999px;
-                                    font-size: 15px;
-                                    font-weight: 700;
-                                    letter-spacing: -0.3px;
-                                    cursor: pointer;
-                                    transition: background 0.2s ease, opacity 0.2s ease;
-                                    box-shadow: 0 4px 16px rgba(15,23,42,0.18);
-                                    font-family: 'Plus Jakarta Sans', sans-serif;
-                                "
-                                @mouseenter="!form.processing && ($event.target.style.background = '#222a3d')"
-                                @mouseleave="!form.processing && ($event.target.style.background = '#0f172a')"
-                            >
-                                <span v-if="form.processing" class="flex items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined animate-spin" style="font-size: 18px;">autorenew</span>
-                                    Memproses...
-                                </span>
-                                <span v-else>Simpan Kata Sandi Baru</span>
+                    <div class="field">
+                        <label for="password">Kata sandi baru</label>
+                        <div class="password-box">
+                            <input
+                                v-model="form.password"
+                                :type="showPassword ? 'text' : 'password'"
+                                id="password"
+                                placeholder="Masukkan kata sandi baru"
+                                required
+                                autofocus
+                            />
+                            <button type="button" class="toggle" @click="togglePassword">
+                                {{ showPassword ? 'Sembunyikan' : 'Lihat' }}
                             </button>
                         </div>
+                        <p v-if="form.errors.password" class="error">{{ form.errors.password }}</p>
+                    </div>
 
-                    </form>
-                </div>
+                    <div class="field">
+                        <label for="password_confirmation">Konfirmasi kata sandi</label>
+                        <div class="password-box">
+                            <input
+                                v-model="form.password_confirmation"
+                                :type="showPasswordConfirmation ? 'text' : 'password'"
+                                id="password_confirmation"
+                                placeholder="Ulangi kata sandi baru"
+                                required
+                            />
+                            <button type="button" class="toggle" @click="togglePasswordConfirmation">
+                                {{ showPasswordConfirmation ? 'Sembunyikan' : 'Lihat' }}
+                            </button>
+                        </div>
+                        <p v-if="form.errors.password_confirmation" class="error">{{ form.errors.password_confirmation }}</p>
+                    </div>
+
+                    <button type="submit" class="submit" :disabled="form.processing || !form.password || !form.password_confirmation">
+                        {{ form.processing ? 'Memproses...' : 'Simpan Kata Sandi Baru' }}
+                    </button>
+                </form>
+
+                <footer class="foot">
+                    <p>&copy; 2026 Dinas Pemberdayaan Masyarakat dan Desa &middot; Kabupaten Bangkalan</p>
+                </footer>
             </div>
-
-            <!-- Bottom: Footer -->
-            <footer class="px-8 md:px-16 pb-8 md:pb-10" style="border-top: 1px solid #e3e5e7; padding-top: 20px;">
-                <p style="font-size: 11px; font-weight: 500; color: #9499a3; letter-spacing: 0.2px; line-height: 1.6;">
-                    © 2024 Dinas Pemberdayaan Masyarakat dan Desa (DPMD) Kabupaten Bangkalan. All rights reserved.
-                </p>
-            </footer>
-
-        </main>
-
-        <!-- ===== RIGHT SIDE: Brand Visual ===== -->
-        <aside
-            class="hidden md:flex md:w-[50%] relative overflow-hidden flex-col items-center justify-center"
-            style="background: #0f172a; padding: 64px;"
-        >
-            <!-- Dot grid pattern -->
-            <div
-                class="absolute inset-0"
-                style="
-                    background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255,255,255,0.12) 1.5px, transparent 0);
-                    background-size: 28px 28px;
-                    pointer-events: none;
-                "
-            ></div>
-
-            <!-- Subtle radial glow -->
-            <div
-                class="absolute pointer-events-none"
-                style="
-                    top: 20%;
-                    right: -15%;
-                    width: 600px;
-                    height: 600px;
-                    background: radial-gradient(ellipse, rgba(55,63,80,0.7) 0%, transparent 70%);
-                    border-radius: 50%;
-                    filter: blur(60px);
-                "
-            ></div>
-
-            <!-- Center content -->
-            <div class="relative z-10 flex flex-col items-center text-center" style="max-width: 420px;">
-
-                <!-- Logo card -->
-                <div
-                    style="
-                        margin-bottom: 40px;
-                        padding: 24px;
-                        background: rgba(255,255,255,0.07);
-                        backdrop-filter: blur(16px);
-                        -webkit-backdrop-filter: blur(16px);
-                        border-radius: 28px;
-                        border: 1px solid rgba(255,255,255,0.12);
-                        box-shadow: 0 24px 64px rgba(0,0,0,0.4);
-                    "
-                >
-                    <img
-                        alt="Logo DPMD"
-                        style="width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtTE-ijsuPQ00aJdFJP59wqnt1BdYFiXyoZxYLDEcQpDYxrfayaFCzPrz6e_2R2Eso74ixSdN2rIs1ialJtxKXlMNxIU6AIZpYvBuQBtYn5BL9sEuydWhNaB0VNJWY4WXFHUEUpZ7vdsjsXz9x3ABvl0SMtTHKnT3vj55FEu_adf_Wp9OI6q5t0w98H6_uKN3EB_aPGpLwXWRfukBRpc3H5njJA8bUU05L64HGhSzUYhjPk9RSP7GJ"
-                    />
-                </div>
-
-                <!-- Tagline -->
-                <h2
-                    style="
-                        font-size: 48px;
-                        font-weight: 700;
-                        color: #ffffff;
-                        letter-spacing: -1px;
-                        line-height: 1.15;
-                        margin-bottom: 16px;
-                    "
-                >
-                    Membangun Desa Bangkalan yang Mandiri &amp; Sejahtera.
-                </h2>
-
-                <p style="font-size: 16px; font-weight: 500; color: #9499a3; line-height: 1.65;">
-                    Sistem Informasi Manajemen Terpadu untuk kemajuan masyarakat dan desa di Kabupaten Bangkalan.
-                </p>
-
-                <!-- Decorative dots -->
-                <div class="flex items-center gap-1.5" style="margin-top: 36px;">
-                    <div style="width: 8px; height: 3px; background: #4d5464; border-radius: 9999px;"></div>
-                    <div style="width: 8px; height: 3px; background: #4d5464; border-radius: 9999px;"></div>
-                    <div style="width: 40px; height: 3px; background: #4d5464; border-radius: 9999px;"></div>
-                </div>
-
-            </div>
-        </aside>
+        </div>
 
     </div>
 </template>

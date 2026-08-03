@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
               class="social-link"
               :aria-label="social.label"
             >
-              <component :is="social.icon" :size="16" />
+              <component :is="social.icon" :size="24" />
             </a>
           </div>
         </div>
@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
 .social-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .social-link {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 10px;
+  width: 48px; height: 48px; border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #c7cad4;
   transition: border-color .15s ease, color .15s ease, background-color .15s ease;

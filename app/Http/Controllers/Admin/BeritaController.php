@@ -57,7 +57,7 @@ class BeritaController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:500',
             'konten' => 'required|string',
-            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:5120', // Max 5MB
+            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:1024', // Max 1MB
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
             'is_published' => 'boolean',
@@ -102,7 +102,7 @@ class BeritaController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:500',
             'konten' => 'required|string',
-            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:1024',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
             'is_published' => 'boolean',

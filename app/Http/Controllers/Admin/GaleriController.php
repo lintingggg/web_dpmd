@@ -45,17 +45,25 @@ class GaleriController extends Controller
             'tanggal_kegiatan' => 'nullable|date',
             'is_published' => 'boolean',
             'tipe' => 'required|in:foto,video',
-            'foto' => [
-                $request->boolean('is_published') ? 'required' : 'nullable',
-                'file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi', 'max:51200' // Increased max size to 50MB for video
-            ],
+            'foto' => $request->tipe === 'video' 
+                ? ($request->boolean('is_published') ? 'required|string|max:2000' : 'nullable|string|max:2000')
+                : [
+                    $request->boolean('is_published') ? 'required' : 'nullable',
+                    'file', 'mimes:jpg,jpeg,png,webp', 'max:1024'
+                ],
         ]);
 
         DB::beginTransaction();
         try {
-            if ($request->hasFile('foto')) {
+            if ($request->tipe === 'foto' && $request->hasFile('foto')) {
                 $path = $request->file('foto')->store('galeri', 'public');
                 $validated['foto'] = $path;
+            } elseif ($request->tipe === 'video' && $request->filled('foto')) {
+                $videoUrl = $request->foto;
+                if (preg_match('/src=["\']([^"\']+)["\']/', $videoUrl, $matches)) {
+                    $videoUrl = $matches[1];
+                }
+                $validated['foto'] = $videoUrl;
             }
 
             $validated['is_published'] = $request->boolean('is_published');
@@ -80,19 +88,27 @@ class GaleriController extends Controller
             'tanggal_kegiatan' => 'nullable|date',
             'is_published' => 'boolean',
             'tipe' => 'required|in:foto,video',
-            'foto' => [
-                ($request->boolean('is_published') && !$galeri->foto) ? 'required' : 'nullable',
-                'file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi', 'max:51200'
-            ],
+            'foto' => $request->tipe === 'video' 
+                ? ($request->boolean('is_published') && !$galeri->foto ? 'required|string|max:2000' : 'nullable|string|max:2000')
+                : [
+                    ($request->boolean('is_published') && !$galeri->foto) ? 'required' : 'nullable',
+                    'file', 'mimes:jpg,jpeg,png,webp', 'max:1024'
+                ],
         ]);
 
         DB::beginTransaction();
         try {
             $fotoLamaPath = $galeri->foto;
 
-            if ($request->hasFile('foto')) {
+            if ($request->tipe === 'foto' && $request->hasFile('foto')) {
                 $newPath = $request->file('foto')->store('galeri', 'public');
                 $validated['foto'] = $newPath;
+            } elseif ($request->tipe === 'video' && $request->filled('foto')) {
+                $videoUrl = $request->foto;
+                if (preg_match('/src=["\']([^"\']+)["\']/', $videoUrl, $matches)) {
+                    $videoUrl = $matches[1];
+                }
+                $validated['foto'] = $videoUrl;
             } else {
                 unset($validated['foto']);
             }
@@ -101,8 +117,13 @@ class GaleriController extends Controller
 
             $galeri->update($validated);
 
-            if ($request->hasFile('foto') && $fotoLamaPath && Storage::disk('public')->exists($fotoLamaPath)) {
-                Storage::disk('public')->delete($fotoLamaPath);
+            // Delete old photo if a new file was uploaded, OR if type changed to video
+            if ($fotoLamaPath && !str_starts_with($fotoLamaPath, 'http')) {
+                if ($request->hasFile('foto') || $request->tipe === 'video') {
+                    if (Storage::disk('public')->exists($fotoLamaPath)) {
+                        Storage::disk('public')->delete($fotoLamaPath);
+                    }
+                }
             }
 
             DB::commit();
@@ -119,7 +140,7 @@ class GaleriController extends Controller
     {
         DB::beginTransaction();
         try {
-            if ($galeri->foto && Storage::disk('public')->exists($galeri->foto)) {
+            if ($galeri->foto && !str_starts_with($galeri->foto, 'http') && Storage::disk('public')->exists($galeri->foto)) {
                 Storage::disk('public')->delete($galeri->foto);
             }
 

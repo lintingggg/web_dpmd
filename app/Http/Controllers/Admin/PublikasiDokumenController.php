@@ -57,7 +57,7 @@ class PublikasiDokumenController extends Controller
             'tahun' => 'required|integer|min:2000|max:2099',
             'deskripsi' => 'nullable|string|max:1000',
             'is_published' => 'boolean',
-            'file_dokumen' => 'nullable|file|mimes:pdf|max:20480', // 20MB
+            'file_dokumen' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120', // 5MB
         ]);
 
         DB::beginTransaction();
@@ -90,7 +90,7 @@ class PublikasiDokumenController extends Controller
             'tahun' => 'required|integer|min:2000|max:2099',
             'deskripsi' => 'nullable|string|max:1000',
             'is_published' => 'boolean',
-            'file_dokumen' => 'nullable|file|mimes:pdf|max:20480', // 20MB
+            'file_dokumen' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120', // 5MB
         ]);
 
         DB::beginTransaction();

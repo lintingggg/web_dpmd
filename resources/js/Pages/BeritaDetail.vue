@@ -171,7 +171,7 @@ const shareNews = async () => {
 
                     <!-- Isi berita -->
                     <article
-                        class="prose prose-slate max-w-none prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-justify font-['Plus_Jakarta_Sans']"
+                        class="prose prose-slate max-w-none text-justify prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-justify prose-div:text-justify font-['Plus_Jakarta_Sans']"
                         v-html="berita.konten"
                     ></article>
 
