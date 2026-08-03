@@ -33,7 +33,7 @@ class AlbumController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'is_published' => 'boolean',
-            'cover' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'cover' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:1024',
         ]);
 
         if ($request->hasFile('cover')) {
@@ -52,7 +52,7 @@ class AlbumController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'is_published' => 'boolean',
-            'cover' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'cover' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:1024',
         ]);
 
         if ($request->hasFile('cover')) {

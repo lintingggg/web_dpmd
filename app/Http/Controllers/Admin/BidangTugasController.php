@@ -44,7 +44,7 @@ class BidangTugasController extends Controller
         $bidang = BidangTugas::firstOrCreate(['id' => 1]);
 
         $rules = [
-            "{$section}_gambar" => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            "{$section}_gambar" => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
             "{$section}_konten" => 'required|string',
         ];
 

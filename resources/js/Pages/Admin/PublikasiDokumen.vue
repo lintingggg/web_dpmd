@@ -44,6 +44,7 @@ const isModalOpen = ref(false);
 const isEditing = ref(false);
 const editingId = ref(null);
 const fileInput = ref(null);
+const fileSizeError = ref(false);
 
 const form = useForm({
     judul: '',
@@ -86,15 +87,27 @@ const closeModal = () => {
 };
 
 const handleFileUpload = (e) => {
+    fileSizeError.value = false;
     const file = e.target.files[0];
     if (file) {
-        form.file_dokumen = file;
+        if (file.size > 5242880) { // 5MB limit
+            fileSizeError.value = true;
+            form.file_dokumen = null;
+            if (fileInput.value) fileInput.value.value = '';
+        } else {
+            form.file_dokumen = file;
+        }
     } else {
         form.file_dokumen = null;
     }
 };
 
 const submitForm = () => {
+    if (fileSizeError.value) {
+        toast({ state: 'warning', title: 'File Terlalu Besar', description: 'Ukuran file dokumen melebihi batas 5MB.' });
+        return;
+    }
+
     if (isEditing.value) {
         // Tambahkan spoofing PUT saat edit
         form.transform((data) => ({
@@ -338,17 +351,18 @@ const openDocument = (path) => {
                 </div>
 
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">File PDF (Maks 20MB)</label>
+                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">File Dokumen (PDF/Word/Excel)</label>
                     <div class="relative w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors group">
                         <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
                         <p class="text-[14px] font-medium text-[#373f50] mb-1">
                             <span v-if="form.file_dokumen">{{ form.file_dokumen.name }}</span>
-                            <span v-else>Pilih file PDF untuk diunggah</span>
+                            <span v-else>Pilih file untuk diunggah</span>
                         </p>
-                        <p class="text-[12px] text-[#9499a3]">Format .pdf (Maksimal 20MB)</p>
-                        <input type="file" ref="fileInput" @change="handleFileUpload" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        <p class="text-[12px] text-[#9499a3]">Format .pdf, .doc, .docx, .xls, .xlsx (Maksimal 5MB)</p>
+                        <input type="file" ref="fileInput" @change="handleFileUpload" accept=".pdf,.doc,.docx,.xls,.xlsx" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     </div>
                     <div v-if="form.errors.file_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.file_dokumen }}</div>
+                    <div v-if="fileSizeError" class="text-red-500 text-xs mt-1 font-semibold">Ukuran file maksimal 5MB. File yang Anda pilih terlalu besar.</div>
                     
                     <div v-if="isEditing" class="mt-2 text-[12px] font-semibold text-[#1976d2] flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">info</span>
@@ -377,7 +391,7 @@ const openDocument = (path) => {
                     <button type="button" @click="closeModal" class="px-5 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
                         Batal
                     </button>
-                    <button type="submit" :disabled="form.processing" class="px-5 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] shadow-[0_4px_12px_rgba(15,23,42,0.12)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70">
+                    <button type="submit" :disabled="form.processing || fileSizeError" class="px-5 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] shadow-[0_4px_12px_rgba(15,23,42,0.12)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
                         <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                         {{ isEditing ? 'Simpan Perubahan' : 'Tambah Dokumen' }}
                     </button>
@@ -443,12 +457,12 @@ const openDocument = (path) => {
                 <div>
                     <h4 class="text-[13px] font-bold text-[#9499a3] uppercase tracking-[1px] mb-2">Status Lampiran</h4>
                     <div v-if="selectedDocument.file_dokumen" class="inline-flex items-center gap-2 p-2.5 bg-[#e3f2fd] rounded-lg border border-[#bbdefb]">
-                        <span class="material-symbols-outlined text-[20px] text-[#1976d2]">picture_as_pdf</span>
-                        <span class="text-[#0f172a] text-[14px]">Telah terlampir: <span class="font-bold">File PDF Tersimpan</span></span>
+                        <span class="material-symbols-outlined text-[20px] text-[#1976d2]">insert_drive_file</span>
+                        <span class="text-[#0f172a] text-[14px]">Telah terlampir: <span class="font-bold">File Tersimpan</span></span>
                     </div>
                     <div v-else class="inline-flex items-center gap-2 p-2.5 bg-[#f0f1f1] rounded-lg border border-[#e3e5e7]">
                         <span class="material-symbols-outlined text-[20px] text-[#9499a3]">description</span>
-                        <span class="text-[#646a79] text-[14px] italic">Belum ada file PDF yang dilampirkan</span>
+                        <span class="text-[#646a79] text-[14px] italic">Belum ada file yang dilampirkan</span>
                     </div>
                 </div>
                 
@@ -467,7 +481,7 @@ const openDocument = (path) => {
                         class="px-5 py-2.5 rounded-full font-bold text-[14px] transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         :class="selectedDocument.file_dokumen ? 'bg-[#1976d2] text-white hover:bg-[#1565c0] shadow-[0_4px_12px_rgba(25,118,210,0.2)] active:scale-95' : 'bg-[#e3e5e7] text-[#9499a3]'">
                     <span class="material-symbols-outlined text-[18px]">open_in_new</span>
-                    Buka File PDF
+                    Buka File
                 </button>
             </div>
         </div>

@@ -75,46 +75,34 @@ watch([hariBuka, hariTutup, jamBuka, jamTutup], () => {
     form.jam_kerja = `${hariBuka.value} - ${hariTutup.value}, ${jamBuka.value} - ${jamTutup.value} WIB`;
 }, { immediate: true });
 
+const twitterError1 = ref(false);
+const twitterError2 = ref(false);
+
 const submit = (tabContext) => {
-    form.transform((data) => {
-        if (tabContext === 'kontak') {
-            return {
-                alamat: data.alamat,
-                email: data.email,
-                telepon: data.telepon,
-                whatsapp: data.whatsapp,
-                jam_kerja: data.jam_kerja,
-                koordinat_map: data.koordinat_map
-            };
-        } else if (tabContext === 'sosmed') {
-            return {
-                facebook_url: data.facebook_url,
-                instagram_url: data.instagram_url,
-                youtube_url: data.youtube_url,
-                twitter_url: data.twitter_url,
-                tiktok_url: data.tiktok_url,
-                show_facebook: data.show_facebook,
-                show_instagram: data.show_instagram,
-                show_youtube: data.show_youtube,
-                show_twitter: data.show_twitter,
-                show_tiktok: data.show_tiktok
-            };
-        } else if (tabContext === 'embed') {
-            return {
-                instagram_embed_1: data.instagram_embed_1,
-                instagram_embed_2: data.instagram_embed_2,
-                tiktok_embed_1: data.tiktok_embed_1,
-                tiktok_embed_2: data.tiktok_embed_2,
-                youtube_embed_1: data.youtube_embed_1,
-                youtube_embed_2: data.youtube_embed_2,
-                facebook_embed_1: data.facebook_embed_1,
-                facebook_embed_2: data.facebook_embed_2,
-                twitter_embed_1: data.twitter_embed_1,
-                twitter_embed_2: data.twitter_embed_2
-            };
+    twitterError1.value = false;
+    twitterError2.value = false;
+
+    if (tabContext === 'embed') {
+        let hasEmbedError = false;
+        if (form.twitter_embed_1 && !form.twitter_embed_1.includes('<blockquote')) {
+            twitterError1.value = true;
+            hasEmbedError = true;
         }
-        return data;
-    }).post(route('admin.kontak-medsos.update'), {
+        if (form.twitter_embed_2 && !form.twitter_embed_2.includes('<blockquote')) {
+            twitterError2.value = true;
+            hasEmbedError = true;
+        }
+        if (hasEmbedError) {
+            toast({
+                state: 'destructive',
+                title: 'Validasi Gagal',
+                description: 'Twitter/X hanya support kode embed, periksa kembali input Anda.'
+            });
+            return;
+        }
+    }
+
+    form.post(route('admin.kontak-medsos.update'), {
         preserveScroll: true,
         onError: (errors) => {
             if (errors.alamat || errors.email || errors.telepon || errors.whatsapp || errors.jam_kerja || errors.koordinat_map) {
@@ -222,7 +210,7 @@ const submit = (tabContext) => {
                             <div v-if="form.errors.whatsapp" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.whatsapp }}</div>
                         </div>
                         <div>
-                            <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Jam Kerja</label>
+                            <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Jam Layanan</label>
                             
                             <div class="bg-[#f9f9f9] border border-[#e3e5e7] rounded-xl p-3 focus-within:border-[#0f172a] focus-within:bg-white transition-colors">
                                 <!-- Pilihan Hari -->
@@ -482,14 +470,16 @@ const submit = (tabContext) => {
                         
                         <div v-show="form.show_twitter" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link X (Twitter) 1</label>
-                                <textarea v-model="form.twitter_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link tweet (https://x.com/...)"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed X (Twitter) 1</label>
+                                <textarea v-model="form.twitter_embed_1" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML tweet"></textarea>
                                 <div v-if="form.errors.twitter_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_1 }}</div>
+                                <div v-if="twitterError1" class="text-red-500 text-xs mt-1 font-semibold">Twitter atau X hanya support kode embed, tidak support link yang di copas langsung.</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed / Link X (Twitter) 2</label>
-                                <textarea v-model="form.twitter_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link tweet (https://x.com/...)"></textarea>
+                                <label class="block text-[13px] font-bold text-[#373f50] uppercase tracking-[0.5px] mb-2">Kode Embed X (Twitter) 2</label>
+                                <textarea v-model="form.twitter_embed_2" rows="4" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#0f172a] focus:border-[#0f172a] focus:bg-white transition-colors" placeholder="Paste kode embed HTML tweet"></textarea>
                                 <div v-if="form.errors.twitter_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_2 }}</div>
+                                <div v-if="twitterError2" class="text-red-500 text-xs mt-1 font-semibold">Twitter atau X hanya support kode embed, tidak support link yang di copas langsung.</div>
                             </div>
                         </div>
                     </div>

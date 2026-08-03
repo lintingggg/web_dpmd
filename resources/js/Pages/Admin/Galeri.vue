@@ -55,7 +55,7 @@ const openModal = (item = null) => {
         form.deskripsi = item.deskripsi || '';
         form.tanggal_kegiatan = item.tanggal_kegiatan || '';
         form.tipe = item.tipe || 'foto';
-        form.foto = null; // Reset foto input
+        form.foto = item.tipe === 'video' ? item.foto : null; // Set foto to URL if video, else reset
         form.is_published = !!item.is_published;
     } else {
         editingId.value = null;
@@ -75,6 +75,8 @@ const closeModal = () => {
     form.clearErrors();
 };
 
+const youtubeError = ref(false);
+
 const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -85,6 +87,15 @@ const handleFileUpload = (e) => {
 };
 
 const submitForm = () => {
+    youtubeError.value = false;
+    if (form.tipe === 'video' && form.foto) {
+        const isUnchangedUrl = isEditing.value && form.foto === detailItem.value?.foto;
+        if (!form.foto.includes('<iframe') && !isUnchangedUrl) {
+            youtubeError.value = true;
+            return;
+        }
+    }
+
     if (isEditing.value) {
         form.transform((data) => ({
             ...data,
@@ -94,7 +105,7 @@ const submitForm = () => {
             onSuccess: () => closeModal(),
         });
     } else {
-        form.post(route('admin.galeri.store', props.album.id), {
+        form.transform((data) => data).post(route('admin.galeri.store', props.album.id), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
         });
@@ -104,6 +115,12 @@ const submitForm = () => {
 const confirmDelete = (item) => {
     detailItem.value = item;
     isDeleteModalOpen.value = true;
+};
+
+const getYoutubeThumbnail = (url) => {
+    if (!url) return '';
+    const match = url.match(/\/embed\/([^?]+)/);
+    return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : '';
 };
 
 const deleteGaleri = () => {
@@ -173,7 +190,14 @@ const formatDate = (dateString) => {
                 <!-- Cover Image or Video -->
                 <div class="relative aspect-[4/3] bg-[#f0f1f1] overflow-hidden">
                     <img v-if="item.tipe === 'foto' && item.foto_url" :src="item.foto_url" alt="Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <video v-else-if="item.tipe === 'video' && item.foto_url" :src="item.foto_url" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" controls></video>
+                    <div v-else-if="item.tipe === 'video' && item.foto_url" class="relative w-full h-full">
+                        <img :src="getYoutubeThumbnail(item.foto_url)" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="bg-black/50 text-white rounded-full p-2.5">
+                                <span class="material-symbols-outlined text-[32px] ml-1">play_arrow</span>
+                            </div>
+                        </div>
+                    </div>
                     <div v-else class="w-full h-full flex flex-col items-center justify-center text-[#9499a3]">
                         <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">image_not_supported</span>
                         <span class="text-[12px] font-bold">Belum ada media</span>
@@ -275,26 +299,36 @@ const formatDate = (dateString) => {
 
                 <!-- Foto/Video -->
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">File Media ({{ form.tipe === 'video' ? 'Video: MP4, MOV, AVI' : 'Foto: JPG, PNG, WEBP' }})</label>
-                    <div class="flex flex-col md:flex-row gap-4 items-start">
+                    <label class="block text-[14px] font-bold text-[#373f50] mb-2" v-if="form.tipe === 'foto'">File Foto (JPG, PNG, WEBP) <span class="text-red-500">*</span></label>
+                    <label class="block text-[14px] font-bold text-[#373f50] mb-2" v-else>URL YouTube Embed <span class="text-red-500">*</span></label>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 items-start" v-if="form.tipe === 'foto'">
                         <div v-if="isEditing && detailItem.foto_url && !form.foto" class="w-32 h-32 rounded-lg bg-[#f0f1f1] border border-[#e3e5e7] overflow-hidden shrink-0 relative">
-                            <img v-if="detailItem.tipe === 'foto'" :src="detailItem.foto_url" alt="Current Photo" class="w-full h-full object-cover" />
-                            <video v-else :src="detailItem.foto_url" class="w-full h-full object-cover"></video>
+                            <img :src="detailItem.foto_url" alt="Current Photo" class="w-full h-full object-cover" />
                             <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] font-bold text-center py-1">Tersimpan</div>
                         </div>
 
                         <div class="relative w-full flex-1 border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors min-h-[128px]">
-                            <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2">{{ form.tipe === 'video' ? 'videocam' : 'image' }}</span>
+                            <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2">image</span>
                             <p class="text-[13px] font-medium text-[#373f50] mb-1">
-                                <span v-if="form.foto">{{ form.foto.name }}</span>
-                                <span v-else>Pilih file {{ form.tipe === 'video' ? 'video baru (Maks 50MB)' : 'gambar baru (Maks 5MB)' }}</span>
+                                <span v-if="form.foto && form.foto.name">{{ form.foto.name }}</span>
+                                <span v-else>Pilih file gambar baru (Maks 1MB)</span>
                             </p>
-                            <input type="file" ref="fileInput" @change="handleFileUpload" :accept="form.tipe === 'video' ? 'video/mp4,video/quicktime,video/x-msvideo' : 'image/jpeg,image/png,image/webp'" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                         </div>
                     </div>
+                    
+                    <div v-else class="w-full">
+                        <textarea v-model="form.foto" rows="3" placeholder='https://www.youtube.com/embed/... atau <iframe src="..."></iframe>' class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]"></textarea>
+                        <p class="text-[12px] text-[#646a79] mt-2">Masukkan URL Embed atau tempel kode <code>&lt;iframe&gt;</code> dari YouTube di sini.</p>
+                    </div>
+                    
                     <div v-if="form.errors.foto" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.foto }}</div>
-                    <div v-if="isEditing" class="mt-2 text-[12px] font-medium text-[#646a79]">
-                        Biarkan kosong jika tidak ingin mengubah file media saat ini.
+                    <div v-if="youtubeError" class="text-red-500 text-xs mt-1 font-semibold">
+                        Ini bukan kode embed youtube. <a href="https://www.google.com/search?q=cara+mencari+kode+embed+youtube" target="_blank" class="text-blue-600 hover:underline">Cara mencari kode embed youtube</a>
+                    </div>
+                    <div v-if="isEditing && form.tipe === 'foto'" class="mt-2 text-[12px] font-medium text-[#646a79]">
+                        Biarkan kosong jika tidak ingin mengubah file foto saat ini.
                     </div>
                 </div>
 

@@ -51,7 +51,7 @@ class ProfilDinasController extends Controller
                 'kadis_nama'    => 'nullable|string|max:255',
                 'kadis_nip'     => ['nullable', 'string', 'min:18', 'max:50', 'regex:/^[0-9\s]+$/'],
                 'sambutan_teks' => 'nullable|string',
-                'kadis_foto'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+                'kadis_foto'    => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
             ],
             'visi-misi' => [
                 'visi_teks' => 'nullable|string',
@@ -62,7 +62,7 @@ class ProfilDinasController extends Controller
             ],
             'struktur'  => [
                 'struktur_keterangan' => 'nullable|string',
-                'struktur_gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+                'struktur_gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
             ],
             'kode-etik' => [
                 'kode_etik_teks' => 'nullable|string',
