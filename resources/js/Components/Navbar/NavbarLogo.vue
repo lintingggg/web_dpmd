@@ -7,19 +7,19 @@ import { Link } from '@inertiajs/vue3';
 <div class="flex items-center gap-4">
 
     <Link href="/" class="flex items-center justify-center shrink-0">
-        <img src="/assets/logo-dpmd-bangkalan.png" alt="Logo DPMD Bangkalan" class="h-16 w-auto object-contain" />
+        <img src="/assets/Logo-kabupaten-Bangkalan.png" alt="Logo DPMD Bangkalan" class="h-16 w-auto object-contain" />
     </Link>
 
     <div>
 
         <div
-            class="text-[10px] sm:text-[11px] uppercase tracking-wider text-neutral-500 whitespace-nowrap"
+            class="text-[10px] sm:text-[11px] uppercase tracking-wider text-white/80 whitespace-nowrap"
         >
             Pemerintah Kabupaten Bangkalan
         </div>
 
         <div
-            class="font-bold text-base sm:text-xl text-[#0F172A] leading-tight whitespace-nowrap"
+            class="font-bold text-base sm:text-xl text-white leading-tight whitespace-nowrap"
         >
             Dinas Pemberdayaan 
         </div>
