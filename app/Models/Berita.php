@@ -12,6 +12,7 @@ class Berita extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'judul',
         'slug',
         'konten',
@@ -21,6 +22,11 @@ class Berita extends Model
         'is_published',
         'published_at',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected $casts = [
         'tags' => 'array',

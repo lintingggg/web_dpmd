@@ -16,12 +16,54 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Superadmin (Existing)
+        User::updateOrCreate(
+            ['email' => 'imuh6500@gmail.com'],
+            [
+                'name' => 'Super Admin DPMD',
+                'password' => Hash::make('admin123'),
+                'role' => 'superadmin',
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Super Admin DPMD',
-            'email' => 'imuh6500@gmail.com',
-            'password' => Hash::make('admin123'),
-        ]);
+        // Admin Pemdes
+        User::updateOrCreate(
+            ['email' => 'pemdes@dpmd.bangkalan.go.id'],
+            [
+                'name' => 'Admin Pemdes',
+                'password' => Hash::make('pemdes123'),
+                'role' => 'admin_pemdes',
+            ]
+        );
+
+        // Admin Pemberdayaan
+        User::updateOrCreate(
+            ['email' => 'pemberdayaan@dpmd.bangkalan.go.id'],
+            [
+                'name' => 'Admin Pemberdayaan',
+                'password' => Hash::make('pemberdayaan123'),
+                'role' => 'admin_pemberdayaan',
+            ]
+        );
+
+        // Admin Lembaga Kemasyarakatan
+        User::updateOrCreate(
+            ['email' => 'lembaga@dpmd.bangkalan.go.id'],
+            [
+                'name' => 'Admin Lembaga Kemasyarakatan',
+                'password' => Hash::make('lembaga123'),
+                'role' => 'admin_lembaga',
+            ]
+        );
+
+        // Admin Sekretariat
+        User::updateOrCreate(
+            ['email' => 'sekretariat@dpmd.bangkalan.go.id'],
+            [
+                'name' => 'Admin Sekretariat',
+                'password' => Hash::make('sekretariat123'),
+                'role' => 'admin_sekretariat',
+            ]
+        );
     }
 }

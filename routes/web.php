@@ -11,15 +11,14 @@ use App\Http\Controllers\Frontend\BidangController;
 use App\Http\Controllers\Frontend\DokumenController;
 use App\Http\Controllers\Frontend\BeritaController as FrontendBeritaController;
 use App\Http\Controllers\Frontend\GaleriController as FrontendGaleriController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [BerandaController::class, 'index']);
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -30,39 +29,44 @@ Route::middleware('auth')->group(function () {
 
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('/agenda', [AdminAgendaController::class, 'index'])->name('admin.agenda.index');
-    Route::post('/agenda', [AdminAgendaController::class, 'store'])->name('admin.agenda.store');
-    Route::post('/agenda/{agenda}', [AdminAgendaController::class, 'update'])->name('admin.agenda.update');
-    Route::delete('/agenda/{agenda}', [AdminAgendaController::class, 'destroy'])->name('admin.agenda.destroy');
-
-    Route::get('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'edit'])->name('admin.pengaturan-beranda');
-    Route::post('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'update'])->name('admin.pengaturan-beranda.update');
-    
-    Route::get('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
-    Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
-    Route::get('/profil-dinas/{section?}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'edit'])->name('admin.profil-dinas');
-    Route::post('/profil-dinas/{section}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'update'])->name('admin.profil-dinas.update');
-    
-    Route::get('/bidang-tugas/{section?}', [BidangTugasController::class, 'edit'])->name('admin.bidang-tugas');
-    Route::post('/bidang-tugas/{section}', [BidangTugasController::class, 'update'])->name('admin.bidang-tugas.update');
-    Route::get('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'index'])->name('admin.publikasi-dokumen');
-    Route::post('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'store'])->name('admin.publikasi-dokumen.store');
-    Route::put('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'update'])->name('admin.publikasi-dokumen.update');
-    Route::delete('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'destroy'])->name('admin.publikasi-dokumen.destroy');
+    // Berita is accessible by all authenticated admin users
     Route::get('/berita', [BeritaController::class, 'index'])->name('admin.berita');
     Route::post('/berita', [BeritaController::class, 'store'])->name('admin.berita.store');
     Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('admin.berita.update');
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('admin.berita.destroy');
-    
-    Route::get('/album', [\App\Http\Controllers\Admin\AlbumController::class, 'index'])->name('admin.album');
-    Route::post('/album', [\App\Http\Controllers\Admin\AlbumController::class, 'store'])->name('admin.album.store');
-    Route::put('/album/{album}', [\App\Http\Controllers\Admin\AlbumController::class, 'update'])->name('admin.album.update');
-    Route::delete('/album/{album}', [\App\Http\Controllers\Admin\AlbumController::class, 'destroy'])->name('admin.album.destroy');
 
-    Route::get('/album/{album}/galeri', [GaleriController::class, 'index'])->name('admin.galeri');
-    Route::post('/album/{album}/galeri', [GaleriController::class, 'store'])->name('admin.galeri.store');
-    Route::put('/galeri/{galeri}', [GaleriController::class, 'update'])->name('admin.galeri.update');
-    Route::delete('/galeri/{galeri}', [GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
+    // The following routes are ONLY accessible by superadmin
+    Route::middleware(['superadmin'])->group(function () {
+        Route::get('/agenda', [AdminAgendaController::class, 'index'])->name('admin.agenda.index');
+        Route::post('/agenda', [AdminAgendaController::class, 'store'])->name('admin.agenda.store');
+        Route::post('/agenda/{agenda}', [AdminAgendaController::class, 'update'])->name('admin.agenda.update');
+        Route::delete('/agenda/{agenda}', [AdminAgendaController::class, 'destroy'])->name('admin.agenda.destroy');
+
+        Route::get('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'edit'])->name('admin.pengaturan-beranda');
+        Route::post('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'update'])->name('admin.pengaturan-beranda.update');
+        
+        Route::get('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
+        Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
+        Route::get('/profil-dinas/{section?}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'edit'])->name('admin.profil-dinas');
+        Route::post('/profil-dinas/{section}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'update'])->name('admin.profil-dinas.update');
+        
+        Route::get('/bidang-tugas/{section?}', [BidangTugasController::class, 'edit'])->name('admin.bidang-tugas');
+        Route::post('/bidang-tugas/{section}', [BidangTugasController::class, 'update'])->name('admin.bidang-tugas.update');
+        Route::get('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'index'])->name('admin.publikasi-dokumen');
+        Route::post('/publikasi-dokumen', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'store'])->name('admin.publikasi-dokumen.store');
+        Route::put('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'update'])->name('admin.publikasi-dokumen.update');
+        Route::delete('/publikasi-dokumen/{dokumen}', [\App\Http\Controllers\Admin\PublikasiDokumenController::class, 'destroy'])->name('admin.publikasi-dokumen.destroy');
+        
+        Route::get('/album', [\App\Http\Controllers\Admin\AlbumController::class, 'index'])->name('admin.album');
+        Route::post('/album', [\App\Http\Controllers\Admin\AlbumController::class, 'store'])->name('admin.album.store');
+        Route::put('/album/{album}', [\App\Http\Controllers\Admin\AlbumController::class, 'update'])->name('admin.album.update');
+        Route::delete('/album/{album}', [\App\Http\Controllers\Admin\AlbumController::class, 'destroy'])->name('admin.album.destroy');
+
+        Route::get('/album/{album}/galeri', [GaleriController::class, 'index'])->name('admin.galeri');
+        Route::post('/album/{album}/galeri', [GaleriController::class, 'store'])->name('admin.galeri.store');
+        Route::put('/galeri/{galeri}', [GaleriController::class, 'update'])->name('admin.galeri.update');
+        Route::delete('/galeri/{galeri}', [GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
+    });
 });
 
 // Rute Bidang Tugas

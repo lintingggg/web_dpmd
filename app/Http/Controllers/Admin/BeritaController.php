@@ -78,8 +78,9 @@ class BeritaController extends Controller
             // Sanitize konten
             $validated['konten'] = Purifier::clean($validated['konten'], 'berita');
 
-            // Set penulis and published_at
+            // Set penulis, user_id and published_at
             $validated['penulis'] = Auth::user()?->name ?? 'Admin';
+            $validated['user_id'] = Auth::id();
             
             $validated['is_published'] = $request->boolean('is_published');
             if ($validated['is_published']) {
