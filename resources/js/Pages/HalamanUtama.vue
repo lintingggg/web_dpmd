@@ -13,25 +13,35 @@ import {
   IconMenu2, 
   IconX, 
   IconChevronDown, 
+  IconChevronLeft,
+  IconChevronRight,
+  IconClock,
   IconSend, 
   IconBell, 
   IconFileDescription, 
   IconArrowRight, 
-  IconCalendar 
+  IconCalendar,
+  IconCalendarEvent
 } from '@tabler/icons-vue';
 import { initHomeAnimations } from '../animations/homeAnimations';
 import Navbar from '../Components/Navbar/Navbar.vue';
 import Footer from '../Components/Footer.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
+import Modal from '../Components/Modal.vue';
+import { router } from '@inertiajs/vue3';
 
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const props = defineProps<{
-  pengumumanList: any[];
-  beritaTerkini?: any[];
-  galeriHighlight?: any[];
+  beritaTerkini: any[];
+  agendaList: any[];
+  galeriHighlight: any[];
   pengaturanBeranda?: any;
+  tanggalAdaAcara: string[];
+  bulan: number;
+  tahun: number;
+  timezoneLabel: string;
 }>();
 
 const page = usePage();
@@ -54,6 +64,74 @@ const isBidangOpen = ref(false);
 // State for mobile accordions
 const isMobileProfilOpen = ref(false);
 const isMobileBidangOpen = ref(false);
+
+// Agenda Calendar Logic
+const currentDate = ref(new Date(props.tahun, props.bulan - 1, 1));
+const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const shortMonthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
+const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+const calendarGrid = computed(() => {
+    const year = currentDate.value.getFullYear();
+    const month = currentDate.value.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const grid = [];
+    let day = 1;
+    for (let i = 0; i < 6; i++) {
+        const week = [];
+        for (let j = 0; j < 7; j++) {
+            if (i === 0 && j < firstDay) {
+                week.push(null);
+            } else if (day > daysInMonth) {
+                week.push(null);
+            } else {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                week.push({ day, dateStr, hasEvent: props.tanggalAdaAcara?.includes(dateStr) });
+                day++;
+            }
+        }
+        grid.push(week);
+        if (day > daysInMonth) break;
+    }
+    return grid;
+});
+
+const prevMonth = () => {
+    let newMonth = props.bulan - 1;
+    let newYear = props.tahun;
+    if (newMonth < 1) { newMonth = 12; newYear--; }
+    router.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
+};
+
+const nextMonth = () => {
+    let newMonth = props.bulan + 1;
+    let newYear = props.tahun;
+    if (newMonth > 12) { newMonth = 1; newYear++; }
+    router.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
+};
+
+watch(() => props.bulan, (newBulan) => {
+    currentDate.value = new Date(props.tahun, newBulan - 1, 1);
+});
+
+// Agenda Detail Modal Logic
+const isDetailOpen = ref(false);
+const selectedAgenda = ref<any>(null);
+
+const openDetail = (item: any) => {
+    selectedAgenda.value = item;
+    isDetailOpen.value = true;
+};
+const closeDetail = () => {
+    isDetailOpen.value = false;
+    setTimeout(() => { selectedAgenda.value = null; }, 300);
+};
+const formatFullDate = (dateStr: string) => {
+    return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateStr));
+};
+const getDayNumber = (dateStr: string) => new Date(dateStr).getDate();
+const getShortMonth = (dateStr: string) => shortMonthNames[new Date(dateStr).getMonth()];
 
 // Data BeritaTerkini sekarang berasal dari props database
 const form = reactive({
@@ -379,45 +457,104 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <!-- PENGUMUMAN TERKINI -->
-    <!-- <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-pengumuman">
+    <!-- AGENDA MENDATANG -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-agenda">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-4 section-header">
         <div>
-          <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Pengumuman Terkini</h2>
-          <p class="text-[#646A79]">Informasi terbaru seputar layanan dan program</p>
+          <h2 class="text-3xl font-bold text-[#0F172A] mb-2">Agenda Mendatang</h2>
+          <p class="text-[#646A79]">Rencana kegiatan dan acara yang akan datang</p>
         </div>
-        <a href="/pengumuman" class="mt-4 sm:mt-0 flex items-center text-sm font-semibold text-[#0F172A] hover:underline">
-          Lihat Semua
-          <IconArrowRight class="ml-1 w-4 h-4" />
-        </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 card-container" v-if="pengumumanList && pengumumanList.length > 0">
-        <div v-for="pengumuman in pengumumanList" :key="pengumuman.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col card-item hover:-translate-y-1">
-          <div class="relative h-48 overflow-hidden bg-gray-100">
-            <img v-if="pengumuman.file_lampiran && (pengumuman.file_lampiran.endsWith('.jpg') || pengumuman.file_lampiran.endsWith('.png') || pengumuman.file_lampiran.endsWith('.jpeg'))" :src="(pengumuman.file_lampiran.startsWith('http') ? pengumuman.file_lampiran : '/storage/' + pengumuman.file_lampiran)" :alt="pengumuman.judul" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-            <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
-              <IconFileDescription class="w-12 h-12" stroke-width="1.5" />
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Column: Calendar -->
+        <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+            <div class="flex items-center justify-between mb-6">
+                <button @click="prevMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
+                    <IconChevronLeft :size="20" />
+                </button>
+                <h2 class="font-bold text-[#0F172A] text-lg">
+                    {{ monthNames[bulan - 1] }} {{ tahun }}
+                </h2>
+                <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
+                    <IconChevronRight :size="20" />
+                </button>
             </div>
-          </div>
-          <div class="p-6 flex-1 flex flex-col">
-            <div class="flex items-center text-gray-500 text-xs mb-3 font-medium">
-              <IconCalendar class="w-4 h-4 mr-1.5" />
-              {{ formatDate(pengumuman.tanggal || pengumuman.created_at) }}
+            
+            <div class="grid grid-cols-7 gap-1 mb-2">
+                <div v-for="day in dayNames" :key="day" class="text-center text-xs font-semibold text-gray-400 py-2">
+                    {{ day }}
+                </div>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
-              <a :href="`/pengumuman/${pengumuman.slug}`" class="hover:text-blue-600 transition-colors">{{ pengumuman.judul }}</a>
-            </h3>
-            <p class="text-gray-600 text-sm line-clamp-2 mb-4 flex-1">
-              {{ pengumuman.cuplikan || (pengumuman.konten ? pengumuman.konten.replace(/<[^>]+>/g, '').substring(0, 120) + '...' : '') }}
-            </p>
-          </div>
+            
+            <div class="space-y-1">
+                <div v-for="(week, wIdx) in calendarGrid" :key="wIdx" class="grid grid-cols-7 gap-1">
+                    <div v-for="(cell, cIdx) in week" :key="cIdx" class="aspect-square relative">
+                        <div v-if="cell" 
+                            class="w-full h-full flex items-center justify-center text-sm font-medium rounded-lg text-gray-700"
+                        >
+                            {{ cell.day }}
+                            <div v-if="cell.hasEvent" class="absolute bottom-2 w-1.5 h-1.5 bg-[#0F172A] rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Right Column: Agenda List -->
+        <div class="lg:col-span-8">
+            <div v-if="agendaList && agendaList.length > 0" class="space-y-4">
+                <div v-for="agenda in agendaList" :key="agenda.id" 
+                    @click="openDetail(agenda)"
+                    class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col sm:flex-row gap-5 hover:border-[#646A79]/30 hover:shadow-md transition-all cursor-pointer group"
+                >
+                    <!-- Date Badge -->
+                    <div class="shrink-0 flex sm:flex-col items-center justify-center gap-2 sm:gap-0 w-full sm:w-20 bg-[#F8FAFC] rounded-xl p-3 border border-gray-100 group-hover:bg-[#0F172A] group-hover:border-[#0F172A] transition-colors">
+                        <span class="text-2xl font-bold text-[#0F172A] group-hover:text-[#FFFFFF] leading-none">{{ getDayNumber(agenda.tanggal) }}</span>
+                        <span class="text-xs font-bold text-[#646A79] group-hover:text-[#F8FAFC] uppercase tracking-wider mt-1">{{ getShortMonth(agenda.tanggal) }}</span>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#F8FAFC] text-[#646A79] border border-gray-200">Agenda Utama</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#0F172A] leading-snug mb-3 group-hover:text-[#646A79] transition-colors line-clamp-2">
+                            {{ agenda.judul }}
+                        </h3>
+                        
+                        <div class="flex flex-wrap gap-4 text-sm text-[#646A79] font-medium">
+                            <div class="flex items-center gap-1.5" v-if="agenda.waktu_mulai">
+                                <IconClock :size="16" class="text-[#646A79]" />
+                                {{ agenda.waktu_mulai.substring(0, 5) }} {{ timezoneLabel }}
+                            </div>
+                            <div class="flex items-center gap-1.5" v-if="agenda.lokasi">
+                                <IconMapPin :size="16" class="text-[#646A79]" />
+                                <span class="line-clamp-1 max-w-[200px]">{{ agenda.lokasi }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden sm:flex shrink-0 items-center justify-center">
+                        <div class="w-10 h-10 rounded-full bg-[#F8FAFC] flex items-center justify-center text-[#646A79] group-hover:bg-[#0F172A] group-hover:text-[#FFFFFF] transition-colors">
+                            <IconChevronRight :size="20" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div v-else class="bg-white rounded-2xl border border-dashed border-[#646A79]/30 p-12 text-center">
+                <div class="w-16 h-16 bg-[#F8FAFC] rounded-full flex items-center justify-center mx-auto mb-4 text-[#646A79]">
+                    <IconCalendarEvent :size="32" />
+                </div>
+                <h3 class="text-lg font-bold text-[#0F172A] mb-1">Belum ada agenda</h3>
+                <p class="text-[#646A79]">Tidak ada agenda acara pada bulan {{ monthNames[bulan - 1] }} {{ tahun }}.</p>
+            </div>
+        </div>
+
       </div>
-      <div v-else class="text-center py-12 text-[#646A79] border border-dashed border-gray-200 rounded-xl">
-        Belum ada pengumuman terbaru.
-      </div>
-    </section> -->
+    </section>
 
     <!-- SOSIAL MEDIA -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 section-sosmed">
@@ -658,5 +795,84 @@ onUnmounted(() => {
 
     <!-- FOOTER -->
     <Footer />
+    <!-- Modal Detail Agenda -->
+    <Modal :show="isDetailOpen" @close="closeDetail" maxWidth="2xl">
+        <div v-if="selectedAgenda" class="bg-white rounded-2xl overflow-hidden relative">
+            
+            <!-- Blue Header Area -->
+            <div class="bg-[#0F172A] p-8 pt-10 text-white relative">
+                <button @click="closeDetail" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                    <IconX :size="18" />
+                </button>
+                
+                <div class="flex items-center gap-5">
+                    <div class="w-20 h-20 bg-white rounded-2xl flex flex-col items-center justify-center shadow-lg shrink-0">
+                        <span class="text-2xl font-bold text-[#0F172A] leading-none">{{ getDayNumber(selectedAgenda.tanggal) }}</span>
+                        <span class="text-xs font-bold text-[#646A79] uppercase tracking-wider mt-1">{{ getShortMonth(selectedAgenda.tanggal) }}</span>
+                    </div>
+                    <div>
+                        <p class="text-[#F8FAFC]/70 text-xs font-bold tracking-widest uppercase mb-1">Detail Agenda</p>
+                        <p class="text-lg font-medium text-[#F8FAFC]">{{ formatFullDate(selectedAgenda.tanggal) }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="p-8">
+                <div class="mb-8">
+                    <p class="text-xs font-bold text-[#646A79] tracking-widest uppercase mb-2">Nama Kegiatan</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-[#0F172A] leading-snug">
+                        {{ selectedAgenda.judul }}
+                    </h2>
+                </div>
+                
+                <div class="space-y-6">
+                    <div v-if="selectedAgenda.waktu_mulai" class="flex gap-4 border-t border-gray-100 pt-6">
+                        <div class="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center shrink-0 text-[#0F172A]">
+                            <IconClock :size="24" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-[#646A79] tracking-widest uppercase mb-1">Waktu</p>
+                            <p class="font-bold text-[#0F172A] text-lg">
+                                {{ selectedAgenda.waktu_mulai.substring(0, 5) }} <span v-if="selectedAgenda.waktu_selesai"> - {{ selectedAgenda.waktu_selesai.substring(0, 5) }}</span> {{ timezoneLabel }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div v-if="selectedAgenda.lokasi" class="flex gap-4 border-t border-gray-100 pt-6">
+                        <div class="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center shrink-0 text-[#0F172A]">
+                            <IconMapPin :size="24" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-[#646A79] tracking-widest uppercase mb-1">Lokasi</p>
+                            <p class="font-bold text-[#0F172A] text-lg">
+                                {{ selectedAgenda.lokasi }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div v-if="selectedAgenda.deskripsi" class="flex gap-4 border-t border-gray-100 pt-6">
+                        <div class="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center shrink-0 text-[#0F172A]">
+                            <IconCalendarEvent :size="24" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-[#646A79] tracking-widest uppercase mb-1">Keterangan</p>
+                            <div class="text-[#646A79] whitespace-pre-line leading-relaxed">
+                                {{ selectedAgenda.deskripsi }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-10 flex justify-end">
+                    <button @click="closeDetail" class="px-6 py-2.5 bg-[#F8FAFC] hover:bg-gray-200 text-[#0F172A] font-semibold rounded-xl transition-colors">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </Modal>
+
   </div>
 </template>

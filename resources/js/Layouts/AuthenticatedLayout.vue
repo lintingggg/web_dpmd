@@ -45,12 +45,12 @@ const page = usePage();
                         Berita
                     </Link>
 
-                    <Link :href="route('admin.pengumuman.index')" 
+                    <Link :href="route('admin.agenda.index')" 
                         class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
-                        :class="route().current('admin.pengumuman.*') || route().current('admin.pengumuman.index') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                        :class="route().current('admin.agenda.*') || route().current('admin.agenda.index') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
                     >
-                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.pengumuman.*') || route().current('admin.pengumuman.index') ? 'font-variation-settings: \'FILL\' 1;' : ''">campaign</span>
-                        Pengumuman
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.agenda.*') || route().current('admin.agenda.index') ? 'font-variation-settings: \'FILL\' 1;' : ''">event</span>
+                        Agenda Acara
                     </Link>
                     
                     <Link :href="route('admin.album')" 

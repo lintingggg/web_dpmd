@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\PengumumanController;
+use App\Http\Controllers\Admin\AgendaController as AdminAgendaController;
 use App\Http\Controllers\Admin\BidangTugasController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\GaleriController;
@@ -30,10 +30,10 @@ Route::middleware('auth')->group(function () {
 
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('admin.pengumuman.index');
-    Route::post('/pengumuman', [PengumumanController::class, 'store'])->name('admin.pengumuman.store');
-    Route::post('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('admin.pengumuman.update');
-    Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('admin.pengumuman.destroy');
+    Route::get('/agenda', [AdminAgendaController::class, 'index'])->name('admin.agenda.index');
+    Route::post('/agenda', [AdminAgendaController::class, 'store'])->name('admin.agenda.store');
+    Route::post('/agenda/{agenda}', [AdminAgendaController::class, 'update'])->name('admin.agenda.update');
+    Route::delete('/agenda/{agenda}', [AdminAgendaController::class, 'destroy'])->name('admin.agenda.destroy');
 
     Route::get('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'edit'])->name('admin.pengaturan-beranda');
     Route::post('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'update'])->name('admin.pengaturan-beranda.update');
