@@ -97,15 +97,9 @@ const shareNews = async () => {
 
     <Navbar />
 
-    <section class="page-header">
-        <div class="container">
-            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
-            <h1>{{ berita.judul }}</h1>
-        </div>
-    </section>
-
-    <div class="bg-gray-50 pb-20 md:pb-32">
+    <div class="bg-gray-50 pt-8 pb-20 md:pb-32">
         <div class="container page-content">
+            <Breadcrumb :items="breadcrumbItems" class="mb-8" />
 
             <div class="flex items-center justify-between mb-6">
                 <Link
@@ -247,26 +241,7 @@ const shareNews = async () => {
     padding: 0 20px;
 }
 
-.page-header {
-    background-color: #FFFFFF;
-    padding: 20px 0 30px;
-    border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 30px;
-}
-
-.page-header h1 {
-    font-size: 32px;
-    font-weight: 800;
-    color: #0F172A;
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
 .page-content {
-    margin: 40px auto 60px;
+    margin: 0 auto 60px;
 }
 </style>

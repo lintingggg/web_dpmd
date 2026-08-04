@@ -38,9 +38,34 @@ const breadcrumbItems = [
 
             <!-- Tupoksi Content Block -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 mb-16">
-                <div class="prose max-w-none text-slate-700 leading-relaxed text-lg prose-li:my-2 prose-ul:list-disc prose-ol:list-decimal prose-ul:pl-6 prose-ol:pl-6 text-left" v-if="props.profil.tupoksi_teks" v-html="props.profil.tupoksi_teks"></div>
-                <div class="text-slate-600 text-lg text-left" v-else>
+                <!-- Teks Tupoksi -->
+                <div class="prose max-w-none text-slate-700 leading-relaxed text-lg prose-li:my-2 prose-ul:list-disc prose-ol:list-decimal prose-ul:pl-6 prose-ol:pl-6 text-left mb-10" v-if="props.profil.tupoksi_teks" v-html="props.profil.tupoksi_teks"></div>
+                <div class="text-slate-600 text-lg text-left mb-10" v-else>
                     <p>(Data Tugas Pokok & Fungsi Belum Tersedia)</p>
+                </div>
+
+                <!-- Dokumen PDF Tupoksi -->
+                <div v-if="props.profil.tupoksi_dokumen" class="mt-8 border-t border-slate-200 pt-8">
+                    <h3 class="text-xl font-bold text-slate-800 mb-6">Dokumen Tugas Pokok & Fungsi</h3>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[600px] flex flex-col">
+                        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <span class="font-semibold text-gray-700 text-sm">PDF Tugas Pokok & Fungsi</span>
+                            </div>
+                            <a :href="'/storage/' + props.profil.tupoksi_dokumen" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors">Buka di Tab Baru</a>
+                        </div>
+                        <div class="flex-grow bg-gray-100 relative" style="min-height: 600px;">
+                            <iframe 
+                                :src="'/storage/' + props.profil.tupoksi_dokumen" 
+                                class="absolute inset-0 w-full h-full border-0" 
+                                title="PDF Viewer"
+                            ></iframe>
+                        </div>
+                    </div>
                 </div>
             </div>
 

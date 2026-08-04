@@ -30,8 +30,7 @@ import UpButton from '../Components/UpButton.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import Modal from '../Components/Modal.vue';
 import { router } from '@inertiajs/vue3';
-import CardNews from '../Components/CardNews.vue'; // tambahkan ini
-
+import CardNews from '../Components/CardNews.vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -135,14 +134,14 @@ const prevMonth = () => {
     let newMonth = props.bulan - 1;
     let newYear = props.tahun;
     if (newMonth < 1) { newMonth = 12; newYear--; }
-    router.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
+    route.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
 };
 
 const nextMonth = () => {
     let newMonth = props.bulan + 1;
     let newYear = props.tahun;
     if (newMonth > 12) { newMonth = 1; newYear++; }
-    router.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
+    route.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
 };
 
 watch(() => props.bulan, (newBulan) => {
@@ -902,6 +901,7 @@ onUnmounted(() => {
             
         </div>
     </Modal>
+
 
     <UpButton />
   </div>

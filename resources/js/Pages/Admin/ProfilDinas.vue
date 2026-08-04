@@ -37,6 +37,7 @@ const form = useForm({
 
     // Tupoksi
     tupoksi_teks: props.profil?.tupoksi_teks || '',
+    tupoksi_dokumen: null,
 
     // Struktur
     struktur_keterangan: props.profil?.struktur_keterangan || '',
@@ -44,6 +45,7 @@ const form = useForm({
 
     // Kode Etik
     kode_etik_teks: props.profil?.kode_etik_teks || '',
+    kode_etik_dokumen: null,
 
     // Maklumat
     maklumat_teks: props.profil?.maklumat_teks || '',
@@ -57,6 +59,8 @@ const form = useForm({
 const fotoKadisPreview = ref(props.profil?.kadis_foto ? `/storage/${props.profil.kadis_foto}` : 'https://ui-avatars.com/api/?name=Kadis&background=c8cbd0&color=ffffff&size=128');
 const strukturPreview = ref(props.profil?.struktur_gambar ? `/storage/${props.profil.struktur_gambar}` : 'https://placehold.co/400x300/c8cbd0/ffffff?text=Bagan+Struktur');
 const maklumatDokumenName = ref(props.profil?.maklumat_dokumen ? 'Dokumen Tersimpan: ' + props.profil.maklumat_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
+const tupoksiDokumenName = ref(props.profil?.tupoksi_dokumen ? 'Dokumen Tersimpan: ' + props.profil.tupoksi_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
+const kodeEtikDokumenName = ref(props.profil?.kode_etik_dokumen ? 'Dokumen Tersimpan: ' + props.profil.kode_etik_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
 
 const handleFileUpload = (e, field) => {
     const file = e.target.files[0];
@@ -66,6 +70,14 @@ const handleFileUpload = (e, field) => {
     
     if (field === 'maklumat_dokumen') {
         maklumatDokumenName.value = file.name;
+        return;
+    }
+    if (field === 'tupoksi_dokumen') {
+        tupoksiDokumenName.value = file.name;
+        return;
+    }
+    if (field === 'kode_etik_dokumen') {
+        kodeEtikDokumenName.value = file.name;
         return;
     }
 
@@ -195,7 +207,25 @@ const formatDate = (dateString) => {
                 <!-- TUPOKSI -->
                 <div v-else-if="currentSection === 'tupoksi'" class="space-y-6">
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Tugas Pokok & Fungsi</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-[14px] font-bold text-[#373f50]">Dokumen Tugas Pokok & Fungsi</label>
+                            <span class="text-[12px] font-medium text-[#646a79]">Hanya format PDF (Max 10MB)</span>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div @click="triggerFileInput('tupoksi_dokumen_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
+                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
+                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
+                                </p>
+                                <p class="text-[12px] text-[#9499a3] font-bold text-blue-600 mt-2">{{ tupoksiDokumenName }}</p>
+                                <input type="file" id="tupoksi_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'tupoksi_dokumen')" />
+                            </div>
+                        </div>
+                        <div v-if="form.errors.tupoksi_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tupoksi_dokumen }}</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Tugas Pokok & Fungsi (Teks)</label>
                         <TipTapEditor v-model="form.tupoksi_teks" />
                         <div v-if="form.errors.tupoksi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tupoksi_teks }}</div>
                     </div>
@@ -234,7 +264,25 @@ const formatDate = (dateString) => {
                 <!-- KODE ETIK -->
                 <div v-else-if="currentSection === 'kode-etik'" class="space-y-6">
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Kode Etik Pelayanan</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-[14px] font-bold text-[#373f50]">Dokumen Kode Etik Pelayanan</label>
+                            <span class="text-[12px] font-medium text-[#646a79]">Hanya format PDF (Max 10MB)</span>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div @click="triggerFileInput('kode_etik_dokumen_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
+                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
+                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
+                                </p>
+                                <p class="text-[12px] text-[#9499a3] font-bold text-blue-600 mt-2">{{ kodeEtikDokumenName }}</p>
+                                <input type="file" id="kode_etik_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'kode_etik_dokumen')" />
+                            </div>
+                        </div>
+                        <div v-if="form.errors.kode_etik_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kode_etik_dokumen }}</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Kode Etik Pelayanan (Teks)</label>
                         <TipTapEditor v-model="form.kode_etik_teks" />
                         <div v-if="form.errors.kode_etik_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kode_etik_teks }}</div>
                     </div>

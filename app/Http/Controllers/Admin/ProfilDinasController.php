@@ -59,6 +59,7 @@ class ProfilDinasController extends Controller
             ],
             'tupoksi'   => [
                 'tupoksi_teks' => 'nullable|string',
+                'tupoksi_dokumen' => 'nullable|file|mimes:pdf|max:10240',
             ],
             'struktur'  => [
                 'struktur_keterangan' => 'nullable|string',
@@ -66,6 +67,7 @@ class ProfilDinasController extends Controller
             ],
             'kode-etik' => [
                 'kode_etik_teks' => 'nullable|string',
+                'kode_etik_dokumen' => 'nullable|file|mimes:pdf|max:10240',
             ],
             'maklumat'  => [
                 'maklumat_teks' => 'nullable|string',
@@ -116,6 +118,20 @@ class ProfilDinasController extends Controller
                 Storage::disk('public')->delete($profil->maklumat_dokumen);
             }
             $validated['maklumat_dokumen'] = $request->file('maklumat_dokumen')->store('profil-dinas/dokumen', 'public');
+        }
+
+        if ($request->hasFile('tupoksi_dokumen')) {
+            if ($profil->tupoksi_dokumen) {
+                Storage::disk('public')->delete($profil->tupoksi_dokumen);
+            }
+            $validated['tupoksi_dokumen'] = $request->file('tupoksi_dokumen')->store('profil-dinas/dokumen', 'public');
+        }
+
+        if ($request->hasFile('kode_etik_dokumen')) {
+            if ($profil->kode_etik_dokumen) {
+                Storage::disk('public')->delete($profil->kode_etik_dokumen);
+            }
+            $validated['kode_etik_dokumen'] = $request->file('kode_etik_dokumen')->store('profil-dinas/dokumen', 'public');
         }
 
         // Simpan

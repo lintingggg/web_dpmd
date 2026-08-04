@@ -5,6 +5,9 @@ import '@idds/vue/index.css';
 
 const showingNavigationDropdown = ref(false);
 const page = usePage();
+// Dropdown otomatis terbuka jika salah satu link di dalamnya sedang aktif/dipilih
+const profilDinasOpen = ref(route().current('admin.profil-dinas'));
+const bidangTugasOpen = ref(route().current('admin.bidang-tugas'));
 </script>
 
 <template>
