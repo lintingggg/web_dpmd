@@ -87,7 +87,8 @@ class BeritaController extends Controller
                 $validated['published_at'] = now();
             }
 
-            Berita::create($validated);
+            $berita = Berita::create($validated);
+            \App\Services\ActivityLogger::log('Membuat Berita', "Membuat berita baru: {$berita->judul}", $berita, null, $berita->toArray());
             DB::commit();
 
             return redirect()->back()->with('message', 'Berita berhasil ditambahkan');
@@ -128,7 +129,9 @@ class BeritaController extends Controller
                 $validated['published_at'] = now();
             }
 
+            $oldValues = $berita->toArray();
             $berita->update($validated);
+            \App\Services\ActivityLogger::log('Mengubah Berita', "Mengubah data berita: {$berita->judul}", $berita, $oldValues, $berita->fresh()->toArray());
             DB::commit();
 
             return redirect()->back()->with('message', 'Berita berhasil diperbarui');
@@ -143,7 +146,9 @@ class BeritaController extends Controller
     {
         DB::beginTransaction();
         try {
+            $oldValues = $berita->toArray();
             $berita->delete(); // Soft delete, thumbnail is NOT deleted
+            \App\Services\ActivityLogger::log('Menghapus Berita', "Menghapus berita: {$berita->judul}", $berita, $oldValues, null);
             DB::commit();
             return redirect()->back()->with('message', 'Berita berhasil dihapus');
         } catch (\Throwable $e) {

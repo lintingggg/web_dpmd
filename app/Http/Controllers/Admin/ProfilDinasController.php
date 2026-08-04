@@ -135,7 +135,20 @@ class ProfilDinasController extends Controller
         }
 
         // Simpan
+        $oldValues = $profil->toArray();
         $profil->update($validated);
+
+        $sectionNames = [
+            'sambutan' => 'Sambutan Kepala Dinas',
+            'visi-misi' => 'Visi & Misi',
+            'tupoksi' => 'Tugas Pokok & Fungsi',
+            'struktur' => 'Struktur Organisasi',
+            'kode-etik' => 'Kode Etik Pelayanan',
+            'maklumat' => 'Maklumat Pelayanan',
+            'motto' => 'Motto Pelayanan',
+        ];
+        $sectionLabel = $sectionNames[$section] ?? $section;
+        \App\Services\ActivityLogger::log('Mengubah Profil Dinas', "Memperbarui profil dinas bagian: {$sectionLabel}", $profil, $oldValues, $profil->fresh()->toArray());
 
         return redirect()->back()->with('message', 'Perubahan profil dinas berhasil disimpan.');
     }

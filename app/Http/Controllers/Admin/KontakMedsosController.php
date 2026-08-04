@@ -103,10 +103,15 @@ class KontakMedsosController extends Controller
             }
         }
 
-        PengaturanKontak::updateOrCreate(
+        $kontakLama = PengaturanKontak::find(1);
+        $oldValues = $kontakLama ? $kontakLama->toArray() : [];
+
+        $kontak = PengaturanKontak::updateOrCreate(
             ['id' => 1],
             $validated
         );
+
+        \App\Services\ActivityLogger::log('Mengubah Pengaturan', 'Memperbarui Pengaturan Kontak & Media Sosial', $kontak, $oldValues, $kontak->fresh()->toArray());
 
         return redirect()->back()->with('message', 'Pengaturan kontak & media sosial berhasil diperbarui.');
     }

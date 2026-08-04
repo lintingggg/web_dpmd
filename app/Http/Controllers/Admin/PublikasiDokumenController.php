@@ -67,7 +67,8 @@ class PublikasiDokumenController extends Controller
                 $validated['file_dokumen'] = $path;
             }
             
-            PublikasiDokumen::create($validated);
+            $dok = PublikasiDokumen::create($validated);
+            \App\Services\ActivityLogger::log('Membuat Dokumen', "Mengunggah dokumen publikasi baru: {$dok->judul}", $dok, null, $dok->toArray());
             
             DB::commit();
         } catch (\Throwable $e) {
@@ -108,7 +109,9 @@ class PublikasiDokumenController extends Controller
                 unset($validated['file_dokumen']);
             }
 
+            $oldValues = $dokumen->toArray();
             $dokumen->update($validated);
+            \App\Services\ActivityLogger::log('Mengubah Dokumen', "Mengubah data dokumen: {$dokumen->judul}", $dokumen, $oldValues, $dokumen->fresh()->toArray());
             
             DB::commit();
         } catch (\Throwable $e) {
@@ -131,7 +134,9 @@ class PublikasiDokumenController extends Controller
                 Storage::disk('public')->delete($dokumen->file_dokumen);
             }
             
+            $oldValues = $dokumen->toArray();
             $dokumen->delete();
+            \App\Services\ActivityLogger::log('Menghapus Dokumen', "Menghapus dokumen: {$dokumen->judul}", $dokumen, $oldValues, null);
             
             DB::commit();
         } catch (\Throwable $e) {

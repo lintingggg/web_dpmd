@@ -64,7 +64,17 @@ class BidangTugasController extends Controller
         }
 
         // Simpan
+        $oldValues = $bidang->toArray();
         $bidang->update($validated);
+
+        $sectionNames = [
+            'pemdes' => 'Pemerintahan Desa',
+            'pemberdayaan' => 'Pemberdayaan Desa',
+            'lembaga' => 'Lembaga Kemasyarakatan',
+            'sekretariat' => 'Sekretariat'
+        ];
+        $sectionLabel = $sectionNames[$section] ?? $section;
+        \App\Services\ActivityLogger::log('Mengubah Bidang Tugas', "Memperbarui data bidang tugas: {$sectionLabel}", $bidang, $oldValues, $bidang->fresh()->toArray());
 
         return redirect()->back()->with('message', 'Perubahan bidang tugas berhasil disimpan.');
     }

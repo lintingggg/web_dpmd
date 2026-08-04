@@ -19,59 +19,25 @@ class DashboardController extends Controller
         $totalDokumen = PublikasiDokumen::count();
         $totalGaleri = Galeri::count();
 
-        // Get recent activities from multiple models
-        $recentBerita = Berita::orderBy('updated_at', 'desc')->take(3)->get()->map(function ($item) {
-            return [
-                'type' => 'Berita',
-                'title' => $item->judul,
-                'status' => $item->is_published ? 'Dipublikasikan' : 'Draft',
-                'author' => $item->penulis ?? 'Admin',
-                'time' => $item->updated_at->diffForHumans(),
-                'updated_at' => $item->updated_at
-            ];
-        });
-
-        $recentAgenda = Agenda::orderBy('updated_at', 'desc')->take(3)->get()->map(function ($item) {
-            return [
-                'type' => 'Agenda',
-                'title' => $item->judul,
-                'status' => 'Aktif',
-                'author' => 'Admin',
-                'time' => $item->updated_at->diffForHumans(),
-                'updated_at' => $item->updated_at
-            ];
-        });
-
-        $recentDokumen = PublikasiDokumen::orderBy('updated_at', 'desc')->take(3)->get()->map(function ($item) {
-            return [
-                'type' => 'Dokumen',
-                'title' => $item->judul,
-                'status' => 'Diunggah',
-                'author' => 'Admin',
-                'time' => $item->updated_at->diffForHumans(),
-                'updated_at' => $item->updated_at
-            ];
-        });
+        // Get recent activities from ActivityLog
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $query = \App\Models\ActivityLog::with('user');
         
-        $recentGaleri = Galeri::orderBy('updated_at', 'desc')->take(3)->get()->map(function ($item) {
+        if ($user->role !== 'superadmin') {
+            $query->where('subject_type', \App\Models\Berita::class);
+        }
+
+        $recentActivities = $query->latest()->take(6)->get()->map(function ($log) {
+            $type = $log->subject_type ? class_basename($log->subject_type) : 'Sistem';
             return [
-                'type' => 'Galeri',
-                'title' => $item->judul,
-                'status' => 'Diunggah',
-                'author' => 'Admin',
-                'time' => $item->updated_at->diffForHumans(),
-                'updated_at' => $item->updated_at
+                'type' => $type,
+                'title' => $log->description,
+                'status' => $log->action,
+                'author' => $log->user ? $log->user->name : 'Anonim',
+                'time' => $log->created_at->diffForHumans(),
+                'updated_at' => $log->created_at
             ];
         });
-
-        $recentActivities = collect()
-            ->merge($recentBerita)
-            ->merge($recentAgenda)
-            ->merge($recentDokumen)
-            ->merge($recentGaleri)
-            ->sortByDesc('updated_at')
-            ->take(6)
-            ->values();
 
         return Inertia::render('Dashboard', [
             'totalBerita' => $totalBerita,

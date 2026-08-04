@@ -48,7 +48,8 @@ class AgendaController extends Controller
 
         $validated['is_published'] = $request->boolean('is_published', true);
 
-        Agenda::create($validated);
+        $agenda = Agenda::create($validated);
+        \App\Services\ActivityLogger::log('Membuat Agenda', "Membuat agenda baru: {$agenda->judul}", $agenda, null, $agenda->toArray());
 
         return redirect()->back()->with('message', 'Agenda berhasil ditambahkan');
     }
@@ -67,14 +68,18 @@ class AgendaController extends Controller
 
         $validated['is_published'] = $request->boolean('is_published', true);
 
+        $oldValues = $agenda->toArray();
         $agenda->update($validated);
+        \App\Services\ActivityLogger::log('Mengubah Agenda', "Mengubah data agenda: {$agenda->judul}", $agenda, $oldValues, $agenda->fresh()->toArray());
 
         return redirect()->back()->with('message', 'Agenda berhasil diperbarui');
     }
 
     public function destroy(Agenda $agenda)
     {
+        $oldValues = $agenda->toArray();
         $agenda->delete();
+        \App\Services\ActivityLogger::log('Menghapus Agenda', "Menghapus agenda: {$agenda->judul}", $agenda, $oldValues, null);
         return redirect()->back()->with('message', 'Agenda berhasil dihapus');
     }
 }

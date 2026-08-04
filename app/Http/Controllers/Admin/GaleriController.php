@@ -69,7 +69,8 @@ class GaleriController extends Controller
             $validated['is_published'] = $request->boolean('is_published');
             $validated['album_id'] = $album->id;
 
-            Galeri::create($validated);
+            $galeri = Galeri::create($validated);
+            \App\Services\ActivityLogger::log('Membuat Galeri', "Membuat item galeri baru: {$galeri->judul}", $galeri, null, $galeri->toArray());
             DB::commit();
 
             return redirect()->back()->with('message', 'Media berhasil ditambahkan ke album');
@@ -115,7 +116,9 @@ class GaleriController extends Controller
 
             $validated['is_published'] = $request->boolean('is_published');
 
+            $oldValues = $galeri->toArray();
             $galeri->update($validated);
+            \App\Services\ActivityLogger::log('Mengubah Galeri', "Mengubah data galeri: {$galeri->judul}", $galeri, $oldValues, $galeri->fresh()->toArray());
 
             // Delete old photo if a new file was uploaded, OR if type changed to video
             if ($fotoLamaPath && !str_starts_with($fotoLamaPath, 'http')) {
@@ -144,7 +147,9 @@ class GaleriController extends Controller
                 Storage::disk('public')->delete($galeri->foto);
             }
 
+            $oldValues = $galeri->toArray();
             $galeri->delete();
+            \App\Services\ActivityLogger::log('Menghapus Galeri', "Menghapus item galeri: {$galeri->judul}", $galeri, $oldValues, null);
             DB::commit();
 
             return redirect()->back()->with('message', 'Media berhasil dihapus');

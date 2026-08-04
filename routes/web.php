@@ -35,6 +35,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('admin.berita.update');
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('admin.berita.destroy');
 
+    // Log Aktivitas (accessible by all authenticated admin users)
+    Route::get('/log-aktivitas', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('admin.log-aktivitas');
+
     // The following routes are ONLY accessible by superadmin
     Route::middleware(['superadmin'])->group(function () {
         Route::get('/agenda', [AdminAgendaController::class, 'index'])->name('admin.agenda.index');

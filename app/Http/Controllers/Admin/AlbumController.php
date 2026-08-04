@@ -41,7 +41,9 @@ class AlbumController extends Controller
         }
 
         $validated['is_published'] = $request->boolean('is_published');
-        Album::create($validated);
+        $album = Album::create($validated);
+
+        \App\Services\ActivityLogger::log('Membuat Album', "Membuat album galeri baru: {$album->nama}", $album, null, $album->toArray());
 
         return redirect()->back()->with('message', 'Album berhasil dibuat');
     }
@@ -65,7 +67,10 @@ class AlbumController extends Controller
         }
 
         $validated['is_published'] = $request->boolean('is_published');
+        $oldValues = $album->toArray();
         $album->update($validated);
+
+        \App\Services\ActivityLogger::log('Mengubah Album', "Mengubah data album galeri: {$album->nama}", $album, $oldValues, $album->fresh()->toArray());
 
         return redirect()->back()->with('message', 'Album berhasil diperbarui');
     }
@@ -84,7 +89,9 @@ class AlbumController extends Controller
             $galeri->delete();
         }
 
+        $oldValues = $album->toArray();
         $album->delete();
+        \App\Services\ActivityLogger::log('Menghapus Album', "Menghapus album galeri: {$album->nama}", $album, $oldValues, null);
         return redirect()->back()->with('message', 'Album berhasil dihapus');
     }
 }

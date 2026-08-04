@@ -30,6 +30,14 @@ const bidangTugasOpen = ref(route().current('admin.bidang-tugas'));
                         Dashboard
                     </Link>
 
+                    <Link :href="route('admin.log-aktivitas')" 
+                        class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95 mb-2 group"
+                        :class="route().current('admin.log-aktivitas') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"
+                    >
+                        <span class="material-symbols-outlined transition-colors" :style="route().current('admin.log-aktivitas') ? 'font-variation-settings: \'FILL\' 1;' : ''">history</span>
+                        Log Aktivitas
+                    </Link>
+
                     <Link :href="route('admin.pengaturan-beranda')" 
                         class="flex items-center gap-4 rounded-lg px-4 py-2 font-bold text-left transition-all duration-200 active:scale-95 mb-2 group"
                         :class="route().current('admin.pengaturan-beranda') ? 'bg-[#e3e5e7] text-[#0f172a]' : 'text-[#9499a3] hover:bg-[#222a3d] hover:text-white'"

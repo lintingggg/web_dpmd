@@ -63,7 +63,10 @@ class PengaturanBerandaController extends Controller
             $pengaturan->hero_image_3 = $path;
         }
 
+        $oldValues = $pengaturan->exists ? $pengaturan->getOriginal() : [];
         $pengaturan->save();
+
+        \App\Services\ActivityLogger::log('Mengubah Pengaturan', 'Memperbarui Pengaturan Banner Utama / Beranda', $pengaturan, $oldValues, $pengaturan->fresh()->toArray());
 
         return redirect()->back()->with('success', 'Pengaturan Beranda berhasil diperbarui.');
     }

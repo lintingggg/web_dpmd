@@ -35,7 +35,11 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user = $request->user();
+        $oldValues = $user->getOriginal();
+        $user->save();
+
+        \App\Services\ActivityLogger::log('Mengubah Profil Akun', "Memperbarui informasi profil akun: {$user->name}", $user, $oldValues, $user->fresh()->toArray());
 
         return Redirect::route('profile.edit');
     }
@@ -53,7 +57,10 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        $oldValues = $user->toArray();
         $user->delete();
+
+        \App\Services\ActivityLogger::log('Menghapus Akun', "Menghapus akun pengguna: {$user->name}", $user, $oldValues, null);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
