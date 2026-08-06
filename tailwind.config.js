@@ -13,6 +13,14 @@ export default {
     theme: {
         extend: {
             colors: {
+                dpmd: {
+                    dark: '#103973',
+                    main: '#1e56a0',
+                    light: '#528be6',
+                    muted: '#64748b',
+                    bg: '#f8fafc',
+                    surface: '#ffffff',
+                },
                 "on-tertiary": "#ffffff",
                 "inverse-on-surface": "#f0f1f1",
                 "on-error": "#ffffff",

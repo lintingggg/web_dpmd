@@ -39,12 +39,18 @@ class DashboardController extends Controller
             ];
         });
 
+        $agendaTerdekat = Agenda::where('tanggal', '>=', date('Y-m-d'))
+                                ->orderBy('tanggal', 'asc')
+                                ->take(3)
+                                ->get();
+
         return Inertia::render('Dashboard', [
             'totalBerita' => $totalBerita,
             'totalAgenda' => $totalAgenda,
             'totalDokumen' => $totalDokumen,
             'totalGaleri' => $totalGaleri,
-            'recentActivities' => $recentActivities
+            'recentActivities' => $recentActivities,
+            'agendaTerdekat' => $agendaTerdekat
         ]);
     }
 }
