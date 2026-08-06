@@ -178,13 +178,13 @@ const openDocument = (path) => {
         <div class="mb-8">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+                    <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#103973] mb-1">
                         Publikasi Dokumen
                     </h2>
-                    <p class="text-[14px] font-medium text-[#646a79]">Kelola file dokumen PDF publik seperti Renstra, Peraturan, dan SOP.</p>
+                    <p class="text-[14px] font-medium text-[#5b6b85]">Kelola file dokumen PDF publik seperti Renstra, Peraturan, dan SOP.</p>
                 </div>
                 
-                <button @click="openModal()" class="bg-[#0f172a] hover:bg-[#222a3d] text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
+                <button @click="openModal()" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
                     <span class="material-symbols-outlined text-[18px]">add</span>
                     Tambah Dokumen
                 </button>
@@ -192,34 +192,34 @@ const openDocument = (path) => {
         </div>
 
         <!-- Main Content Card -->
-        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden">
+        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
             
             <!-- Tabs Navigation -->
-            <div class="px-6 md:px-8 border-b border-[#e3e5e7] flex gap-8 overflow-x-auto">
+            <div class="px-6 md:px-8 border-b border-[#dbe6f7] flex gap-8 overflow-x-auto">
                 <button 
                     v-for="(label, key) in categories" 
                     :key="key"
                     @click="activeTab = key"
                     class="py-4 text-[14px] font-bold border-b-2 transition-colors whitespace-nowrap"
-                    :class="activeTab === key ? 'border-[#0f172a] text-[#0f172a]' : 'border-transparent text-[#9499a3] hover:text-[#0f172a]'"
+                    :class="activeTab === key ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-[#7488a8] hover:text-[#103973]'"
                 >
                     {{ label }}
                 </button>
             </div>
 
             <!-- Filters Area -->
-            <div class="p-6 md:p-8 border-b border-[#e3e5e7] flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-[#f9f9f9]">
+            <div class="p-6 md:p-8 border-b border-[#dbe6f7] flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-[#f5f8fd]">
                 <!-- Search Box -->
                 <div class="relative w-full md:w-96">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9499a3] text-[20px]">search</span>
-                    <input v-model="search" type="text" placeholder="Cari judul dokumen..." class="w-full bg-white border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-xl pl-11 pr-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#7488a8] text-[20px]">search</span>
+                    <input v-model="search" type="text" placeholder="Cari judul dokumen..." class="w-full bg-white border border-[#dbe6f7] text-[#103973] text-[14px] rounded-xl pl-11 pr-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
                 </div>
                 
                 <!-- Filter Section -->
                 <div class="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                     <div class="flex items-center gap-2 whitespace-nowrap">
-                        <span class="text-[11px] font-bold text-[#9499a3] uppercase tracking-[1px]">Status:</span>
-                        <select v-model="statusFilter" class="bg-white border border-[#e3e5e7] text-[#0f172a] text-[13px] font-bold rounded-lg px-3 py-1.5 focus:ring-0 focus:border-[#c8cbd0]">
+                        <span class="text-[11px] font-bold text-[#7488a8] uppercase tracking-[1px]">Status:</span>
+                        <select v-model="statusFilter" class="bg-white border border-[#dbe6f7] text-[#103973] text-[13px] font-bold rounded-lg px-3 py-1.5 focus:ring-0 focus:border-[#c7dafa]">
                             <option value="">Semua</option>
                             <option value="publish">Publish</option>
                             <option value="draft">Draft</option>
@@ -227,8 +227,8 @@ const openDocument = (path) => {
                     </div>
                     
                     <div class="flex items-center gap-2 whitespace-nowrap">
-                        <span class="text-[11px] font-bold text-[#9499a3] uppercase tracking-[1px]">Tahun:</span>
-                        <select v-model="tahunFilter" class="bg-white border border-[#e3e5e7] text-[#0f172a] text-[13px] font-bold rounded-lg px-3 py-1.5 focus:ring-0 focus:border-[#c8cbd0]">
+                        <span class="text-[11px] font-bold text-[#7488a8] uppercase tracking-[1px]">Tahun:</span>
+                        <select v-model="tahunFilter" class="bg-white border border-[#dbe6f7] text-[#103973] text-[13px] font-bold rounded-lg px-3 py-1.5 focus:ring-0 focus:border-[#c7dafa]">
                             <option value="">Semua</option>
                             <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
                         </select>
@@ -240,14 +240,14 @@ const openDocument = (path) => {
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
-                        <tr class="bg-[#f9f9f9]">
-                            <th class="py-4 px-6 md:px-8 text-[11px] font-bold text-[#646a79] uppercase tracking-[2.75px] border-b border-[#e3e5e7]">Judul Dokumen</th>
-                            <th class="py-4 px-6 text-[11px] font-bold text-[#646a79] uppercase tracking-[2.75px] border-b border-[#e3e5e7] text-center w-32">Tahun</th>
-                            <th class="py-4 px-6 md:px-8 text-[11px] font-bold text-[#646a79] uppercase tracking-[2.75px] border-b border-[#e3e5e7] text-right w-40">Aksi</th>
+                        <tr class="bg-[#f5f8fd]">
+                            <th class="py-4 px-6 md:px-8 text-[11px] font-bold text-[#5b6b85] uppercase tracking-[2.75px] border-b border-[#dbe6f7]">Judul Dokumen</th>
+                            <th class="py-4 px-6 text-[11px] font-bold text-[#5b6b85] uppercase tracking-[2.75px] border-b border-[#dbe6f7] text-center w-32">Tahun</th>
+                            <th class="py-4 px-6 md:px-8 text-[11px] font-bold text-[#5b6b85] uppercase tracking-[2.75px] border-b border-[#dbe6f7] text-right w-40">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-[14px] font-medium divide-y divide-[#e3e5e7]">
-                        <tr v-for="doc in dokumen.data" :key="doc.id" class="hover:bg-[#f9f9f9]/50 transition-colors group">
+                    <tbody class="text-[14px] font-medium divide-y divide-[#dbe6f7]">
+                        <tr v-for="doc in dokumen.data" :key="doc.id" class="hover:bg-[#f5f8fd]/50 transition-colors group">
                             <!-- Judul -->
                             <td class="py-4 px-6 md:px-8">
                                 <div class="flex items-center gap-4">
@@ -255,10 +255,10 @@ const openDocument = (path) => {
                                         <span class="material-symbols-outlined text-[#d32f2f] text-[22px]">picture_as_pdf</span>
                                     </div>
                                     <div>
-                                        <p @click="openDetailModal(doc)" class="font-bold text-[#0f172a] leading-tight hover:text-[#1976d2] transition-colors cursor-pointer">
+                                        <p @click="openDetailModal(doc)" class="font-bold text-[#103973] leading-tight hover:text-[#1356a0] transition-colors cursor-pointer">
                                             {{ doc.judul }}
                                         </p>
-                                        <span v-if="!doc.is_published" class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-[10px] font-bold bg-[#f1f3f4] text-[#646a79] uppercase">
+                                        <span v-if="!doc.is_published" class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-[10px] font-bold bg-[#f1f3f4] text-[#5b6b85] uppercase">
                                             Draft
                                         </span>
                                     </div>
@@ -266,14 +266,14 @@ const openDocument = (path) => {
                             </td>
                             
                             <!-- Tahun -->
-                            <td class="py-4 px-6 text-center text-[#646a79] font-semibold">
+                            <td class="py-4 px-6 text-center text-[#5b6b85] font-semibold">
                                 {{ doc.tahun }}
                             </td>
                             
                             <!-- Aksi -->
                             <td class="py-4 px-6 md:px-8">
                                 <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                    <button @click="openModal(doc)" class="w-8 h-8 rounded-full hover:bg-[#e3e5e7] text-[#646a79] flex items-center justify-center transition-colors" title="Edit">
+                                    <button @click="openModal(doc)" class="w-8 h-8 rounded-full hover:bg-[#dbe6f7] text-[#5b6b85] flex items-center justify-center transition-colors" title="Edit">
                                         <span class="material-symbols-outlined text-[18px]">edit</span>
                                     </button>
                                     <button @click="confirmDelete(doc)" class="w-8 h-8 rounded-full hover:bg-[#ffebee] text-[#d32f2f] flex items-center justify-center transition-colors" title="Hapus">
@@ -285,8 +285,8 @@ const openDocument = (path) => {
                         
                         <!-- Empty State -->
                         <tr v-if="dokumen.data.length === 0">
-                            <td colspan="3" class="py-12 text-center text-[#646a79]">
-                                <span class="material-symbols-outlined text-[48px] text-[#c8cbd0] mb-2 block">folder_off</span>
+                            <td colspan="3" class="py-12 text-center text-[#5b6b85]">
+                                <span class="material-symbols-outlined text-[48px] text-[#c7dafa] mb-2 block">folder_off</span>
                                 Belum ada dokumen di kategori ini.
                             </td>
                         </tr>
@@ -295,9 +295,9 @@ const openDocument = (path) => {
             </div>
 
             <!-- Footer / Pagination -->
-            <div class="p-6 md:px-8 border-t border-[#e3e5e7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f9f9f9]">
-                <p class="text-[13px] font-medium text-[#646a79]">
-                    Menampilkan <span class="font-bold text-[#0f172a]">{{ dokumen.from || 0 }}-{{ dokumen.to || 0 }}</span> dari <span class="font-bold text-[#0f172a]">{{ dokumen.total }}</span> dokumen
+            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]">
+                <p class="text-[13px] font-medium text-[#5b6b85]">
+                    Menampilkan <span class="font-bold text-[#103973]">{{ dokumen.from || 0 }}-{{ dokumen.to || 0 }}</span> dari <span class="font-bold text-[#103973]">{{ dokumen.total }}</span> dokumen
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-1" v-if="dokumen.links && dokumen.links.length > 3">
@@ -307,7 +307,7 @@ const openDocument = (path) => {
                         :href="link.url || '#'"
                         class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
                         :class="[
-                            link.active ? 'bg-[#0f172a] text-white font-bold' : 'text-[#646a79] hover:bg-[#e3e5e7]',
+                            link.active ? 'bg-[#1356a0] text-white font-bold' : 'text-[#5b6b85] hover:bg-[#dbe6f7]',
                             !link.url ? 'opacity-50 cursor-not-allowed' : ''
                         ]"
                         v-html="link.label"
@@ -322,28 +322,28 @@ const openDocument = (path) => {
     <!-- Modal Form Tambah/Edit -->
     <Modal :show="isModalOpen" @close="closeModal">
         <div class="p-6 md:p-8">
-            <h3 class="text-[20px] font-bold text-[#0f172a] mb-6">
+            <h3 class="text-[20px] font-bold text-[#103973] mb-6">
                 {{ isEditing ? 'Edit Dokumen' : 'Tambah Dokumen Publikasi' }}
             </h3>
             
             <form @submit.prevent="submitForm" class="space-y-5">
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">Judul Dokumen <span class="text-red-500">*</span></label>
-                    <input v-model="form.judul" type="text" required placeholder="Misal: Rencana Strategis DPMD 2024-2029" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
+                    <label class="block text-[14px] font-bold text-[#1356a0] mb-2">Judul Dokumen <span class="text-red-500">*</span></label>
+                    <input v-model="form.judul" type="text" required placeholder="Misal: Rencana Strategis DPMD 2024-2029" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-[#103973] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
                     <div v-if="form.errors.judul" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.judul }}</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Kategori <span class="text-red-500">*</span></label>
-                        <select v-model="form.kategori" required class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]">
+                        <label class="block text-[14px] font-bold text-[#1356a0] mb-2">Kategori <span class="text-red-500">*</span></label>
+                        <select v-model="form.kategori" required class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-[#103973] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]">
                             <option v-for="(label, key) in categories" :key="key" :value="key">{{ label }}</option>
                         </select>
                         <div v-if="form.errors.kategori" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kategori }}</div>
                     </div>
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Tahun <span class="text-red-500">*</span></label>
-                        <select v-model="form.tahun" required class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]">
+                        <label class="block text-[14px] font-bold text-[#1356a0] mb-2">Tahun <span class="text-red-500">*</span></label>
+                        <select v-model="form.tahun" required class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-[#103973] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]">
                             <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
                         </select>
                         <div v-if="form.errors.tahun" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tahun }}</div>
@@ -351,28 +351,28 @@ const openDocument = (path) => {
                 </div>
 
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">File Dokumen (PDF/Word/Excel)</label>
-                    <div class="relative w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors group">
-                        <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
-                        <p class="text-[14px] font-medium text-[#373f50] mb-1">
+                    <label class="block text-[14px] font-bold text-[#1356a0] mb-2">File Dokumen (PDF/Word/Excel)</label>
+                    <div class="relative w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors group">
+                        <span class="material-symbols-outlined text-[32px] text-[#5b6b85] mb-2 group-hover:text-[#103973] transition-colors">upload_file</span>
+                        <p class="text-[14px] font-medium text-[#1356a0] mb-1">
                             <span v-if="form.file_dokumen">{{ form.file_dokumen.name }}</span>
                             <span v-else>Pilih file untuk diunggah</span>
                         </p>
-                        <p class="text-[12px] text-[#9499a3]">Format .pdf, .doc, .docx, .xls, .xlsx (Maksimal 5MB)</p>
+                        <p class="text-[12px] text-[#7488a8]">Format .pdf, .doc, .docx, .xls, .xlsx (Maksimal 5MB)</p>
                         <input type="file" ref="fileInput" @change="handleFileUpload" accept=".pdf,.doc,.docx,.xls,.xlsx" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     </div>
                     <div v-if="form.errors.file_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.file_dokumen }}</div>
                     <div v-if="fileSizeError" class="text-red-500 text-xs mt-1 font-semibold">Ukuran file maksimal 5MB. File yang Anda pilih terlalu besar.</div>
                     
-                    <div v-if="isEditing" class="mt-2 text-[12px] font-semibold text-[#1976d2] flex items-center gap-1">
+                    <div v-if="isEditing" class="mt-2 text-[12px] font-semibold text-[#1356a0] flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">info</span>
                         <span>Biarkan kosong jika tidak ingin mengubah dokumen saat ini.</span>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">Deskripsi Singkat</label>
-                    <textarea v-model="form.deskripsi" rows="3" placeholder="Opsional..." class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a] resize-none"></textarea>
+                    <label class="block text-[14px] font-bold text-[#1356a0] mb-2">Deskripsi Singkat</label>
+                    <textarea v-model="form.deskripsi" rows="3" placeholder="Opsional..." class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-[#103973] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0] resize-none"></textarea>
                     <div v-if="form.errors.deskripsi" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.deskripsi }}</div>
                 </div>
 
@@ -380,18 +380,18 @@ const openDocument = (path) => {
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <div class="relative flex items-center">
                             <input type="checkbox" v-model="form.is_published" class="peer sr-only">
-                            <div class="w-11 h-6 bg-[#c8cbd0] rounded-full peer-checked:bg-[#0f172a] transition-colors duration-200 ease-in-out"></div>
+                            <div class="w-11 h-6 bg-[#c7dafa] rounded-full peer-checked:bg-[#1356a0] transition-colors duration-200 ease-in-out"></div>
                             <div class="absolute left-[2px] top-[2px] bg-white w-5 h-5 rounded-full shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></div>
                         </div>
-                        <span class="text-[14px] font-bold text-[#373f50] group-hover:text-[#0f172a] transition-colors">Tampilkan ke Publik</span>
+                        <span class="text-[14px] font-bold text-[#1356a0] group-hover:text-[#103973] transition-colors">Tampilkan ke Publik</span>
                     </label>
                 </div>
                 
-                <div class="pt-4 flex justify-end gap-3 border-t border-[#e3e5e7]">
-                    <button type="button" @click="closeModal" class="px-5 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+                <div class="pt-4 flex justify-end gap-3 border-t border-[#dbe6f7]">
+                    <button type="button" @click="closeModal" class="px-5 py-2.5 rounded-full border border-[#c7dafa] bg-white text-[#1356a0] font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                         Batal
                     </button>
-                    <button type="submit" :disabled="form.processing || fileSizeError" class="px-5 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] shadow-[0_4px_12px_rgba(15,23,42,0.12)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                    <button type="submit" :disabled="form.processing || fileSizeError" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
                         <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                         {{ isEditing ? 'Simpan Perubahan' : 'Tambah Dokumen' }}
                     </button>
@@ -406,12 +406,12 @@ const openDocument = (path) => {
             <div class="w-16 h-16 rounded-full bg-[#ffebee] flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-[32px] text-[#d32f2f]">warning</span>
             </div>
-            <h3 class="text-[20px] font-bold text-[#0f172a] mb-2">Hapus Dokumen?</h3>
-            <p class="text-[14px] font-medium text-[#646a79] mb-8">
-                Anda yakin ingin menghapus <span class="font-bold text-[#0f172a]">"{{ itemToDelete?.judul }}"</span>? Tindakan ini akan menghapus file fisik dokumen tersebut.
+            <h3 class="text-[20px] font-bold text-[#103973] mb-2">Hapus Dokumen?</h3>
+            <p class="text-[14px] font-medium text-[#5b6b85] mb-8">
+                Anda yakin ingin menghapus <span class="font-bold text-[#103973]">"{{ itemToDelete?.judul }}"</span>? Tindakan ini akan menghapus file fisik dokumen tersebut.
             </p>
             <div class="flex justify-center gap-3">
-                <button @click="isDeleteModalOpen = false" class="px-6 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+                <button @click="isDeleteModalOpen = false" class="px-6 py-2.5 rounded-full border border-[#c7dafa] bg-white text-[#1356a0] font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                     Batal
                 </button>
                 <button @click="executeDelete" class="px-6 py-2.5 rounded-full bg-[#d32f2f] text-white font-bold text-[14px] hover:bg-[#b71c1c] shadow-[0_4px_12px_rgba(211,47,47,0.2)] transition-all active:scale-95">
@@ -423,63 +423,63 @@ const openDocument = (path) => {
     <!-- Modal Detail Dokumen -->
     <Modal :show="isDetailModalOpen" @close="isDetailModalOpen = false" max-width="2xl">
         <div v-if="selectedDocument" class="p-6 md:p-8">
-            <div class="flex items-start justify-between mb-6 pb-6 border-b border-[#e3e5e7]">
+            <div class="flex items-start justify-between mb-6 pb-6 border-b border-[#dbe6f7]">
                 <div class="flex gap-4">
                     <div class="w-12 h-12 rounded-xl bg-[#ffebee] flex items-center justify-center flex-shrink-0">
                         <span class="material-symbols-outlined text-[#d32f2f] text-[28px]">picture_as_pdf</span>
                     </div>
                     <div>
-                        <h3 class="text-[20px] font-bold text-[#0f172a] leading-tight mb-2">{{ selectedDocument.judul }}</h3>
+                        <h3 class="text-[20px] font-bold text-[#103973] leading-tight mb-2">{{ selectedDocument.judul }}</h3>
                         <div class="flex flex-wrap items-center gap-3">
                             <span v-if="selectedDocument.is_published" class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#e6f4ea] text-[#137333] uppercase">
                                 Publish
                             </span>
-                            <span v-else class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f1f3f4] text-[#646a79] uppercase">
+                            <span v-else class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f1f3f4] text-[#5b6b85] uppercase">
                                 Draft
                             </span>
-                            <span class="inline-flex items-center gap-1 text-[12px] font-semibold text-[#646a79]">
+                            <span class="inline-flex items-center gap-1 text-[12px] font-semibold text-[#5b6b85]">
                                 <span class="material-symbols-outlined text-[14px]">folder</span>
                                 {{ categories[selectedDocument.kategori] }}
                             </span>
-                            <span class="inline-flex items-center gap-1 text-[12px] font-semibold text-[#646a79]">
+                            <span class="inline-flex items-center gap-1 text-[12px] font-semibold text-[#5b6b85]">
                                 <span class="material-symbols-outlined text-[14px]">calendar_today</span>
                                 Tahun {{ selectedDocument.tahun }}
                             </span>
                         </div>
                     </div>
                 </div>
-                <button @click="isDetailModalOpen = false" class="text-[#9499a3] hover:text-[#0f172a] transition-colors">
+                <button @click="isDetailModalOpen = false" class="text-[#7488a8] hover:text-[#103973] transition-colors">
                     <span class="material-symbols-outlined text-[24px]">close</span>
                 </button>
             </div>
 
             <div class="space-y-6">
                 <div>
-                    <h4 class="text-[13px] font-bold text-[#9499a3] uppercase tracking-[1px] mb-2">Status Lampiran</h4>
-                    <div v-if="selectedDocument.file_dokumen" class="inline-flex items-center gap-2 p-2.5 bg-[#e3f2fd] rounded-lg border border-[#bbdefb]">
-                        <span class="material-symbols-outlined text-[20px] text-[#1976d2]">insert_drive_file</span>
-                        <span class="text-[#0f172a] text-[14px]">Telah terlampir: <span class="font-bold">File Tersimpan</span></span>
+                    <h4 class="text-[13px] font-bold text-[#7488a8] uppercase tracking-[1px] mb-2">Status Lampiran</h4>
+                    <div v-if="selectedDocument.file_dokumen" class="inline-flex items-center gap-2 p-2.5 bg-[#eaf1fb] rounded-lg border border-[#c7dafa]">
+                        <span class="material-symbols-outlined text-[20px] text-[#1356a0]">insert_drive_file</span>
+                        <span class="text-[#103973] text-[14px]">Telah terlampir: <span class="font-bold">File Tersimpan</span></span>
                     </div>
-                    <div v-else class="inline-flex items-center gap-2 p-2.5 bg-[#f0f1f1] rounded-lg border border-[#e3e5e7]">
-                        <span class="material-symbols-outlined text-[20px] text-[#9499a3]">description</span>
-                        <span class="text-[#646a79] text-[14px] italic">Belum ada file yang dilampirkan</span>
+                    <div v-else class="inline-flex items-center gap-2 p-2.5 bg-[#eaf1fb] rounded-lg border border-[#dbe6f7]">
+                        <span class="material-symbols-outlined text-[20px] text-[#7488a8]">description</span>
+                        <span class="text-[#5b6b85] text-[14px] italic">Belum ada file yang dilampirkan</span>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="text-[13px] font-bold text-[#9499a3] uppercase tracking-[1px] mb-2">Deskripsi Dokumen</h4>
-                    <p class="text-[14px] text-[#373f50] leading-relaxed whitespace-pre-wrap">{{ selectedDocument.deskripsi || 'Tidak ada deskripsi yang ditambahkan untuk dokumen ini.' }}</p>
+                    <h4 class="text-[13px] font-bold text-[#7488a8] uppercase tracking-[1px] mb-2">Deskripsi Dokumen</h4>
+                    <p class="text-[14px] text-[#1356a0] leading-relaxed whitespace-pre-wrap">{{ selectedDocument.deskripsi || 'Tidak ada deskripsi yang ditambahkan untuk dokumen ini.' }}</p>
                 </div>
             </div>
 
-            <div class="mt-8 pt-6 border-t border-[#e3e5e7] flex justify-end gap-3">
-                <button @click="isDetailModalOpen = false" class="px-5 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+            <div class="mt-8 pt-6 border-t border-[#dbe6f7] flex justify-end gap-3">
+                <button @click="isDetailModalOpen = false" class="px-5 py-2.5 rounded-full border border-[#c7dafa] bg-white text-[#1356a0] font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                     Tutup
                 </button>
                 <button @click="openDocument(selectedDocument.file_dokumen)" 
                         :disabled="!selectedDocument.file_dokumen"
                         class="px-5 py-2.5 rounded-full font-bold text-[14px] transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        :class="selectedDocument.file_dokumen ? 'bg-[#1976d2] text-white hover:bg-[#1565c0] shadow-[0_4px_12px_rgba(25,118,210,0.2)] active:scale-95' : 'bg-[#e3e5e7] text-[#9499a3]'">
+                        :class="selectedDocument.file_dokumen ? 'bg-[#1356a0] text-white hover:bg-[#103973] shadow-[0_4px_12px_rgba(19,86,160,0.25)] active:scale-95' : 'bg-[#dbe6f7] text-[#7488a8]'">
                     <span class="material-symbols-outlined text-[18px]">open_in_new</span>
                     Buka File
                 </button>
