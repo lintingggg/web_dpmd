@@ -74,26 +74,26 @@ const formatDate = (dateString) => {
     <Head :title="pageTitle" />
 
     <AuthenticatedLayout>
-        <div class="mb-8">
-            <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+        <div class="mb-8 pt-4">
+            <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1">
                 Kelola Bidang Tugas
             </h2>
-            <p class="text-[14px] font-medium text-[#646a79]">Kelola uraian tugas, fungsi, dan layanan untuk masing-masing bidang/sekretariat DPMD.</p>
+            <p class="text-[14px] font-medium text-slate-500">Kelola uraian tugas, fungsi, dan layanan untuk masing-masing bidang/sekretariat DPMD.</p>
         </div>
 
-        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden">
+        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
 
             <!-- Card Header -->
-            <div class="p-6 md:p-8 border-b border-[#e3e5e7]">
+            <div class="p-6 md:p-8 border-b border-[#dbe6f7] bg-[#f5f8fd]">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-4 mb-1">
-                            <h3 class="text-[20px] font-bold text-[#0f172a]">Edit {{ pageTitle }}</h3>
+                            <h3 class="text-[20px] font-bold text-slate-900">Edit {{ pageTitle }}</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#137333] mr-1.5"></span> Published
                             </span>
                         </div>
-                        <p class="text-[12px] font-medium text-[#646a79]">Terakhir diubah: {{ formatDate(bidangTugas?.updated_at) }}</p>
+                        <p class="text-[12px] font-medium text-slate-500">Terakhir diubah: {{ formatDate(bidangTugas?.updated_at) }}</p>
                     </div>
                 </div>
             </div>
@@ -104,23 +104,23 @@ const formatDate = (dateString) => {
                 <!-- Photo Upload -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-[14px] font-bold text-[#373f50]">
+                        <label class="block text-[14px] font-bold text-slate-700">
                             Gambar Ilustrasi / Struktur Bidang
                         </label>
-                        <span class="text-[12px] font-medium text-[#646a79]">Format Landscape direkomendasikan (Max 2MB)</span>
+                        <span class="text-[12px] font-medium text-slate-500">Format Landscape direkomendasikan (Max 2MB)</span>
                     </div>
                     
                     <div class="flex flex-col md:flex-row gap-6">
-                        <div class="w-full md:w-48 h-32 rounded-xl border border-[#e3e5e7] bg-[#f9f9f9] overflow-hidden flex-shrink-0 relative group">
+                        <div class="w-full md:w-48 h-32 rounded-xl border border-[#dbe6f7] bg-[#f5f8fd] overflow-hidden flex-shrink-0 relative group">
                             <img :src="imagePreview" alt="Preview" class="w-full h-full object-cover" />
                         </div>
                         
-                        <div @click="triggerFileInput(currentSection + '_gambar_input')" class="flex-1 border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
-                            <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">cloud_upload</span>
-                            <p class="text-[14px] font-medium text-[#373f50] mb-1">
-                                <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau seret foto kesini
+                        <div @click="triggerFileInput(currentSection + '_gambar_input')" class="flex-1 border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
+                            <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">cloud_upload</span>
+                            <p class="text-[14px] font-medium text-slate-600 mb-1">
+                                <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau seret foto kesini
                             </p>
-                            <p class="text-[12px] text-[#9499a3]">JPG, PNG format</p>
+                            <p class="text-[12px] text-slate-400">JPG, PNG format</p>
                             <input type="file" :id="currentSection + '_gambar_input'" class="hidden" accept="image/jpeg,image/png" @change="e => handleFileUpload(e, currentSection + '_gambar')" />
                         </div>
                     </div>
@@ -129,7 +129,7 @@ const formatDate = (dateString) => {
 
                 <!-- WYSIWYG Editor -->
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">Uraian Tugas Pokok, Fungsi, dan Layanan</label>
+                    <label class="block text-[14px] font-bold text-slate-700 mb-2">Uraian Tugas Pokok, Fungsi, dan Layanan</label>
                     <TipTapEditor v-model="form[currentSection + '_konten']" />
                     <div v-if="form.errors[`${currentSection}_konten`]" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors[`${currentSection}_konten`] }}</div>
                 </div>
@@ -137,14 +137,14 @@ const formatDate = (dateString) => {
             </div>
 
             <!-- Card Footer / Actions -->
-            <div class="bg-[#f9f9f9] border-t border-[#e3e5e7] p-6 flex items-center justify-end gap-3">
-                <button @click="form.reset()" type="button" class="px-6 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+            <div class="bg-[#f5f8fd] border-t border-[#dbe6f7] p-6 flex items-center justify-end gap-3">
+                <button @click="form.reset()" type="button" class="px-6 py-2.5 rounded-full border border-[#c7dafa] bg-white text-slate-700 font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                     Batal
                 </button>
                 <button 
                     @click="submit" 
                     :disabled="form.processing"
-                    class="px-6 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] shadow-[0_4px_12px_rgba(15,23,42,0.12)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70"
+                    class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70"
                 >
                     <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                     Simpan Perubahan

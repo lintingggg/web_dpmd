@@ -117,27 +117,27 @@ const formatDate = (dateString) => {
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
-        <div class="mb-8">
-            <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+        <div class="mb-8 pt-4">
+            <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1">
                 Profil & Informasi
             </h2>
-            <p class="text-[14px] font-medium text-[#646a79]">Kelola konten inti yang mendeskripsikan identitas, struktur, dan sejarah DPMD Kabupaten Bangkalan kepada publik.</p>
+            <p class="text-[14px] font-medium text-slate-500">Kelola konten inti yang mendeskripsikan identitas, struktur, dan sejarah DPMD Kabupaten Bangkalan kepada publik.</p>
         </div>
 
         <!-- Main Content Card -->
-        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden">
+        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
             
             <!-- Card Header -->
-            <div class="p-6 md:p-8 border-b border-[#e3e5e7]">
+            <div class="p-6 md:p-8 border-b border-[#dbe6f7] bg-[#f5f8fd]">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-4 mb-1">
-                            <h3 class="text-[20px] font-bold text-[#0f172a]">Edit {{ pageTitle }}</h3>
+                            <h3 class="text-[20px] font-bold text-slate-900">Edit {{ pageTitle }}</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#137333] mr-1.5"></span> Published
                             </span>
                         </div>
-                        <p class="text-[12px] font-medium text-[#646a79]">Terakhir diubah: {{ formatDate(profil?.updated_at) }}</p>
+                        <p class="text-[12px] font-medium text-slate-500">Terakhir diubah: {{ formatDate(profil?.updated_at) }}</p>
                     </div>
                 </div>
             </div>
@@ -149,34 +149,34 @@ const formatDate = (dateString) => {
                 <div v-if="currentSection === 'sambutan'" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-[14px] font-bold text-[#373f50] mb-2">Nama Kepala Dinas</label>
-                            <input v-model="form.kadis_nama" type="text" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
+                            <label class="block text-[14px] font-bold text-slate-700 mb-2">Nama Kepala Dinas</label>
+                            <input v-model="form.kadis_nama" type="text" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
                             <div v-if="form.errors.kadis_nama" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kadis_nama }}</div>
                         </div>
                         <div>
-                            <label class="block text-[14px] font-bold text-[#373f50] mb-2">NIP Kepala Dinas</label>
-                            <input v-model="form.kadis_nip" type="text" placeholder="Contoh: 19900101 202012 1 001" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
+                            <label class="block text-[14px] font-bold text-slate-700 mb-2">NIP Kepala Dinas</label>
+                            <input v-model="form.kadis_nip" type="text" placeholder="Contoh: 19900101 202012 1 001" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
                             <div v-if="form.errors.kadis_nip" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kadis_nip }}</div>
-                            <p v-else class="text-[12px] text-[#9499a3] mt-1.5 font-medium">Hanya angka dan spasi (minimal 18 karakter).</p>
+                            <p v-else class="text-[12px] text-slate-400 mt-1.5 font-medium">Hanya angka dan spasi (minimal 18 karakter).</p>
                         </div>
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-[#373f50]">Foto Profil Kepala Dinas</label>
-                            <span class="text-[12px] font-medium text-[#646a79]">Rekomendasi rasio 1:1 (Max 2MB)</span>
+                            <label class="block text-[14px] font-bold text-slate-700">Foto Profil Kepala Dinas</label>
+                            <span class="text-[12px] font-medium text-slate-500">Rekomendasi rasio 1:1 (Max 2MB)</span>
                         </div>
                         
                         <div class="flex flex-col md:flex-row gap-6">
-                            <div class="w-full md:w-32 h-32 rounded-xl border border-[#e3e5e7] bg-[#f9f9f9] overflow-hidden flex-shrink-0 relative group">
+                            <div class="w-full md:w-32 h-32 rounded-xl border border-[#dbe6f7] bg-[#f5f8fd] overflow-hidden flex-shrink-0 relative group">
                                 <img :src="fotoKadisPreview" alt="Preview" class="w-full h-full object-cover" />
                             </div>
-                            <div @click="triggerFileInput('kadis_foto_input')" class="flex-1 border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">cloud_upload</span>
-                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
-                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti foto
+                            <div @click="triggerFileInput('kadis_foto_input')" class="flex-1 border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">cloud_upload</span>
+                                <p class="text-[14px] font-medium text-slate-600 mb-1">
+                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti foto
                                 </p>
-                                <p class="text-[12px] text-[#9499a3]">JPG, PNG format</p>
+                                <p class="text-[12px] text-slate-400">JPG, PNG format</p>
                                 <input type="file" id="kadis_foto_input" class="hidden" accept="image/jpeg,image/png" @change="e => handleFileUpload(e, 'kadis_foto')" />
                             </div>
                         </div>
@@ -184,40 +184,40 @@ const formatDate = (dateString) => {
                     </div>
 
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Teks Sambutan</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Sambutan</label>
                         <TipTapEditor v-model="form.sambutan_teks" />
                         <div v-if="form.errors.sambutan_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.sambutan_teks }}</div>
                     </div>
                 </div>
 
                 <!-- VISI DAN MISI -->
-                <div v-else-if="currentSection === 'visi-misi'" class="space-y-6">
+                <div v-if="currentSection === 'visi-misi'" class="space-y-6">
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Teks Visi</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Visi</label>
                         <TipTapEditor v-model="form.visi_teks" />
                         <div v-if="form.errors.visi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.visi_teks }}</div>
                     </div>
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Teks Misi</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Misi</label>
                         <TipTapEditor v-model="form.misi_teks" />
                         <div v-if="form.errors.misi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.misi_teks }}</div>
                     </div>
                 </div>
 
                 <!-- TUPOKSI -->
-                <div v-else-if="currentSection === 'tupoksi'" class="space-y-6">
+                <div v-if="currentSection === 'tupoksi'" class="space-y-6">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-[#373f50]">Dokumen Tugas Pokok & Fungsi</label>
-                            <span class="text-[12px] font-medium text-[#646a79]">Hanya format PDF (Max 10MB)</span>
+                            <label class="block text-[14px] font-bold text-slate-700">Dokumen Tugas Pokok & Fungsi</label>
+                            <span class="text-[12px] font-medium text-slate-500">Hanya format PDF (Max 10MB)</span>
                         </div>
                         <div class="flex flex-col gap-4">
-                            <div @click="triggerFileInput('tupoksi_dokumen_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
-                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
-                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
+                            <div @click="triggerFileInput('tupoksi_dokumen_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">upload_file</span>
+                                <p class="text-[14px] font-medium text-slate-600 mb-1">
+                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
                                 </p>
-                                <p class="text-[12px] text-[#9499a3] font-bold text-blue-600 mt-2">{{ tupoksiDokumenName }}</p>
+                                <p class="text-[12px] text-slate-400 font-bold text-[#1356a0] mt-2">{{ tupoksiDokumenName }}</p>
                                 <input type="file" id="tupoksi_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'tupoksi_dokumen')" />
                             </div>
                         </div>
@@ -225,29 +225,29 @@ const formatDate = (dateString) => {
                     </div>
 
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Tugas Pokok & Fungsi (Teks)</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Tugas Pokok & Fungsi (Teks)</label>
                         <TipTapEditor v-model="form.tupoksi_teks" />
                         <div v-if="form.errors.tupoksi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tupoksi_teks }}</div>
                     </div>
                 </div>
 
                 <!-- STRUKTUR -->
-                <div v-else-if="currentSection === 'struktur'" class="space-y-6">
+                <div v-if="currentSection === 'struktur'" class="space-y-6">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-[#373f50]">Bagan Struktur Organisasi</label>
-                            <span class="text-[12px] font-medium text-[#646a79]">Format Landscape direkomendasikan (Max 5MB)</span>
+                            <label class="block text-[14px] font-bold text-slate-700">Bagan Struktur Organisasi</label>
+                            <span class="text-[12px] font-medium text-slate-500">Format Landscape direkomendasikan (Max 5MB)</span>
                         </div>
                         <div class="flex flex-col gap-4">
-                            <div class="w-full h-auto rounded-xl border border-[#e3e5e7] bg-[#f9f9f9] overflow-hidden flex-shrink-0 relative group">
+                            <div class="w-full h-auto rounded-xl border border-[#dbe6f7] bg-[#f5f8fd] overflow-hidden flex-shrink-0 relative group">
                                 <img :src="strukturPreview" alt="Preview" class="w-full h-auto object-cover" />
                             </div>
-                            <div @click="triggerFileInput('struktur_gambar_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">cloud_upload</span>
-                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
-                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti bagan
+                            <div @click="triggerFileInput('struktur_gambar_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">cloud_upload</span>
+                                <p class="text-[14px] font-medium text-slate-600 mb-1">
+                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti bagan
                                 </p>
-                                <p class="text-[12px] text-[#9499a3]">JPG, PNG format</p>
+                                <p class="text-[12px] text-slate-400">JPG, PNG format</p>
                                 <input type="file" id="struktur_gambar_input" class="hidden" accept="image/jpeg,image/png" @change="e => handleFileUpload(e, 'struktur_gambar')" />
                             </div>
                         </div>
@@ -255,7 +255,7 @@ const formatDate = (dateString) => {
                     </div>
 
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Keterangan Struktur (Opsional)</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Keterangan Struktur (Opsional)</label>
                         <TipTapEditor v-model="form.struktur_keterangan" />
                         <div v-if="form.errors.struktur_keterangan" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.struktur_keterangan }}</div>
                     </div>
@@ -265,16 +265,16 @@ const formatDate = (dateString) => {
                 <div v-else-if="currentSection === 'kode-etik'" class="space-y-6">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-[#373f50]">Dokumen Kode Etik Pelayanan</label>
-                            <span class="text-[12px] font-medium text-[#646a79]">Hanya format PDF (Max 10MB)</span>
+                            <label class="block text-[14px] font-bold text-slate-700">Dokumen Kode Etik Pelayanan</label>
+                            <span class="text-[12px] font-medium text-slate-500">Hanya format PDF (Max 10MB)</span>
                         </div>
                         <div class="flex flex-col gap-4">
-                            <div @click="triggerFileInput('kode_etik_dokumen_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
-                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
-                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
+                            <div @click="triggerFileInput('kode_etik_dokumen_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">upload_file</span>
+                                <p class="text-[14px] font-medium text-slate-600 mb-1">
+                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
                                 </p>
-                                <p class="text-[12px] text-[#9499a3] font-bold text-blue-600 mt-2">{{ kodeEtikDokumenName }}</p>
+                                <p class="text-[12px] text-slate-400 font-bold text-[#1356a0] mt-2">{{ kodeEtikDokumenName }}</p>
                                 <input type="file" id="kode_etik_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'kode_etik_dokumen')" />
                             </div>
                         </div>
@@ -282,7 +282,7 @@ const formatDate = (dateString) => {
                     </div>
 
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Kode Etik Pelayanan (Teks)</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Kode Etik Pelayanan (Teks)</label>
                         <TipTapEditor v-model="form.kode_etik_teks" />
                         <div v-if="form.errors.kode_etik_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kode_etik_teks }}</div>
                     </div>
@@ -292,16 +292,16 @@ const formatDate = (dateString) => {
                 <div v-else-if="currentSection === 'maklumat'" class="space-y-6">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-[#373f50]">Dokumen Maklumat Pelayanan</label>
-                            <span class="text-[12px] font-medium text-[#646a79]">Hanya format PDF (Max 10MB)</span>
+                            <label class="block text-[14px] font-bold text-slate-700">Dokumen Maklumat Pelayanan</label>
+                            <span class="text-[12px] font-medium text-slate-500">Hanya format PDF (Max 10MB)</span>
                         </div>
                         <div class="flex flex-col gap-4">
-                            <div @click="triggerFileInput('maklumat_dokumen_input')" class="w-full border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2 group-hover:text-[#0f172a] transition-colors">upload_file</span>
-                                <p class="text-[14px] font-medium text-[#373f50] mb-1">
-                                    <span class="text-[#0f172a] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
+                            <div @click="triggerFileInput('maklumat_dokumen_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
+                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">upload_file</span>
+                                <p class="text-[14px] font-medium text-slate-600 mb-1">
+                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
                                 </p>
-                                <p class="text-[12px] text-[#9499a3] font-bold text-blue-600 mt-2">{{ maklumatDokumenName }}</p>
+                                <p class="text-[12px] text-slate-400 font-bold text-[#1356a0] mt-2">{{ maklumatDokumenName }}</p>
                                 <input type="file" id="maklumat_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'maklumat_dokumen')" />
                             </div>
                         </div>
@@ -309,7 +309,7 @@ const formatDate = (dateString) => {
                     </div>
 
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Teks Maklumat Pelayanan</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Maklumat Pelayanan</label>
                         <TipTapEditor v-model="form.maklumat_teks" />
                         <div v-if="form.errors.maklumat_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.maklumat_teks }}</div>
                     </div>
@@ -318,7 +318,7 @@ const formatDate = (dateString) => {
                 <!-- MOTTO -->
                 <div v-else-if="currentSection === 'motto'" class="space-y-6">
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Motto Pelayanan</label>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Motto Pelayanan</label>
                         <TipTapEditor v-model="form.motto_teks" />
                         <div v-if="form.errors.motto_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.motto_teks }}</div>
                     </div>
@@ -327,14 +327,14 @@ const formatDate = (dateString) => {
             </div>
 
             <!-- Card Footer / Actions -->
-            <div class="bg-[#f9f9f9] border-t border-[#e3e5e7] p-6 flex items-center justify-end gap-3">
-                <button type="button" @click="form.reset()" class="px-6 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+            <div class="bg-[#f5f8fd] border-t border-[#dbe6f7] p-6 flex items-center justify-end gap-3">
+                <button type="button" @click="form.reset()" class="px-6 py-2.5 rounded-full border border-[#c7dafa] bg-white text-slate-700 font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                     Batal
                 </button>
                 <button 
                     @click="submit"
                     :disabled="form.processing"
-                    class="px-6 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] shadow-[0_4px_12px_rgba(15,23,42,0.12)] transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2"
+                    class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2"
                 >
                     <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                     Simpan Perubahan

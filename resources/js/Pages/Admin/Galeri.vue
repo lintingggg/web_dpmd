@@ -47,7 +47,7 @@ watch([search, statusFilter], ([newSearch, newStatus]) => {
 const openModal = (item = null) => {
     isEditing.value = !!item;
     form.clearErrors();
-    
+
     if (item) {
         editingId.value = item.id;
         detailItem.value = item;
@@ -64,7 +64,7 @@ const openModal = (item = null) => {
         form.tipe = 'foto';
         form.is_published = false;
     }
-    
+
     if (fileInput.value) fileInput.value.value = '';
     isModalOpen.value = true;
 };
@@ -149,20 +149,20 @@ const formatDate = (dateString) => {
     <AuthenticatedLayout>
         <!-- Page Header Top -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-                <div class="mb-2">
-                    <Link :href="route('admin.album')" class="text-[#646a79] hover:text-[#0f172a] font-medium flex items-center gap-1 text-[13px] transition-colors">
-                        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <div class="pt-4">
+                <div class="mb-3">
+                    <Link :href="route('admin.album')" class="text-slate-500 hover:text-[#1356a0] font-semibold flex items-center gap-2 text-[13px] transition-colors">
+                        <i class="fa-solid fa-arrow-left text-[12px]"></i>
                         Kembali ke Daftar Album
                     </Link>
                 </div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1">
                     Galeri: {{ album.nama }}
                 </h2>
-                <p class="text-[14px] font-medium text-[#646a79]">Kelola dokumentasi foto dan video dalam album ini.</p>
+                <p class="text-[14px] font-medium text-slate-500">Kelola dokumentasi foto dan video dalam album ini.</p>
             </div>
-            
-            <button @click="openModal()" class="bg-[#0f172a] hover:bg-[#222a3d] text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
+
+            <button @click="openModal()" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
                 <span class="material-symbols-outlined text-[18px]">add_photo_alternate</span>
                 Buat Entri Baru
             </button>
@@ -170,12 +170,12 @@ const formatDate = (dateString) => {
 
         <!-- Filter & Search Bar -->
         <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div class="relative w-full md:w-96">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9499a3] text-[20px]">search</span>
-                <input v-model="search" type="text" placeholder="Cari judul kegiatan..." class="w-full bg-white border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-full pl-11 pr-4 py-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.04)] focus:ring-[#0f172a] focus:border-[#0f172a]" />
+            <div class="flex items-center bg-white border border-slate-200 rounded-full px-4 py-2.5 w-full md:w-96 shadow-sm focus-within:ring-2 focus-within:ring-[#528be6]/50 focus-within:border-[#528be6] transition-all">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
+                <input v-model="search" type="text" placeholder="Cari judul kegiatan..." class="bg-transparent border-none outline-none focus:ring-0 text-sm w-full ml-3 text-slate-700 placeholder-slate-400 font-medium p-0" />
             </div>
             <div class="flex items-center gap-2 w-full md:w-auto">
-                <select v-model="statusFilter" class="bg-white border border-[#e3e5e7] text-[#0f172a] text-[13px] font-bold rounded-full px-4 py-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.04)] focus:ring-0 focus:border-[#c8cbd0]">
+                <select v-model="statusFilter" class="bg-slate-50 border border-slate-200 text-slate-600 text-xs font-bold rounded-lg px-4 py-2.5 outline-none focus:border-[#528be6] focus:ring-0 cursor-pointer shadow-sm">
                     <option value="">Semua Status</option>
                     <option value="publish">Published</option>
                     <option value="draft">Draft</option>
@@ -185,31 +185,31 @@ const formatDate = (dateString) => {
 
         <!-- Galeri Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            
-            <div v-for="item in galeri.data" :key="item.id" class="bg-white rounded-[20px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden group hover:shadow-[0_8px_30px_rgba(15,23,42,0.08)] transition-all flex flex-col">
+
+            <div v-for="item in galeri.data" :key="item.id" class="bg-white rounded-[1.25rem] border border-slate-200/60 shadow-sm overflow-hidden group hover:shadow-md hover:border-slate-300 transition-all flex flex-col">
                 <!-- Cover Image or Video -->
-                <div class="relative aspect-[4/3] bg-[#f0f1f1] overflow-hidden">
+                <div class="relative aspect-[4/3] bg-slate-100 overflow-hidden">
                     <img v-if="item.tipe === 'foto' && item.foto_url" :src="item.foto_url" alt="Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div v-else-if="item.tipe === 'video' && item.foto_url" class="relative w-full h-full">
                         <img :src="getYoutubeThumbnail(item.foto_url)" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div class="bg-black/50 text-white rounded-full p-2.5">
-                                <span class="material-symbols-outlined text-[32px] ml-1">play_arrow</span>
+                            <div class="bg-[#103973]/60 text-white rounded-full w-11 h-11 flex items-center justify-center">
+                                <i class="fa-solid fa-play text-[16px] ml-0.5"></i>
                             </div>
                         </div>
                     </div>
-                    <div v-else class="w-full h-full flex flex-col items-center justify-center text-[#9499a3]">
-                        <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">image_not_supported</span>
+                    <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                        <i class="fa-regular fa-image text-[40px] mb-2 opacity-50"></i>
                         <span class="text-[12px] font-bold">Belum ada media</span>
                     </div>
-                    
+
                     <!-- Overlay Actions -->
-                    <div class="absolute inset-0 bg-[#0f172a]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm pointer-events-none group-hover:pointer-events-auto">
-                        <button @click="openModal(item)" class="w-10 h-10 rounded-full bg-white text-[#0f172a] hover:bg-[#e3e5e7] flex items-center justify-center transition-colors shadow-lg" title="Edit">
-                            <span class="material-symbols-outlined text-[20px]">edit</span>
+                    <div class="absolute inset-0 bg-[#103973]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm pointer-events-none group-hover:pointer-events-auto">
+                        <button @click="openModal(item)" class="w-10 h-10 rounded-full bg-white text-[#1e56a0] hover:bg-blue-50 flex items-center justify-center transition-colors shadow-lg" title="Edit">
+                            <i class="fa-solid fa-pen-to-square text-[15px]"></i>
                         </button>
-                        <button @click="confirmDelete(item)" class="w-10 h-10 rounded-full bg-[#ba1a1a] text-white hover:bg-[#93000a] flex items-center justify-center transition-colors shadow-lg" title="Hapus">
-                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                        <button @click="confirmDelete(item)" class="w-10 h-10 rounded-full bg-rose-600 text-white hover:bg-rose-700 flex items-center justify-center transition-colors shadow-lg" title="Hapus">
+                            <i class="fa-solid fa-trash text-[15px]"></i>
                         </button>
                     </div>
                 </div>
@@ -218,11 +218,15 @@ const formatDate = (dateString) => {
                 <div class="p-5 flex-1 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-[11px] font-bold text-[#646a79] tracking-[0.5px] uppercase">{{ formatDate(item.tanggal_kegiatan) }} • {{ item.tipe === 'video' ? 'VIDEO' : 'FOTO' }}</span>
-                            <span v-if="item.is_published" class="w-2 h-2 rounded-full bg-[#137333]" title="Published"></span>
-                            <span v-else class="w-2 h-2 rounded-full bg-[#9499a3]" title="Draft"></span>
+                            <span class="text-[11px] font-bold text-slate-400 tracking-[0.5px] uppercase">{{ formatDate(item.tanggal_kegiatan) }} • {{ item.tipe === 'video' ? 'VIDEO' : 'FOTO' }}</span>
+                            <span v-if="item.is_published" class="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md border border-emerald-100">
+                                <i class="fa-solid fa-check text-[9px]"></i> Live
+                            </span>
+                            <span v-else class="inline-flex items-center gap-1 text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200">
+                                Draft
+                            </span>
                         </div>
-                        <h3 class="text-[15px] font-bold text-[#0f172a] leading-snug line-clamp-2 transition-colors">
+                        <h3 class="text-[15px] font-bold text-slate-900 leading-snug line-clamp-2 transition-colors">
                             {{ item.judul }}
                         </h3>
                     </div>
@@ -230,31 +234,31 @@ const formatDate = (dateString) => {
             </div>
 
             <!-- Add New Card (Ghost Card) -->
-            <div @click="openModal()" class="border-2 border-dashed border-[#c8cbd0] rounded-[20px] bg-[#f9f9f9]/50 hover:bg-[#f9f9f9] transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[250px] group">
-                <div class="w-16 h-16 rounded-full bg-white border border-[#e3e5e7] shadow-sm flex items-center justify-center text-[#0f172a] mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-[28px]">add</span>
+            <div @click="openModal()" class="border-2 border-dashed border-slate-300 rounded-[1.25rem] bg-slate-50/60 hover:bg-slate-50 transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[250px] group">
+                <div class="w-16 h-16 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-[#1e56a0] mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-plus text-[22px]"></i>
                 </div>
-                <h3 class="text-[15px] font-bold text-[#0f172a] mb-1">Buat Entri Baru</h3>
-                <p class="text-[13px] text-[#646a79]">Tambah koleksi dokumentasi</p>
+                <h3 class="text-[15px] font-bold text-slate-900 mb-1">Buat Entri Baru</h3>
+                <p class="text-[13px] text-slate-500">Tambah koleksi dokumentasi</p>
             </div>
 
         </div>
 
         <!-- Pagination -->
-        <div v-if="galeri.data.length > 0" class="bg-white rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden mb-8">
-            <div class="p-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f9f9f9]">
-                <p class="text-[13px] font-medium text-[#646a79]">
-                    Menampilkan <span class="font-bold text-[#0f172a]">{{ galeri.from || 0 }}-{{ galeri.to || 0 }}</span> dari <span class="font-bold text-[#0f172a]">{{ galeri.total }}</span> entri
+        <div v-if="galeri.data.length > 0" class="bg-white rounded-xl border border-slate-200/60 shadow-sm overflow-hidden mb-8">
+            <div class="p-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/60">
+                <p class="text-[13px] font-medium text-slate-500">
+                    Menampilkan <span class="font-bold text-slate-900">{{ galeri.from || 0 }}-{{ galeri.to || 0 }}</span> dari <span class="font-bold text-slate-900">{{ galeri.total }}</span> entri
                 </p>
-                
+
                 <div class="flex flex-wrap items-center gap-1" v-if="galeri.links && galeri.links.length > 3">
-                    <Link 
-                        v-for="(link, index) in galeri.links" 
+                    <Link
+                        v-for="(link, index) in galeri.links"
                         :key="index"
                         :href="link.url || '#'"
                         class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
                         :class="[
-                            link.active ? 'bg-[#0f172a] text-white font-bold' : 'text-[#646a79] hover:bg-[#e3e5e7]',
+                            link.active ? 'bg-[#1e56a0] text-white font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-100',
                             !link.url ? 'opacity-50 cursor-not-allowed' : ''
                         ]"
                         v-html="link.label"
@@ -269,65 +273,65 @@ const formatDate = (dateString) => {
     <!-- Modal Form Tambah/Edit -->
     <Modal :show="isModalOpen" @close="closeModal" maxWidth="2xl">
         <div class="p-6 md:p-8">
-            <div class="flex items-center justify-between mb-6 pb-6 border-b border-[#e3e5e7]">
+            <div class="flex items-center justify-between mb-6 pb-6 border-b border-slate-200">
                 <div>
-                    <h3 class="text-[24px] font-bold text-[#0f172a] leading-tight">{{ isEditing ? 'Edit Galeri' : 'Tambah Galeri Baru' }}</h3>
-                    <p class="text-[14px] text-[#646a79] mt-1">Isi formulir di bawah ini dengan detail kegiatan.</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900 leading-tight tracking-tight">{{ isEditing ? 'Edit Galeri' : 'Tambah Galeri Baru' }}</h3>
+                    <p class="text-sm text-slate-500 mt-1 font-medium">Isi formulir di bawah ini dengan detail kegiatan.</p>
                 </div>
-                <button @click="closeModal" class="text-[#9499a3] hover:text-[#0f172a] transition-colors">
-                    <span class="material-symbols-outlined text-[24px]">close</span>
+                <button @click="closeModal" class="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                    <i class="fa-solid fa-xmark text-[18px]"></i>
                 </button>
             </div>
 
             <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Judul -->
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">Judul Kegiatan <span class="text-red-500">*</span></label>
-                    <input v-model="form.judul" type="text" required class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" placeholder="Masukkan judul..." />
-                    <div v-if="form.errors.judul" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.judul }}</div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Judul Kegiatan <span class="text-rose-500">*</span></label>
+                    <input v-model="form.judul" type="text" required class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#528be6]/40 focus:border-[#528be6]" placeholder="Masukkan judul..." />
+                    <div v-if="form.errors.judul" class="text-rose-500 text-xs mt-1 font-semibold">{{ form.errors.judul }}</div>
                 </div>
 
                 <!-- Tipe (Foto/Video) -->
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">Tipe Media <span class="text-red-500">*</span></label>
-                    <select v-model="form.tipe" required class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Tipe Media <span class="text-rose-500">*</span></label>
+                    <select v-model="form.tipe" required class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#528be6]/40 focus:border-[#528be6] cursor-pointer">
                         <option value="foto">Foto</option>
                         <option value="video">Video</option>
                     </select>
-                    <div v-if="form.errors.tipe" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tipe }}</div>
+                    <div v-if="form.errors.tipe" class="text-rose-500 text-xs mt-1 font-semibold">{{ form.errors.tipe }}</div>
                 </div>
 
                 <!-- Foto/Video -->
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2" v-if="form.tipe === 'foto'">File Foto (JPG, PNG, WEBP) <span class="text-red-500">*</span></label>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2" v-else>URL YouTube Embed <span class="text-red-500">*</span></label>
-                    
+                    <label class="block text-sm font-bold text-slate-700 mb-2" v-if="form.tipe === 'foto'">File Foto (JPG, PNG, WEBP) <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2" v-else>URL YouTube Embed <span class="text-rose-500">*</span></label>
+
                     <div class="flex flex-col md:flex-row gap-4 items-start" v-if="form.tipe === 'foto'">
-                        <div v-if="isEditing && detailItem.foto_url && !form.foto" class="w-32 h-32 rounded-lg bg-[#f0f1f1] border border-[#e3e5e7] overflow-hidden shrink-0 relative">
+                        <div v-if="isEditing && detailItem.foto_url && !form.foto" class="w-32 h-32 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 relative">
                             <img :src="detailItem.foto_url" alt="Current Photo" class="w-full h-full object-cover" />
-                            <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] font-bold text-center py-1">Tersimpan</div>
+                            <div class="absolute bottom-0 inset-x-0 bg-[#103973]/70 text-white text-[10px] font-bold text-center py-1">Tersimpan</div>
                         </div>
 
-                        <div class="relative w-full flex-1 border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors min-h-[128px]">
-                            <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2">image</span>
-                            <p class="text-[13px] font-medium text-[#373f50] mb-1">
+                        <div class="relative w-full flex-1 border-2 border-dashed border-slate-300 bg-slate-50 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-100/70 transition-colors min-h-[128px]">
+                            <i class="fa-solid fa-image text-[26px] text-slate-400 mb-2"></i>
+                            <p class="text-[13px] font-medium text-slate-600 mb-1">
                                 <span v-if="form.foto && form.foto.name">{{ form.foto.name }}</span>
                                 <span v-else>Pilih file gambar baru (Maks 1MB)</span>
                             </p>
                             <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                         </div>
                     </div>
-                    
+
                     <div v-else class="w-full">
-                        <textarea v-model="form.foto" rows="3" placeholder='https://www.youtube.com/embed/... atau <iframe src="..."></iframe>' class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]"></textarea>
-                        <p class="text-[12px] text-[#646a79] mt-2">Masukkan URL Embed atau tempel kode <code>&lt;iframe&gt;</code> dari YouTube di sini.</p>
+                        <textarea v-model="form.foto" rows="3" placeholder='https://www.youtube.com/embed/... atau <iframe src="..."></iframe>' class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#528be6]/40 focus:border-[#528be6]"></textarea>
+                        <p class="text-[12px] text-slate-500 mt-2">Masukkan URL Embed atau tempel kode <code>&lt;iframe&gt;</code> dari YouTube di sini.</p>
                     </div>
-                    
-                    <div v-if="form.errors.foto" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.foto }}</div>
-                    <div v-if="youtubeError" class="text-red-500 text-xs mt-1 font-semibold">
-                        Ini bukan kode embed youtube. <a href="https://www.google.com/search?q=cara+mencari+kode+embed+youtube" target="_blank" class="text-blue-600 hover:underline">Cara mencari kode embed youtube</a>
+
+                    <div v-if="form.errors.foto" class="text-rose-500 text-xs mt-1 font-semibold">{{ form.errors.foto }}</div>
+                    <div v-if="youtubeError" class="text-rose-500 text-xs mt-1 font-semibold">
+                        Ini bukan kode embed youtube. <a href="https://www.google.com/search?q=cara+mencari+kode+embed+youtube" target="_blank" class="text-[#1e56a0] hover:underline">Cara mencari kode embed youtube</a>
                     </div>
-                    <div v-if="isEditing && form.tipe === 'foto'" class="mt-2 text-[12px] font-medium text-[#646a79]">
+                    <div v-if="isEditing && form.tipe === 'foto'" class="mt-2 text-[12px] font-medium text-slate-500">
                         Biarkan kosong jika tidak ingin mengubah file foto saat ini.
                     </div>
                 </div>
@@ -335,17 +339,17 @@ const formatDate = (dateString) => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Tanggal Kegiatan -->
                     <div>
-                        <label class="block text-[14px] font-bold text-[#373f50] mb-2">Tanggal Kegiatan</label>
-                        <input v-model="form.tanggal_kegiatan" type="date" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" />
-                        <div v-if="form.errors.tanggal_kegiatan" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tanggal_kegiatan }}</div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Kegiatan</label>
+                        <input v-model="form.tanggal_kegiatan" type="date" class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#528be6]/40 focus:border-[#528be6]" />
+                        <div v-if="form.errors.tanggal_kegiatan" class="text-rose-500 text-xs mt-1 font-semibold">{{ form.errors.tanggal_kegiatan }}</div>
                     </div>
                 </div>
 
                 <!-- Deskripsi -->
                 <div>
-                    <label class="block text-[14px] font-bold text-[#373f50] mb-2">Deskripsi Singkat</label>
-                    <textarea v-model="form.deskripsi" rows="3" class="w-full bg-[#f9f9f9] border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#0f172a] focus:border-[#0f172a]" placeholder="Tuliskan deskripsi singkat..."></textarea>
-                    <div v-if="form.errors.deskripsi" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.deskripsi }}</div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Singkat</label>
+                    <textarea v-model="form.deskripsi" rows="3" class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#528be6]/40 focus:border-[#528be6]" placeholder="Tuliskan deskripsi singkat..."></textarea>
+                    <div v-if="form.errors.deskripsi" class="text-rose-500 text-xs mt-1 font-semibold">{{ form.errors.deskripsi }}</div>
                 </div>
 
                 <!-- Publish Toggle -->
@@ -353,26 +357,26 @@ const formatDate = (dateString) => {
                     <label class="flex items-center gap-3 cursor-pointer group w-max">
                         <div class="relative flex items-center">
                             <input type="checkbox" v-model="form.is_published" class="peer sr-only">
-                            <div class="w-11 h-6 bg-[#c8cbd0] rounded-full peer-checked:bg-[#0f172a] transition-colors duration-200 ease-in-out"></div>
+                            <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#1e56a0] transition-colors duration-200 ease-in-out"></div>
                             <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform duration-200 ease-in-out shadow-sm"></div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[14px] font-bold text-[#0f172a] leading-none mb-1">Publikasikan</span>
-                            <span class="text-[12px] text-[#646a79] leading-none">Galeri akan tampil di website publik</span>
+                            <span class="text-sm font-bold text-slate-900 leading-none mb-1">Publikasikan</span>
+                            <span class="text-[12px] text-slate-500 leading-none">Galeri akan tampil di website publik</span>
                         </div>
                     </label>
-                    <p class="text-xs text-orange-600 mt-2 font-medium flex items-center gap-1" v-if="form.is_published">
-                        <span class="material-symbols-outlined text-[14px]">warning</span>
+                    <p class="text-xs text-amber-600 mt-2 font-semibold flex items-center gap-1.5" v-if="form.is_published">
+                        <i class="fa-solid fa-triangle-exclamation text-[12px]"></i>
                         Foto wajib diisi sebelum dapat dipublikasikan.
                     </p>
                 </div>
 
                 <!-- Actions -->
-                <div class="pt-6 border-t border-[#e3e5e7] flex justify-end gap-3">
-                    <button type="button" @click="closeModal" class="px-6 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+                <div class="pt-6 border-t border-slate-200 flex justify-end gap-3">
+                    <button type="button" @click="closeModal" class="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95 shadow-sm">
                         Batal
                     </button>
-                    <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
+                    <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-xl bg-[#1e56a0] text-white font-semibold text-sm hover:bg-[#103973] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#1e56a0]/20">
                         {{ form.processing ? 'Menyimpan...' : 'Simpan Galeri' }}
                     </button>
                 </div>
@@ -383,20 +387,20 @@ const formatDate = (dateString) => {
     <!-- Modal Konfirmasi Hapus -->
     <Modal :show="isDeleteModalOpen" @close="isDeleteModalOpen = false" maxWidth="md">
         <div class="p-6 md:p-8 text-center">
-            <div class="w-16 h-16 rounded-full bg-[#fce8e8] text-[#ba1a1a] flex items-center justify-center mx-auto mb-6">
-                <span class="material-symbols-outlined text-[32px]">delete_forever</span>
+            <div class="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-trash-can text-[26px]"></i>
             </div>
-            
-            <h3 class="text-[24px] font-bold text-[#0f172a] leading-tight mb-3">Hapus Galeri?</h3>
-            <p class="text-[15px] text-[#646a79] mb-8">
-                Tindakan ini akan menghapus galeri <span class="font-bold text-[#0f172a]">"{{ detailItem?.judul }}"</span> secara permanen beserta file foto fisiknya. Tindakan ini tidak dapat dibatalkan.
+
+            <h3 class="text-2xl font-extrabold text-slate-900 leading-tight tracking-tight mb-3">Hapus Galeri?</h3>
+            <p class="text-[15px] text-slate-500 mb-8">
+                Tindakan ini akan menghapus galeri <span class="font-bold text-slate-900">"{{ detailItem?.judul }}"</span> secara permanen beserta file foto fisiknya. Tindakan ini tidak dapat dibatalkan.
             </p>
-            
+
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button @click="isDeleteModalOpen = false" class="px-6 py-3 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
+                <button @click="isDeleteModalOpen = false" class="px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95 shadow-sm">
                     Batal
                 </button>
-                <button @click="deleteGaleri" class="px-6 py-3 rounded-full bg-[#ba1a1a] text-white font-bold text-[14px] hover:bg-[#93000a] transition-all active:scale-95 shadow-[0_4px_12px_rgba(186,26,26,0.2)]">
+                <button @click="deleteGaleri" class="px-6 py-3 rounded-xl bg-rose-600 text-white font-semibold text-sm hover:bg-rose-700 transition-all active:scale-95 shadow-lg shadow-rose-600/20">
                     Ya, Hapus Permanen
                 </button>
             </div>

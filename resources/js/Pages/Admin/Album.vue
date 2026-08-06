@@ -119,28 +119,32 @@ const goToGaleri = (albumId) => {
         <!-- Page Header Top -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-[#0f172a] mb-1">
+                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1 pt-4">
                     Album Kegiatan
                 </h2>
-                <p class="text-[14px] font-medium text-[#646a79]">Kelola album untuk dokumentasi kegiatan DPMD Bangkalan.</p>
+                <p class="text-[14px] font-medium text-slate-500">Kelola album untuk dokumentasi kegiatan DPMD Bangkalan.</p>
             </div>
             
-            <button @click="openModal()" class="bg-[#0f172a] hover:bg-[#222a3d] text-white font-bold py-2.5 px-6 rounded-full transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
-                <span class="material-symbols-outlined text-[18px]">create_new_folder</span>
+            <button @click="openModal()" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
+                <span class="material-symbols-outlined text-[18px]">add</span>
                 Buat Album Baru
             </button>
         </div>
 
-        <!-- Filter & Search Bar -->
-        <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div class="relative w-full md:w-96">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9499a3] text-[20px]">search</span>
-                <input v-model="search" type="text" placeholder="Cari nama album..." class="w-full bg-white border border-[#e3e5e7] text-[#0f172a] text-[14px] rounded-full pl-11 pr-4 py-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.04)] focus:ring-[#0f172a] focus:border-[#0f172a]" />
+        <!-- Main Content Wrapper -->
+        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
+            <!-- Toolbar -->
+            <div class="p-6 md:p-8 border-b border-[#dbe6f7] flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-[#f5f8fd]">
+                <!-- Search Box -->
+                <div class="relative w-full md:w-96">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-[20px]">search</span>
+                    <input v-model="search" type="text" placeholder="Cari nama album..." class="w-full bg-white border border-[#dbe6f7] text-slate-900 text-[14px] rounded-xl pl-11 pr-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
+                </div>
             </div>
-        </div>
 
-        <!-- Album Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <!-- Album Grid Content -->
+            <div class="p-6 md:p-8 bg-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             
             <div v-for="item in albums.data" :key="item.id" class="bg-white rounded-[20px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden group hover:shadow-[0_8px_30px_rgba(15,23,42,0.08)] transition-all flex flex-col">
                 <!-- Cover Image -->
@@ -180,21 +184,21 @@ const goToGaleri = (albumId) => {
             </div>
 
             <!-- Add New Card (Ghost Card) -->
-            <div @click="openModal()" class="border-2 border-dashed border-[#c8cbd0] rounded-[20px] bg-[#f9f9f9]/50 hover:bg-[#f9f9f9] transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[250px] group">
-                <div class="w-16 h-16 rounded-full bg-white border border-[#e3e5e7] shadow-sm flex items-center justify-center text-[#0f172a] mb-4 group-hover:scale-110 transition-transform">
+            <div @click="openModal()" class="border-2 border-dashed border-[#dbe6f7] rounded-[20px] bg-[#f5f8fd]/50 hover:bg-[#f5f8fd] transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[250px] group">
+                <div class="w-16 h-16 rounded-full bg-white border border-[#dbe6f7] shadow-sm flex items-center justify-center text-[#1356a0] mb-4 group-hover:scale-110 transition-transform">
                     <span class="material-symbols-outlined text-[28px]">add</span>
                 </div>
-                <h3 class="text-[15px] font-bold text-[#0f172a] mb-1">Buat Album Baru</h3>
-                <p class="text-[13px] text-[#646a79]">Kelompokkan foto & video</p>
+                <h3 class="text-[15px] font-bold text-slate-900 mb-1">Buat Album Baru</h3>
+                <p class="text-[13px] text-slate-500">Kelompokkan foto & video</p>
             </div>
 
-        </div>
+                </div>
+            </div>
 
-        <!-- Pagination -->
-        <div v-if="albums.data.length > 0" class="bg-white rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden mb-8">
-            <div class="p-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f9f9f9]">
-                <p class="text-[13px] font-medium text-[#646a79]">
-                    Menampilkan <span class="font-bold text-[#0f172a]">{{ albums.from || 0 }}-{{ albums.to || 0 }}</span> dari <span class="font-bold text-[#0f172a]">{{ albums.total }}</span> album
+            <!-- Footer / Pagination -->
+            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]">
+                <p class="text-[13px] font-medium text-slate-500">
+                    Menampilkan <span class="font-bold text-slate-900">{{ albums.from || 0 }}-{{ albums.to || 0 }}</span> dari <span class="font-bold text-slate-900">{{ albums.total }}</span> album
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-1" v-if="albums.links && albums.links.length > 3">
@@ -204,7 +208,7 @@ const goToGaleri = (albumId) => {
                         :href="link.url || '#'"
                         class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
                         :class="[
-                            link.active ? 'bg-[#0f172a] text-white font-bold' : 'text-[#646a79] hover:bg-[#e3e5e7]',
+                            link.active ? 'bg-[#1356a0] text-white font-bold' : 'text-slate-500 hover:bg-[#dbe6f7]',
                             !link.url ? 'opacity-50 cursor-not-allowed' : ''
                         ]"
                         v-html="link.label"
@@ -213,7 +217,6 @@ const goToGaleri = (albumId) => {
                 </div>
             </div>
         </div>
-
     </AuthenticatedLayout>
 
     <!-- Modal Form Tambah/Edit -->
@@ -284,7 +287,8 @@ const goToGaleri = (albumId) => {
                     <button type="button" @click="closeModal" class="px-6 py-2.5 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
                         Batal
                     </button>
-                    <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-full bg-[#0f172a] text-white font-bold text-[14px] hover:bg-[#222a3d] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(15,23,42,0.12)]">
+                    <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i v-if="form.processing" class="fa-solid fa-circle-notch fa-spin text-[18px] mr-2"></i>
                         {{ form.processing ? 'Menyimpan...' : 'Simpan Album' }}
                     </button>
                 </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import { useToast } from '@idds/vue';
@@ -126,160 +126,207 @@ const formatDate = (dateString) => {
     <Head title="Kelola Agenda Acara - Admin DPMD" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Kelola Agenda Acara</h2>
-        </template>
+        <!-- Page Header Top -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1 pt-4">
+                    Agenda Acara
+                </h2>
+                <p class="text-[14px] font-medium text-slate-500">Kelola jadwal kegiatan dan acara yang tampil di portal publik.</p>
+            </div>
+            
+            <button @click="openModal" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Tambah Agenda
+            </button>
+        </div>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- Main Content -->
+        <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
+            <!-- Toolbar -->
+            <div class="p-6 md:p-8 border-b border-[#dbe6f7] flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-[#f5f8fd]">
+                <!-- Search Box -->
+                <div class="relative w-full md:w-96">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-[20px]">search</span>
+                    <input v-model="search" type="text" placeholder="Cari judul agenda..." class="w-full bg-white border border-[#dbe6f7] text-slate-900 text-[14px] rounded-xl pl-11 pr-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
+                </div>
                 
-                <!-- Controls -->
-                <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="flex gap-4 w-full sm:w-auto">
-                        <input 
-                            v-model="search" 
-                            type="text" 
-                            placeholder="Cari judul agenda..." 
-                            class="w-full sm:w-64 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        >
-                        <select 
-                            v-model="statusFilter"
-                            class="w-full sm:w-48 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        >
+                <!-- Filter Section -->
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 whitespace-nowrap">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-[1px]">Status:</span>
+                        <select v-model="statusFilter" class="bg-white border border-[#dbe6f7] text-slate-900 text-[13px] font-bold rounded-lg px-3 py-1.5 focus:ring-0 focus:border-[#c7dafa]">
                             <option>Semua Status</option>
                             <option>Aktif</option>
                             <option>Non-Aktif</option>
                         </select>
                     </div>
-                    
-                    <button 
-                        @click="openModal" 
-                        class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow flex items-center justify-center gap-2"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Agenda
-                    </button>
                 </div>
+            </div>
 
-                <!-- Table -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul & Lokasi</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="item in agenda.data" :key="item.id">
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ item.judul }}</div>
-                                        <div class="text-sm text-gray-500 flex items-center gap-1 mt-1" v-if="item.lokasi">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-[#f5f8fd]">
+                            <th class="py-4 px-6 md:px-8 text-[11px] font-bold text-slate-500 uppercase tracking-[2.75px] border-b border-[#dbe6f7]">Judul & Lokasi</th>
+                            <th class="py-4 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-[2.75px] border-b border-[#dbe6f7]">Waktu</th>
+                            <th class="py-4 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-[2.75px] border-b border-[#dbe6f7]">Status</th>
+                            <th class="py-4 px-6 md:px-8 text-[11px] font-bold text-slate-500 uppercase tracking-[2.75px] border-b border-[#dbe6f7] text-right w-40">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-[14px] font-medium divide-y divide-[#dbe6f7]">
+                        <tr v-for="item in agenda.data" :key="item.id" class="hover:bg-[#f5f8fd] transition-colors group">
+                            <td class="py-4 px-6 md:px-8">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-lg bg-[#eaf1fb] flex items-center justify-center flex-shrink-0 border border-[#dbe6f7]">
+                                        <span class="material-symbols-outlined text-[#1356a0] text-[24px]">event</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-900 leading-tight">
+                                            {{ item.judul }}
+                                        </p>
+                                        <div class="text-[12px] text-slate-500 flex items-center gap-1.5 mt-1" v-if="item.lokasi">
+                                            <span class="material-symbols-outlined text-[14px]">location_on</span>
                                             {{ item.lokasi }}
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900 font-medium">{{ formatDate(item.tanggal) }}</div>
-                                        <div class="text-sm text-gray-500 mt-1" v-if="item.waktu_mulai">
-                                            {{ item.waktu_mulai.substring(0, 5) }} <span v-if="item.waktu_selesai">- {{ item.waktu_selesai.substring(0, 5) }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span :class="[
-                                            'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                                            item.is_published ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                        ]">
-                                            {{ item.is_published ? 'Aktif' : 'Non-Aktif' }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button @click="openEditModal(item)" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                                        <button @click="deleteItem(item.id)" class="text-red-600 hover:text-red-900">Hapus</button>
-                                    </td>
-                                </tr>
-                                <tr v-if="agenda.data.length === 0">
-                                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                        Belum ada data agenda.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Pagination -->
-                    <div class="px-6 py-4 border-t border-gray-200" v-if="agenda.links && agenda.links.length > 3">
-                        <div class="flex flex-wrap gap-1">
-                            <template v-for="(link, p) in agenda.links" :key="p">
-                                <div v-if="link.url === null" class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded" v-html="link.label" />
-                                <Link v-else class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-gray-100 focus:border-indigo-500 focus:text-indigo-500" :class="{ 'bg-blue-50 text-blue-700': link.active }" :href="link.url" v-html="link.label" />
-                            </template>
-                        </div>
-                    </div>
-                </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <p class="font-bold text-slate-900 mb-0.5">{{ formatDate(item.tanggal) }}</p>
+                                <div class="text-[12px] text-slate-500 flex items-center gap-1.5" v-if="item.waktu_mulai">
+                                    <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                    {{ item.waktu_mulai.substring(0, 5) }} <span v-if="item.waktu_selesai">- {{ item.waktu_selesai.substring(0, 5) }}</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <span v-if="item.is_published" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#137333]"></span> Aktif
+                                </span>
+                                <span v-else class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#eaf1fb] text-slate-500 border border-[#dbe6f7]">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#7488a8]"></span> Non-Aktif
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 md:px-8">
+                                <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <button @click="openEditModal(item)" class="w-8 h-8 rounded-full hover:bg-[#dbe6f7] text-slate-500 flex items-center justify-center transition-colors" title="Edit">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
+                                    <button @click="deleteItem(item.id)" class="w-8 h-8 rounded-full hover:bg-[#ffebee] text-[#d32f2f] flex items-center justify-center transition-colors" title="Hapus">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr v-if="agenda.data.length === 0">
+                            <td colspan="4" class="py-12 text-center text-slate-500">
+                                <span class="material-symbols-outlined text-[48px] text-[#c7dafa] mb-2 block">event_busy</span>
+                                Belum ada agenda acara.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
+            <!-- Footer / Pagination -->
+            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]">
+                <p class="text-[13px] font-medium text-slate-500">
+                    Menampilkan <span class="font-bold text-slate-900">{{ agenda.from || 0 }}-{{ agenda.to || 0 }}</span> dari <span class="font-bold text-slate-900">{{ agenda.total || agenda.data.length }}</span> agenda
+                </p>
+                
+                <div class="flex flex-wrap items-center gap-1" v-if="agenda.links && agenda.links.length > 3">
+                    <Link
+                        v-for="(link, p) in agenda.links"
+                        :key="p"
+                        :href="link.url || '#'"
+                        class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
+                        :class="[
+                            link.active ? 'bg-[#1356a0] text-white font-bold' : 'text-slate-500 hover:bg-[#dbe6f7]',
+                            !link.url ? 'opacity-50 cursor-not-allowed' : ''
+                        ]"
+                        v-html="link.label"
+                        preserve-scroll
+                    />
+                </div>
             </div>
         </div>
 
+
         <!-- Form Modal -->
         <Modal :show="isModalOpen" @close="closeModal">
-            <div class="p-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-6">
-                    {{ isEditing ? 'Edit Agenda Acara' : 'Tambah Agenda Acara Baru' }}
-                </h2>
-
-                <form @submit.prevent="submit" class="space-y-4">
+            <div class="p-6 md:p-8">
+                <div class="flex items-center justify-between mb-6 pb-6 border-b border-[#dbe6f7]">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Judul Acara *</label>
-                        <input v-model="form.judul" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                        <div v-if="form.errors.judul" class="text-red-500 text-xs mt-1">{{ form.errors.judul }}</div>
+                        <h3 class="text-[24px] font-bold text-slate-900 leading-tight">{{ isEditing ? 'Edit Agenda Acara' : 'Tambah Agenda Acara Baru' }}</h3>
+                        <p class="text-[14px] text-slate-500 mt-1">Isi formulir di bawah ini dengan detail agenda.</p>
+                    </div>
+                    <button @click="closeModal" class="text-slate-500 hover:text-slate-900 transition-colors">
+                        <span class="material-symbols-outlined text-[24px]">close</span>
+                    </button>
+                </div>
+
+                <form @submit.prevent="submit" class="space-y-6">
+                    <div>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Judul Acara <span class="text-red-500">*</span></label>
+                        <input v-model="form.judul" type="text" required class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" placeholder="Misal: Rapat Koordinasi Tahunan" />
+                        <div v-if="form.errors.judul" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.judul }}</div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Tanggal Pelaksanaan *</label>
-                        <input v-model="form.tanggal" type="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                        <div v-if="form.errors.tanggal" class="text-red-500 text-xs mt-1">{{ form.errors.tanggal }}</div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Waktu Mulai</label>
-                            <input v-model="form.waktu_mulai" type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <div v-if="form.errors.waktu_mulai" class="text-red-500 text-xs mt-1">{{ form.errors.waktu_mulai }}</div>
+                            <label class="block text-[14px] font-bold text-slate-700 mb-2">Tanggal Pelaksanaan <span class="text-red-500">*</span></label>
+                            <input v-model="form.tanggal" type="date" required class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
+                            <div v-if="form.errors.tanggal" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tanggal }}</div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Waktu Selesai</label>
-                            <input v-model="form.waktu_selesai" type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <div v-if="form.errors.waktu_selesai" class="text-red-500 text-xs mt-1">{{ form.errors.waktu_selesai }}</div>
+                            <label class="block text-[14px] font-bold text-slate-700 mb-2">Lokasi Acara</label>
+                            <input v-model="form.lokasi" type="text" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" placeholder="Misal: Balai Desa..." />
+                            <div v-if="form.errors.lokasi" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.lokasi }}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-[14px] font-bold text-slate-700 mb-2">Waktu Mulai</label>
+                            <input v-model="form.waktu_mulai" type="time" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
+                            <div v-if="form.errors.waktu_mulai" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.waktu_mulai }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-[14px] font-bold text-slate-700 mb-2">Waktu Selesai</label>
+                            <input v-model="form.waktu_selesai" type="time" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0]" />
+                            <div v-if="form.errors.waktu_selesai" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.waktu_selesai }}</div>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Lokasi Acara</label>
-                        <input v-model="form.lokasi" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Misal: Balai Desa...">
-                        <div v-if="form.errors.lokasi" class="text-red-500 text-xs mt-1">{{ form.errors.lokasi }}</div>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Deskripsi / Keterangan</label>
+                        <textarea v-model="form.deskripsi" rows="3" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] rounded-lg px-4 py-2.5 focus:ring-[#1356a0] focus:border-[#1356a0] resize-none" placeholder="Tuliskan keterangan detail tentang agenda..."></textarea>
+                        <div v-if="form.errors.deskripsi" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.deskripsi }}</div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Deskripsi / Keterangan</label>
-                        <textarea v-model="form.deskripsi" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
-                        <div v-if="form.errors.deskripsi" class="text-red-500 text-xs mt-1">{{ form.errors.deskripsi }}</div>
+                    <div class="bg-[#f5f8fd] border border-[#dbe6f7] rounded-xl p-4 mt-2">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative">
+                                <input type="checkbox" v-model="form.is_published" class="peer sr-only">
+                                <div class="w-11 h-6 bg-[#c7dafa] rounded-full peer-checked:bg-[#1356a0] transition-colors duration-200 ease-in-out"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white w-5 h-5 rounded-full shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></div>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[14px] font-bold text-slate-900 leading-none mb-1 group-hover:text-slate-700 transition-colors">Tampilkan ke Publik</span>
+                                <span class="text-[12px] text-slate-500 leading-none">Aktifkan agar agenda ini tampil di halaman website</span>
+                            </div>
+                        </label>
                     </div>
 
-                    <div class="flex items-center">
-                        <input v-model="form.is_published" type="checkbox" id="is_published" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                        <label for="is_published" class="ml-2 block text-sm text-gray-900">Aktif (Tampilkan di website)</label>
-                    </div>
-
-                    <div class="mt-6 flex justify-end gap-3">
-                        <button type="button" @click="closeModal" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <div class="pt-6 border-t border-[#dbe6f7] flex justify-end gap-3">
+                        <button type="button" @click="closeModal" class="px-6 py-2.5 rounded-full border border-[#c7dafa] bg-white text-slate-700 font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                             Batal
                         </button>
-                        <button type="submit" :disabled="form.processing" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
-                            {{ form.processing ? 'Menyimpan...' : 'Simpan' }}
+                        <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                            <i v-if="form.processing" class="fa-solid fa-circle-notch fa-spin text-[18px]"></i>
+                            {{ form.processing ? 'Menyimpan...' : 'Simpan Agenda' }}
                         </button>
                     </div>
                 </form>
