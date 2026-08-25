@@ -48,8 +48,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         Route::get('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'edit'])->name('admin.pengaturan-beranda');
         Route::post('/pengaturan-beranda', [\App\Http\Controllers\Admin\PengaturanBerandaController::class, 'update'])->name('admin.pengaturan-beranda.update');
         
-        Route::get('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
-        Route::post('/kontak-medsos', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
+        Route::get('/kontak-medsos/{section?}', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'edit'])->name('admin.kontak-medsos');
+        Route::post('/kontak-medsos/{section}', [\App\Http\Controllers\Admin\KontakMedsosController::class, 'update'])->name('admin.kontak-medsos.update');
         Route::get('/profil-dinas/{section?}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'edit'])->name('admin.profil-dinas');
         Route::post('/profil-dinas/{section}', [\App\Http\Controllers\Admin\ProfilDinasController::class, 'update'])->name('admin.profil-dinas.update');
         

@@ -20,6 +20,7 @@ watch(isSidebarCollapsed, (newVal) => {
 // Dropdown otomatis terbuka jika salah satu link di dalamnya sedang aktif/dipilih
 const profilDinasOpen = ref(page.url.startsWith('/admin/profil-dinas'));
 const bidangTugasOpen = ref(page.url.startsWith('/admin/bidang-tugas'));
+const kontakMedsosOpen = ref(page.url.startsWith('/admin/kontak-medsos'));
 
 const toggleMobileSidebar = () => {
     showingNavigationDropdown.value = !showingNavigationDropdown.value;
@@ -31,6 +32,7 @@ const toggleDesktopSidebar = () => {
     if (isSidebarCollapsed.value) {
         profilDinasOpen.value = false;
         bidangTugasOpen.value = false;
+        kontakMedsosOpen.value = false;
     }
 };
 
@@ -38,9 +40,15 @@ const handleDropdownClick = (dropdownType) => {
     if (dropdownType === 'profil') {
         profilDinasOpen.value = !profilDinasOpen.value;
         bidangTugasOpen.value = false;
+        kontakMedsosOpen.value = false;
     } else if (dropdownType === 'bidang') {
         bidangTugasOpen.value = !bidangTugasOpen.value;
         profilDinasOpen.value = false;
+        kontakMedsosOpen.value = false;
+    } else if (dropdownType === 'kontak') {
+        kontakMedsosOpen.value = !kontakMedsosOpen.value;
+        profilDinasOpen.value = false;
+        bidangTugasOpen.value = false;
     }
 };
 </script>
@@ -76,10 +84,9 @@ const handleDropdownClick = (dropdownType) => {
             <!-- custom-scrollbar class is assumed to exist in your global CSS to hide/style scrollbar -->
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-12 custom-scrollbar">
                 
-                <p v-show="!isSidebarCollapsed" class="px-4 text-xs font-medium text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Menu Utama</p>
-                
-                <div class="space-y-1.5">
-                    
+                <!-- SECTION 1: DASHBOARD & MONITORING -->
+                <p v-show="!isSidebarCollapsed" class="px-4 text-[10px] font-bold text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Dashboard & Monitoring</p>
+                <div class="space-y-1.5 mb-6">
                     <Link :href="route('dashboard')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
@@ -109,7 +116,11 @@ const handleDropdownClick = (dropdownType) => {
                         </div>
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Log Aktivitas</span>
                     </Link>
+                </div>
 
+                <!-- SECTION 2: KONTEN PUBLIK -->
+                <p v-show="!isSidebarCollapsed" class="px-4 text-[10px] font-bold text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Konten Publik</p>
+                <div class="space-y-1.5 mb-6">
                     <Link :href="route('admin.pengaturan-beranda')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
@@ -184,7 +195,11 @@ const handleDropdownClick = (dropdownType) => {
                         </div>
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Publikasi Dokumen</span>
                     </Link>
+                </div>
 
+                <!-- SECTION 3: PROFIL & STRUKTUR -->
+                <p v-show="!isSidebarCollapsed" class="px-4 text-[10px] font-bold text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Profil & Struktur</p>
+                <div class="space-y-1.5 mb-6">
                     <!-- Dropdown: Profil Dinas -->
                     <div>
                         <button @click="handleDropdownClick('profil')" 
@@ -237,21 +252,34 @@ const handleDropdownClick = (dropdownType) => {
                             <Link :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('sekretariat') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Sekretariat</Link>
                         </div>
                     </div>
+                </div>
 
-                    <Link :href="route('admin.kontak-medsos')" 
-                        class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
-                        :class="[
-                            $page.url.startsWith('/admin/kontak-medsos') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
-                            isSidebarCollapsed ? 'p-3 justify-center' : 'px-4 py-3'
-                        ]"
-                        :title="isSidebarCollapsed ? 'Kontak & Medsos' : ''"
-                    >
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                             :class="$page.url.startsWith('/admin/kontak-medsos') ? 'bg-[#1e56a0] text-white shadow-sm' : 'text-slate-400 group-hover:text-slate-600'">
-                            <i class="fa-solid fa-share-nodes text-sm"></i>
+                <!-- SECTION 4: PENGATURAN -->
+                <p v-show="!isSidebarCollapsed" class="px-4 text-[10px] font-bold text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Pengaturan</p>
+                <div class="space-y-1.5">
+                    <!-- Dropdown: Kontak & Medsos -->
+                    <div>
+                        <button @click="handleDropdownClick('kontak')" 
+                                class="w-full flex items-center gap-3 rounded-xl font-medium transition-colors group outline-none relative"
+                                :class="[
+                                    $page.url.startsWith('/admin/kontak-medsos') ? 'text-[#103973] font-bold bg-[#f0f4f8]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8]',
+                                    isSidebarCollapsed ? 'p-3 justify-center' : 'px-4 py-3'
+                                ]"
+                                :title="isSidebarCollapsed ? 'Kontak & Medsos' : ''">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 transition-colors"
+                                 :class="$page.url.startsWith('/admin/kontak-medsos') ? 'bg-[#1e56a0] text-white shadow-sm rounded-full' : 'text-slate-400 group-hover:text-slate-600 rounded-full'">
+                                <i class="fa-solid fa-share-nodes text-sm"></i>
+                            </div>
+                            <span v-show="!isSidebarCollapsed" class="whitespace-nowrap">Kontak & Medsos</span>
+                            <i v-show="!isSidebarCollapsed" class="fa-solid fa-chevron-down ml-auto text-[10px] text-slate-300 group-hover:text-slate-400 transition-transform duration-200" :class="kontakMedsosOpen ? '-rotate-180 text-[#1e56a0]' : ''"></i>
+                        </button>
+                        
+                        <div v-show="!isSidebarCollapsed && kontakMedsosOpen" class="pl-14 pr-3 space-y-1 mt-1 mb-2">
+                            <Link :href="route('admin.kontak-medsos', { section: 'kontak' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/kontak') || $page.url === '/admin/kontak-medsos' ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Informasi Kontak</Link>
+                            <Link :href="route('admin.kontak-medsos', { section: 'sosmed' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/sosmed') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Tautan Sosmed</Link>
+                            <Link :href="route('admin.kontak-medsos', { section: 'embedding' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/embedding') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pengaturan Embedding</Link>
                         </div>
-                        <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Kontak & Medsos</span>
-                    </Link>
+                    </div>
                     
                     <Link :href="route('logout')" method="post" as="button" 
                         class="w-full flex items-center gap-3 rounded-xl font-medium transition-colors group mt-2 relative outline-none"

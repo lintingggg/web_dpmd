@@ -2,10 +2,11 @@
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from '@idds/vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
-    kontak: Object
+    kontak: Object,
+    section: String
 });
 
 const { toast } = useToast();
@@ -48,6 +49,27 @@ const form = useForm({
 
 // State Tab
 const activeTab = ref('kontak');
+
+watch(() => props.section, (newSec) => {
+    if (newSec) {
+        activeTab.value = newSec === 'embedding' ? 'embed' : newSec;
+    }
+}, { immediate: true });
+
+const sectionTitles = {
+    'kontak': 'Informasi Kontak',
+    'sosmed': 'Tautan Profil Media Sosial',
+    'embed': 'Pengaturan Widget Embed'
+};
+
+const sectionDescriptions = {
+    'kontak': 'Kelola informasi alamat kantor, nomor email, telepon, WhatsApp, dan jam kerja pelayanan.',
+    'sosmed': 'Kelola tautan akun media sosial resmi DPMD Bangkalan (Facebook, Instagram, dll).',
+    'embed': 'Kelola kode penyisipan (embed) widget media sosial untuk ditampilkan di halaman beranda.'
+};
+
+const pageTitle = computed(() => sectionTitles[activeTab.value] || 'Kontak & Media Sosial');
+const pageDesc = computed(() => sectionDescriptions[activeTab.value] || 'Kelola informasi kontak dan media sosial.');
 
 // Logic untuk Jam Kerja Interaktif
 let initHariBuka = 'Senin';
@@ -102,17 +124,11 @@ const submit = (tabContext) => {
         }
     }
 
-    form.post(route('admin.kontak-medsos.update'), {
+    const postSection = activeTab.value === 'embed' ? 'embedding' : activeTab.value;
+
+    form.post(route('admin.kontak-medsos.update', postSection), {
         preserveScroll: true,
         onError: (errors) => {
-            if (errors.alamat || errors.email || errors.telepon || errors.whatsapp || errors.jam_kerja || errors.koordinat_map) {
-                activeTab.value = 'kontak';
-            } else if (errors.facebook_url || errors.instagram_url || errors.youtube_url || errors.twitter_url || errors.tiktok_url) {
-                activeTab.value = 'sosmed';
-            } else {
-                activeTab.value = 'embed';
-            }
-            
             toast({
                 state: 'destructive',
                 title: 'Validasi Gagal',
@@ -124,7 +140,7 @@ const submit = (tabContext) => {
 </script>
 
 <template>
-    <Head title="Pengaturan Kontak & Media Sosial" />
+    <Head :title="pageTitle" />
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
@@ -132,27 +148,11 @@ const submit = (tabContext) => {
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1">
-                        Kontak & Media Sosial
+                        {{ pageTitle }}
                     </h2>
-                    <p class="text-[14px] font-medium text-slate-500">Kelola informasi kontak dinas dan tautan akun media sosial resmi.</p>
+                    <p class="text-[14px] font-medium text-slate-500">{{ pageDesc }}</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Tabs Navigation -->
-        <div class="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-xl border border-[#dbe6f7] shadow-sm">
-            <button @click="activeTab = 'kontak'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all flex items-center gap-2', activeTab === 'kontak' ? 'bg-gradient-to-r from-[#1356a0] to-[#528be6] text-white shadow-md' : 'text-slate-500 hover:bg-[#f3f4f6] hover:text-slate-700']">
-                Informasi Kontak
-                <span v-if="form.errors.alamat || form.errors.email || form.errors.telepon || form.errors.whatsapp || form.errors.jam_kerja || form.errors.koordinat_map" class="w-2 h-2 rounded-full bg-red-500"></span>
-            </button>
-            <button @click="activeTab = 'sosmed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all flex items-center gap-2', activeTab === 'sosmed' ? 'bg-gradient-to-r from-[#1356a0] to-[#528be6] text-white shadow-md' : 'text-slate-500 hover:bg-[#f3f4f6] hover:text-slate-700']">
-                Tautan Profil Media Sosial
-                <span v-if="form.errors.facebook_url || form.errors.instagram_url || form.errors.youtube_url || form.errors.twitter_url || form.errors.tiktok_url" class="w-2 h-2 rounded-full bg-red-500"></span>
-            </button>
-            <button @click="activeTab = 'embed'" :class="['px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all flex items-center gap-2', activeTab === 'embed' ? 'bg-gradient-to-r from-[#1356a0] to-[#528be6] text-white shadow-md' : 'text-slate-500 hover:bg-[#f3f4f6] hover:text-slate-700']">
-                Widget Beranda (Embed)
-                <span v-if="form.errors.instagram_embed_1 || form.errors.instagram_embed_2 || form.errors.tiktok_embed_1 || form.errors.tiktok_embed_2 || form.errors.youtube_embed_1 || form.errors.youtube_embed_2 || form.errors.facebook_embed_1 || form.errors.facebook_embed_2 || form.errors.twitter_embed_1 || form.errors.twitter_embed_2" class="w-2 h-2 rounded-full bg-red-500"></span>
-            </button>
         </div>
 
         <div class="w-full">
