@@ -4,15 +4,12 @@ import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import TipTapEditor from '@/Components/TipTapEditor.vue';
-import { useToast } from '@idds/vue';
 
 const props = defineProps({
     berita: Object,
     filters: Object,
     available_tags: Array,
 });
-
-const { toast } = useToast();
 
 // Format date helper
 const formatDate = (dateString) => {
@@ -112,10 +109,6 @@ const submitForm = () => {
             preserveScroll: true,
             onSuccess: () => {
                 closeModal();
-                toast({ state: 'success', title: 'Berhasil', description: 'Berita berhasil diperbarui.' });
-            },
-            onError: () => {
-                toast({ state: 'error', title: 'Gagal', description: 'Silakan periksa form kembali.' });
             }
         });
     } else {
@@ -127,10 +120,6 @@ const submitForm = () => {
             preserveScroll: true,
             onSuccess: () => {
                 closeModal();
-                toast({ state: 'success', title: 'Berhasil', description: 'Berita berhasil ditambahkan.' });
-            },
-            onError: () => {
-                toast({ state: 'error', title: 'Gagal', description: 'Silakan periksa form kembali.' });
             }
         });
     }
@@ -160,7 +149,6 @@ const executeDelete = () => {
             onSuccess: () => {
                 isDeleteModalOpen.value = false;
                 itemToDelete.value = null;
-                toast({ state: 'success', title: 'Dihapus', description: 'Berita berhasil dihapus.' });
             }
         });
     }

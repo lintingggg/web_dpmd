@@ -27,15 +27,13 @@ class DashboardController extends Controller
             $query->where('subject_type', \App\Models\Berita::class);
         }
 
-        $recentActivities = $query->latest()->take(6)->get()->map(function ($log) {
-            $type = $log->subject_type ? class_basename($log->subject_type) : 'Sistem';
+        $recentActivities = $query->latest()->take(5)->get()->map(function ($log) {
             return [
-                'type' => $type,
-                'title' => $log->description,
-                'status' => $log->action,
-                'author' => $log->user ? $log->user->name : 'Anonim',
-                'time' => $log->created_at->diffForHumans(),
-                'updated_at' => $log->created_at
+                'id' => $log->id,
+                'description' => $log->description,
+                'subject_type' => $log->subject_type,
+                'event' => $log->action, // Maps 'action' to 'event' for the badge
+                'created_at' => $log->created_at->toIso8601String(),
             ];
         });
 
@@ -44,13 +42,41 @@ class DashboardController extends Controller
                                 ->take(3)
                                 ->get();
 
+        // Query visitor stats for the last 7 days
+        $visitorStats = [];
+        $dayLabels = [
+            'Monday' => 'Sen',
+            'Tuesday' => 'Sel',
+            'Wednesday' => 'Rab',
+            'Thursday' => 'Kam',
+            'Friday' => 'Jum',
+            'Saturday' => 'Sab',
+            'Sunday' => 'Min'
+        ];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dateString = $date->toDateString();
+            $englishDay = $date->format('l');
+            $label = $dayLabels[$englishDay] ?? substr($englishDay, 0, 3);
+            
+            $count = \App\Models\VisitorLog::where('visit_date', $dateString)->count();
+            
+            $visitorStats[] = [
+                'label' => $label,
+                'count' => $count,
+                'date' => $dateString
+            ];
+        }
+
         return Inertia::render('Dashboard', [
             'totalBerita' => $totalBerita,
             'totalAgenda' => $totalAgenda,
             'totalDokumen' => $totalDokumen,
             'totalGaleri' => $totalGaleri,
             'recentActivities' => $recentActivities,
-            'agendaTerdekat' => $agendaTerdekat
+            'agendaTerdekat' => $agendaTerdekat,
+            'visitorStats' => $visitorStats
         ]);
     }
 }

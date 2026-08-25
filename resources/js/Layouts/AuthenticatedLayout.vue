@@ -333,14 +333,7 @@ const handleDropdownClick = (dropdownType) => {
                         <i class="fa-solid" :class="isSidebarCollapsed ? 'fa-indent' : 'fa-outdent'"></i>
                     </button>
                     
-                    <!-- Search Bar -->
-                    <div class="hidden sm:flex items-center bg-white border border-slate-200 rounded-full px-4 py-2 w-64 lg:w-80 shadow-sm focus-within:ring-2 focus-within:ring-[#528be6]/50 focus-within:border-[#528be6] transition-all">
-                        <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
-                        <input type="text" placeholder="Cari data, berita..." class="bg-transparent border-none outline-none text-sm w-full ml-3 text-slate-700 placeholder-slate-400 font-medium focus:ring-0">
-                        <div class="flex items-center justify-center bg-slate-100 rounded md px-1.5 py-0.5 ml-2 text-[10px] text-slate-400 font-bold tracking-widest border border-slate-200">
-                            /
-                        </div>
-                    </div>
+
                 </div>
 
                 <div class="flex items-center gap-3 lg:gap-5">

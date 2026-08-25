@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { computed } from 'vue';
 
 const props = defineProps({
     totalBerita: Number,
@@ -8,8 +9,21 @@ const props = defineProps({
     totalDokumen: Number,
     totalGaleri: Number,
     recentActivities: Array,
-    agendaTerdekat: Array
+    agendaTerdekat: Array,
+    visitorStats: Array
 });
+
+const maxVisitorCount = computed(() => {
+    if (!props.visitorStats || props.visitorStats.length === 0) return 1;
+    const max = Math.max(...props.visitorStats.map(s => s.count));
+    return max > 0 ? max : 1;
+});
+
+const getBarHeight = (count) => {
+    const percentage = (count / maxVisitorCount.value) * 100;
+    if (count === 0) return '8px';
+    return `${Math.max(percentage, 12)}%`;
+};
 
 // Format date helper
 const formatDate = (dateString) => {
@@ -136,40 +150,21 @@ const getTypeIcon = (type) => {
                     
                     <!-- Minimalist Bar Chart -->
                     <div class="flex-1 flex items-end justify-between gap-2 sm:gap-6 mt-auto h-48 px-2 pb-6 border-b border-slate-100 relative">
-                        <!-- Tooltip example -->
-                        <div class="absolute top-4 left-1/3 transform -translate-x-1/2 bg-slate-900 text-xs font-bold px-2.5 py-1.5 rounded-lg shadow-lg text-white z-10 hidden sm:block">
-                            +34%
-                            <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
-                        </div>
-
                         <!-- Bars -->
-                        <div class="w-full flex flex-col items-center gap-3">
-                            <div class="w-full h-24 rounded-t-lg overflow-hidden relative" style="background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 4px, #e2e8f0 4px, #e2e8f0 8px);"></div>
-                            <span class="text-xs text-slate-400 font-semibold">S</span>
-                        </div>
-                        <div class="w-full flex flex-col items-center gap-3">
-                            <div class="w-full h-32 bg-slate-300 rounded-t-lg relative"></div>
-                            <span class="text-xs text-slate-400 font-semibold">S</span>
-                        </div>
-                        <div class="w-full flex flex-col items-center gap-3 relative">
-                            <div class="w-full h-28 bg-[#528be6] rounded-t-lg relative before:content-[''] before:absolute before:-top-3 before:left-1/2 before:-translate-x-1/2 before:w-1.5 before:h-1.5 before:bg-[#1e56a0] before:rounded-full"></div>
-                            <span class="text-xs text-slate-900 font-extrabold">R</span>
-                        </div>
-                        <div class="w-full flex flex-col items-center gap-3">
-                            <div class="w-full h-40 bg-[#1e56a0] rounded-t-lg relative shadow-md shadow-slate-900/10"></div>
-                            <span class="text-xs text-slate-400 font-semibold">R</span>
-                        </div>
-                        <div class="w-full flex flex-col items-center gap-3">
-                            <div class="w-full h-20 rounded-t-lg overflow-hidden relative" style="background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 4px, #e2e8f0 4px, #e2e8f0 8px);"></div>
-                            <span class="text-xs text-slate-400 font-semibold">K</span>
-                        </div>
-                        <div class="w-full flex flex-col items-center gap-3">
-                            <div class="w-full h-24 rounded-t-lg overflow-hidden relative" style="background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 4px, #e2e8f0 4px, #e2e8f0 8px);"></div>
-                            <span class="text-xs text-slate-400 font-semibold">J</span>
-                        </div>
-                        <div class="w-full flex flex-col items-center gap-3">
-                            <div class="w-full h-16 rounded-t-lg overflow-hidden relative" style="background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 4px, #e2e8f0 4px, #e2e8f0 8px);"></div>
-                            <span class="text-xs text-slate-400 font-semibold">S</span>
+                        <div v-for="stat in visitorStats" :key="stat.date" class="w-full flex flex-col items-center gap-3 group relative">
+                            <!-- Tooltip on Hover -->
+                            <div class="absolute bottom-full mb-2 bg-slate-950 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+                                {{ stat.count }} Pengunjung
+                            </div>
+                            <!-- Bar -->
+                            <div :style="{ height: getBarHeight(stat.count) }" 
+                                 class="w-full rounded-t-lg transition-all duration-500 relative"
+                                 :class="[
+                                     stat.count > 0 ? 'bg-[#1e56a0] group-hover:bg-[#528be6] shadow-sm' : 'bg-slate-100 border border-slate-200/50'
+                                 ]">
+                            </div>
+                            <!-- Label -->
+                            <span class="text-[11px] text-slate-500 font-bold uppercase">{{ stat.label }}</span>
                         </div>
                     </div>
                 </div>

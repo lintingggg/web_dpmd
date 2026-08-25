@@ -31,6 +31,7 @@ import PrimaryButton from '../Components/PrimaryButton.vue';
 import Modal from '../Components/Modal.vue';
 import { router } from '@inertiajs/vue3';
 import CardNews from '../Components/CardNews.vue';
+import CalendarAgenda from '../Components/CalendarAgenda.vue';
 import { usePage, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -98,57 +99,12 @@ const isBidangOpen = ref(false);
 const isMobileProfilOpen = ref(false);
 const isMobileBidangOpen = ref(false);
 
-// Agenda Calendar Logic
-const currentDate = ref(new Date(props.tahun, props.bulan - 1, 1));
+// Agenda Calendar Month Helper
 const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-const shortMonthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
-const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
-const calendarGrid = computed(() => {
-    const year = currentDate.value.getFullYear();
-    const month = currentDate.value.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const grid = [];
-    let day = 1;
-    for (let i = 0; i < 6; i++) {
-        const week = [];
-        for (let j = 0; j < 7; j++) {
-            if (i === 0 && j < firstDay) {
-                week.push(null);
-            } else if (day > daysInMonth) {
-                week.push(null);
-            } else {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                week.push({ day, dateStr, hasEvent: props.tanggalAdaAcara?.includes(dateStr) });
-                day++;
-            }
-        }
-        grid.push(week);
-        if (day > daysInMonth) break;
-    }
-    return grid;
-});
 
-const prevMonth = () => {
-    let newMonth = props.bulan - 1;
-    let newYear = props.tahun;
-    if (newMonth < 1) { newMonth = 12; newYear--; }
-    route.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
-};
-
-const nextMonth = () => {
-    let newMonth = props.bulan + 1;
-    let newYear = props.tahun;
-    if (newMonth > 12) { newMonth = 1; newYear++; }
-    route.get('/', { month: newMonth, year: newYear }, { preserveState: true, preserveScroll: true, only: ['agendaList', 'tanggalAdaAcara', 'bulan', 'tahun'] });
-};
-
-watch(() => props.bulan, (newBulan) => {
-    currentDate.value = new Date(props.tahun, newBulan - 1, 1);
-});
-
-// Agenda Detail Modal Logic
+// Unused local modal states and methods removed
+const selectedDate = ref(null);
 const isDetailOpen = ref(false);
 const selectedAgenda = ref<any>(null);
 
@@ -164,7 +120,23 @@ const formatFullDate = (dateStr: string) => {
     return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateStr));
 };
 const getDayNumber = (dateStr: string) => new Date(dateStr).getDate();
-const getShortMonth = (dateStr: string) => shortMonthNames[new Date(dateStr).getMonth()];
+const getShortMonth = (dateStr: string) => {
+    const shortMonthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
+    return shortMonthNames[new Date(dateStr).getMonth()];
+};
+
+// Filtered agenda list by selected date
+const filteredAgendaList = computed(() => {
+    if (!selectedDate.value) return props.agendaList;
+    return props.agendaList.filter(agenda => {
+        const d = new Date(agenda.tanggal);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const agendaDateStr = `${year}-${month}-${day}`;
+        return agendaDateStr === selectedDate.value;
+    });
+});
 
 // Data BeritaTerkini sekarang berasal dari props database
 const form = useForm({
@@ -524,44 +496,32 @@ onUnmounted(() => {
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left Column: Calendar -->
-        <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-            <div class="flex items-center justify-between mb-6">
-                <button @click="prevMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
-                    <IconChevronLeft :size="20" />
-                </button>
-                <h2 class="font-bold text-[#0F172A] text-lg">
-                    {{ monthNames[bulan - 1] }} {{ tahun }}
-                </h2>
-                <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
-                    <IconChevronRight :size="20" />
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-7 gap-1 mb-2">
-                <div v-for="day in dayNames" :key="day" class="text-center text-xs font-semibold text-gray-400 py-2">
-                    {{ day }}
-                </div>
-            </div>
-            
-            <div class="space-y-1">
-                <div v-for="(week, wIdx) in calendarGrid" :key="wIdx" class="grid grid-cols-7 gap-1">
-                    <div v-for="(cell, cIdx) in week" :key="cIdx" class="aspect-square relative">
-                        <div v-if="cell" 
-                            class="w-full h-full flex items-center justify-center text-sm font-medium rounded-lg text-gray-700"
-                        >
-                            {{ cell.day }}
-                            <div v-if="cell.hasEvent" class="absolute bottom-2 w-1.5 h-1.5 bg-[#0F172A] rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Left Column: Calendar Component -->
+        <div class="lg:col-span-4 sticky top-24">
+            <CalendarAgenda 
+                v-slot:default
+                v-model="selectedDate"
+                :tanggal-ada-acara="tanggalAdaAcara" 
+                :bulan="bulan" 
+                :tahun="tahun" 
+            />
         </div>
 
         <!-- Right Column: Agenda List -->
         <div class="lg:col-span-8">
-            <div v-if="agendaList && agendaList.length > 0" class="space-y-4">
-                <div v-for="agenda in agendaList" :key="agenda.id" 
+            <!-- Filter Info -->
+            <div v-if="selectedDate" class="mb-4 bg-sky-50 border border-sky-100 rounded-2xl p-4 flex items-center justify-between text-sky-800 text-sm">
+                <div class="flex items-center gap-2 font-semibold">
+                    <IconCalendarEvent :size="18" />
+                    <span>Menampilkan agenda untuk tanggal: {{ formatFullDate(selectedDate) }}</span>
+                </div>
+                <button @click="selectedDate = null" class="text-xs bg-white hover:bg-sky-100 border border-sky-200 text-sky-700 font-bold px-3 py-1.5 rounded-xl transition-colors shadow-sm">
+                    Tampilkan Semua
+                </button>
+            </div>
+
+            <div v-if="filteredAgendaList && filteredAgendaList.length > 0" class="space-y-4">
+                <div v-for="agenda in filteredAgendaList" :key="agenda.id" 
                     @click="openDetail(agenda)"
                     class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col sm:flex-row gap-5 hover:border-[#646A79]/30 hover:shadow-md transition-all cursor-pointer group"
                 >
@@ -605,7 +565,7 @@ onUnmounted(() => {
                     <IconCalendarEvent :size="32" />
                 </div>
                 <h3 class="text-lg font-bold text-[#0F172A] mb-1">Belum ada agenda</h3>
-                <p class="text-[#646A79]">Tidak ada agenda acara pada bulan {{ monthNames[bulan - 1] }} {{ tahun }}.</p>
+                <p class="text-[#646A79]">Tidak ada agenda acara pada tanggal ini. <button v-if="selectedDate" @click="selectedDate = null" class="text-sky-600 hover:underline font-bold">Tampilkan semua agenda bulan ini</button></p>
             </div>
         </div>
 
@@ -857,6 +817,9 @@ onUnmounted(() => {
 
     <!-- FOOTER -->
     <Footer />
+
+
+
     <!-- Modal Detail Agenda -->
     <Modal :show="isDetailOpen" @close="closeDetail" maxWidth="2xl">
         <div v-if="selectedAgenda" class="bg-white rounded-2xl overflow-hidden relative">
@@ -935,7 +898,6 @@ onUnmounted(() => {
             
         </div>
     </Modal>
-
 
     <UpButton />
   </div>

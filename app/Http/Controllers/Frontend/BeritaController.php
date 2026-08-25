@@ -32,6 +32,13 @@ class BeritaController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        // Increment views with session protection (prevent refresh spam)
+        $sessionKey = 'viewed_berita_' . $berita->id;
+        if (!session()->has($sessionKey)) {
+            $berita->increment('views');
+            session()->put($sessionKey, true);
+        }
+
         // Get 4 related news by tags, or fallback to latest
         $beritaTerkiniQuery = Berita::where('is_published', true)
             ->where('id', '!=', $berita->id);
