@@ -104,6 +104,10 @@ Route::get('/dokumen-dan-peraturan/{id}', [DokumenController::class, 'show']);
 Route::get('/galeri', [FrontendGaleriController::class, 'index']);
 Route::get('/galeri/{id}', [FrontendGaleriController::class, 'show']);
 
+Route::post('/kontak/kirim', [\App\Http\Controllers\Frontend\KontakController::class, 'kirim'])
+    ->middleware('throttle:3,5')
+    ->name('kontak.kirim');
+
 require __DIR__.'/auth.php';
 // Global 404 Fallback
 Route::fallback(function () {

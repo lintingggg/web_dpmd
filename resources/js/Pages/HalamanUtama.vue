@@ -31,7 +31,7 @@ import PrimaryButton from '../Components/PrimaryButton.vue';
 import Modal from '../Components/Modal.vue';
 import { router } from '@inertiajs/vue3';
 import CardNews from '../Components/CardNews.vue';
-import { usePage, Link } from '@inertiajs/vue3';
+import { usePage, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const FALLBACK_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'>
@@ -167,12 +167,13 @@ const getDayNumber = (dateStr: string) => new Date(dateStr).getDate();
 const getShortMonth = (dateStr: string) => shortMonthNames[new Date(dateStr).getMonth()];
 
 // Data BeritaTerkini sekarang berasal dari props database
-const form = reactive({
+const form = useForm({
   nama: '',
   email: '',
   subjek: '',
-  pesan: ''
-} as any);
+  pesan: '',
+  'g-recaptcha-response': ''
+});
 
 // Social Media Tabs State
 const socialTabs = computed(() => {
@@ -336,21 +337,38 @@ const openLink = (url: string) => {
 };
 
 const submitForm = () => {
+  const token = (window as any).grecaptcha ? (window as any).grecaptcha.getResponse() : '';
+  form['g-recaptcha-response'] = token;
+
   if(!form.nama || !form.email || !form.pesan) {
     alert('Mohon lengkapi form kontak!');
     return;
   }
   
-  const subject = form.subjek ? encodeURIComponent(form.subjek) : encodeURIComponent('Pesan dari Website DPMD');
-  const body = encodeURIComponent(`Nama: ${form.nama}\nEmail: ${form.email}\n\nPesan:\n${form.pesan}`);
-  const targetEmail = kontak.value.email || 'dpmd@bangkalankab.go.id';
+  if(!form['g-recaptcha-response']) {
+    alert('Mohon selesaikan verifikasi reCAPTCHA!');
+    return;
+  }
   
-  window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
-  
-  form.nama = '';
-  form.email = '';
-  form.subjek = '';
-  form.pesan = '';
+  form.post(route('kontak.kirim'), {
+    preserveScroll: true,
+    onSuccess: () => {
+      alert('Pesan Anda berhasil dikirim!');
+      form.reset();
+      if ((window as any).grecaptcha) {
+        (window as any).grecaptcha.reset();
+      }
+    },
+    onError: (errors) => {
+      if (errors['g-recaptcha-response']) {
+        alert(errors['g-recaptcha-response']);
+      } else if (errors['pesan']) {
+        alert(errors['pesan']);
+      } else {
+        alert('Terjadi kesalahan saat mengirim pesan.');
+      }
+    }
+  });
 };
 
 // Close dropdowns on outside click for better UX
@@ -362,6 +380,16 @@ const closeDropdowns = (e: Event) => {
 };
 
 onMounted(() => {
+  // Load Google reCAPTCHA script
+  if (!document.getElementById('recaptcha-script')) {
+    const script = document.createElement('script');
+    script.id = 'recaptcha-script';
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
   document.addEventListener('click', closeDropdowns);
   // Initialize GSAP animations
   initHomeAnimations();
@@ -811,8 +839,14 @@ onUnmounted(() => {
               <textarea v-model="form.pesan" rows="4" placeholder="Tuliskan pesan atau pertanyaan Anda di sini..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0F1B3D] focus:border-[#0F1B3D] outline-none transition-all text-sm resize-none" required></textarea>
             </div>
             
-            <button type="submit" class="inline-flex items-center justify-center w-full sm:w-auto gap-2 bg-[#0F1B3D] text-white px-8 py-3.5 rounded-full font-semibold hover:bg-opacity-90 transition-colors shadow-sm">
-              <IconSend class="w-5 h-5" />
+            <!-- Google reCAPTCHA widget -->
+            <div v-if="page.props.recaptcha_sitekey" class="my-4">
+              <div class="g-recaptcha" :data-sitekey="page.props.recaptcha_sitekey"></div>
+            </div>
+            
+            <button type="submit" :disabled="form.processing" class="inline-flex items-center justify-center w-full sm:w-auto gap-2 bg-[#0F1B3D] text-white px-8 py-3.5 rounded-full font-semibold hover:bg-opacity-90 transition-colors shadow-sm disabled:opacity-50">
+              <IconSend class="w-5 h-5" v-if="!form.processing" />
+              <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" v-else></div>
               Kirim via Email
             </button>
           </form>

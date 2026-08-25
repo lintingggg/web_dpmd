@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
             'kontak' => fn () => PengaturanKontak::first() ?? new PengaturanKontak(),
+            'recaptcha_sitekey' => env('NOCAPTCHA_SITEKEY'),
         ];
     }
 }
