@@ -11,81 +11,119 @@ defineProps({
     }
 });
 
-const emit = defineEmits(['lihatDetail']);
+defineEmits(['lihatDetail']);
 </script>
 
 <template>
-    <div style="width: 100%; background: #ffffff; border: 1px solid #e3e5e7; border-radius: 16px; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif;">
+    <div class="w-full font-sans">
 
         <!-- Loading state -->
-        <div v-if="isLoading" style="padding: 48px; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center;">
-            <div style="width: 32px; height: 32px; border: 2.5px solid #e3e5e7; border-top-color: #0f172a; border-radius: 9999px; animation: spin 0.8s linear infinite;"></div>
-            <span style="font-size: 13px; font-weight: 500; color: #9499a3;">Memuat data...</span>
+        <div v-if="isLoading" class="p-12 flex flex-col gap-3 items-center justify-center bg-white border border-[#dbe6f7] rounded-2xl">
+            <div class="w-8 h-8 border-2 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
+            <span class="text-[13px] font-medium text-slate-400">Memuat data...</span>
         </div>
 
         <!-- Empty state -->
-        <div v-else-if="!dataDokumen.length" style="padding: 48px; text-align: center;">
-            <span class="material-symbols-outlined" style="font-size: 40px; color: #c8cbd0; display: block; margin-bottom: 12px;">description</span>
-            <p style="font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 4px;">Belum ada dokumen</p>
-            <p style="font-size: 13px; font-weight: 500; color: #9499a3;">Dokumen akan ditampilkan di sini.</p>
+        <div v-else-if="!dataDokumen.length" class="p-12 text-center bg-white border border-[#dbe6f7] rounded-2xl">
+            <span class="material-symbols-outlined text-[40px] text-slate-300 block mb-3">description</span>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Belum ada dokumen</p>
+            <p class="text-xs font-medium text-slate-400">Dokumen akan ditampilkan di sini.</p>
         </div>
 
-        <!-- Table -->
-        <table v-else style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background: #f8fafc; border-bottom: 1px solid #e3e5e7;">
-                    <th style="padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; color: #646a79; letter-spacing: 1px; text-transform: uppercase;">Judul Dokumen</th>
-                    <th style="padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; color: #646a79; letter-spacing: 1px; text-transform: uppercase;">Kategori</th>
-                    <th style="padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; color: #646a79; letter-spacing: 1px; text-transform: uppercase;">Tanggal</th>
-                    <th style="padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; color: #646a79; letter-spacing: 1px; text-transform: uppercase;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
+        <div v-else class="space-y-4">
+            <!-- Desktop View: Table -->
+            <div class="hidden md:block bg-white border border-[#dbe6f7] rounded-2xl overflow-hidden shadow-sm">
+                <table class="w-full border-collapse text-left">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-[#dbe6f7]">
+                            <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Judul Dokumen</th>
+                            <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
+                            <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider w-24">Tahun</th>
+                            <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider w-56 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(row, idx) in dataDokumen"
+                            :key="row.id ?? idx"
+                            class="border-b border-slate-100 last:border-0 hover:bg-[#f5f8fd]/50 transition-colors"
+                        >
+                            <td class="py-4 px-6">
+                                <span class="block text-sm font-bold text-slate-900 leading-snug">{{ row.judul }}</span>
+                                <span v-if="row.deskripsi" class="block text-xs font-medium text-slate-400 mt-1 line-clamp-2">{{ row.deskripsi }}</span>
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                <span class="inline-flex px-3 py-1 bg-[#f5f8fd] border border-[#dbe6f7] rounded-full text-[11px] font-bold text-slate-700">
+                                    {{ row.kategori }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap text-sm font-semibold text-slate-500">{{ row.tahun }}</td>
+                            <td class="py-4 px-6">
+                                <div class="flex gap-2 items-center justify-end">
+                                    <a
+                                        :href="row.link"
+                                        :download="row.judul + '.pdf'"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white rounded-full text-xs font-bold transition-all active:scale-95 shadow-sm"
+                                    >
+                                        <span class="material-symbols-outlined text-[15px]">download</span>
+                                        Unduh
+                                    </a>
+                                    <Link
+                                        :href="`/dokumen-dan-peraturan/${row.id}`"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 border border-[#dbe6f7] hover:bg-[#eaf1fb] text-slate-700 rounded-full text-xs font-bold transition-colors"
+                                    >
+                                        <span class="material-symbols-outlined text-[15px]">visibility</span>
+                                        Detail
+                                    </Link>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile View: Card List -->
+            <div class="block md:hidden space-y-4">
+                <div 
                     v-for="(row, idx) in dataDokumen"
                     :key="row.id ?? idx"
-                    style="border-bottom: 1px solid #f0f1f3; transition: background 0.15s ease;"
-                    @mouseenter="$event.currentTarget.style.background = '#f8fafc'"
-                    @mouseleave="$event.currentTarget.style.background = 'transparent'"
+                    class="bg-white border border-[#dbe6f7] rounded-2xl p-5 shadow-sm space-y-4"
                 >
-                    <td style="padding: 14px 16px;">
-                        <span style="display: block; font-size: 14px; font-weight: 600; color: #0f172a;">{{ row.judul }}</span>
-                        <span v-if="row.deskripsi" style="display: block; font-size: 12px; font-weight: 500; color: #9499a3; margin-top: 2px;">{{ row.deskripsi }}</span>
-                    </td>
-                    <td style="padding: 14px 16px;">
-                        <span style="display: inline-block; padding: 3px 10px; background: #f8fafc; border: 1px solid #e3e5e7; border-radius: 9999px; font-size: 11px; font-weight: 700; color: #373f50; letter-spacing: 0.3px;">
+                    <!-- Header: Category & Year -->
+                    <div class="flex justify-between items-center gap-2">
+                        <span class="inline-flex px-2.5 py-0.5 bg-[#f5f8fd] border border-[#dbe6f7] rounded-full text-[10px] font-bold text-slate-600">
                             {{ row.kategori }}
                         </span>
-                    </td>
-                    <td style="padding: 14px 16px; font-size: 13px; font-weight: 500; color: #646a79;">{{ row.tanggal }}</td>
-                    <td style="padding: 14px 16px;">
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <a
-                                :href="row.link"
-                                :download="row.judul + '.pdf'"
-                                style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1.5px solid #0f172a; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #ffffff; background: #0f172a; cursor: pointer; transition: all 0.15s ease; text-decoration: none;"
-                            >
-                                <span class="material-symbols-outlined" style="font-size: 14px;">download</span>
-                                Download
-                            </a>
-                            <Link
-                                :href="`/dokumen-dan-peraturan/${row.id}`"
-                                style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1.5px solid #e3e5e7; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #0f172a; background: transparent; cursor: pointer; transition: all 0.15s ease; text-decoration: none;"
-                            >
-                                <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span>
-                                Detail
-                            </Link>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        <span class="text-xs font-bold text-slate-400">{{ row.tahun }}</span>
+                    </div>
+
+                    <!-- Body: Title & Desc -->
+                    <div class="space-y-1">
+                        <h4 class="text-sm font-bold text-slate-900 leading-snug">{{ row.judul }}</h4>
+                        <p v-if="row.deskripsi" class="text-xs font-medium text-slate-400 leading-relaxed">{{ row.deskripsi }}</p>
+                    </div>
+
+                    <!-- Footer: Action buttons -->
+                    <div class="flex gap-2 pt-2">
+                        <a
+                            :href="row.link"
+                            :download="row.judul + '.pdf'"
+                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-gradient-to-r from-[#1356a0] to-[#528be6] text-white rounded-xl text-xs font-bold active:scale-95 shadow-sm"
+                        >
+                            <span class="material-symbols-outlined text-[15px]">download</span>
+                            Unduh PDF
+                        </a>
+                        <Link
+                            :href="`/dokumen-dan-peraturan/${row.id}`"
+                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 border border-[#dbe6f7] bg-white text-slate-700 rounded-xl text-xs font-bold active:scale-95"
+                        >
+                            <span class="material-symbols-outlined text-[15px]">visibility</span>
+                            Detail
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </template>
-
-<style scoped>
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-</style>

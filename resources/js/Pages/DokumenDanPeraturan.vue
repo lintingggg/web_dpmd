@@ -148,6 +148,26 @@ function gotoPage(page: number) {
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             <div class="lg:col-span-3">
 
+                <!-- Mobile Category Pills (Horizontal Scroll) -->
+                <div class="lg:hidden mb-6 overflow-x-auto whitespace-nowrap pb-2 -mx-4 px-4 scrollbar-hide">
+                    <div class="flex gap-2">
+                        <button
+                            v-for="kategori in categoryList"
+                            :key="kategori"
+                            type="button"
+                            @click="pilihKategori(kategori)"
+                            class="px-4 py-2 text-xs font-bold rounded-full border transition-all duration-150"
+                            :class="[
+                                (activeCategory === kategori || (activeCategory === '' && kategori === 'Semua'))
+                                    ? 'bg-[#1356a0] text-white border-[#1356a0] shadow-sm'
+                                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                            ]"
+                        >
+                            {{ kategori === 'Semua' ? 'Semua Kategori' : (kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (kategori === 'peraturan' ? 'Produk Peraturan' : 'Lainnya')) }}
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Search Bar -->
                 <div class="relative w-full mb-5">
                     <SearchBar
@@ -236,8 +256,8 @@ function gotoPage(page: number) {
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <aside class="lg:col-span-1">
+            <!-- Sidebar (Desktop only) -->
+            <aside class="hidden lg:block lg:col-span-1">
                 <div class="lg:sticky lg:top-24 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <h2 class="text-sm font-bold tracking-wide text-slate-800 uppercase mb-3">
                         Kategori
