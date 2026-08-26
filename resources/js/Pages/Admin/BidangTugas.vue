@@ -3,6 +3,7 @@ import { Head, usePage, useForm, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TipTapEditor from '@/Components/TipTapEditor.vue';
+import { formatDateTime } from '@/Utils/formatDate';
 
 const props = defineProps({
     bidangTugas: Object,
@@ -61,13 +62,6 @@ const submit = () => {
     });
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('id-ID', { 
-        year: 'numeric', month: 'short', day: 'numeric', 
-        hour: '2-digit', minute: '2-digit' 
-    });
-};
 </script>
 
 <template>
@@ -93,7 +87,7 @@ const formatDate = (dateString) => {
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#137333] mr-1.5"></span> Published
                             </span>
                         </div>
-                        <p class="text-[12px] font-medium text-slate-500">Terakhir diubah: {{ formatDate(bidangTugas?.updated_at) }}</p>
+                        <p class="text-[12px] font-medium text-slate-500">Terakhir diubah: {{ formatDateTime(bidangTugas?.updated_at) }}</p>
                     </div>
                 </div>
             </div>

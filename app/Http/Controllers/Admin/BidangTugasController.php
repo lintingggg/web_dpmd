@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\BidangTugas;
-use Illuminate\Support\Facades\Storage;
-use Mews\Purifier\Facades\Purifier;
+use App\Services\BidangTugasService;
+use App\Http\Requests\UpdateBidangTugasRequest;
+use Illuminate\Support\Facades\Gate;
 
 class BidangTugasController extends Controller
 {
@@ -18,11 +19,12 @@ class BidangTugasController extends Controller
         'sekretariat'
     ];
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    public function __construct(protected BidangTugasService $bidangTugasService) {}
+
     public function edit(?string $section = null)
     {
+        Gate::authorize('viewAny', BidangTugas::class);
+
         $section = $section ?? 'pemdes';
         abort_unless(in_array($section, self::VALID_SECTIONS), 404);
 
@@ -34,48 +36,16 @@ class BidangTugasController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $section)
+    public function update(UpdateBidangTugasRequest $request, string $section)
     {
+        Gate::authorize('update', BidangTugas::class);
         abort_unless(in_array($section, self::VALID_SECTIONS), 404);
         
         $bidang = BidangTugas::firstOrCreate(['id' => 1]);
 
-        $rules = [
-            "{$section}_gambar" => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
-            "{$section}_konten" => 'required|string',
-        ];
-
-        $validated = $request->validate($rules);
-
-        // Sanitasi HTML
-        if (isset($validated["{$section}_konten"])) {
-            $validated["{$section}_konten"] = Purifier::clean($validated["{$section}_konten"], 'profil_dinas');
-        }
-
-        // Handle file uploads
-        if ($request->hasFile("{$section}_gambar")) {
-            if ($bidang->{"{$section}_gambar"}) {
-                Storage::disk('public')->delete($bidang->{"{$section}_gambar"});
-            }
-            $validated["{$section}_gambar"] = $request->file("{$section}_gambar")->store('bidang-tugas', 'public');
-        }
-
-        // Simpan
-        $oldValues = $bidang->toArray();
-        $bidang->update($validated);
-
-        $sectionNames = [
-            'pemdes' => 'Pemerintahan Desa',
-            'pemberdayaan' => 'Pemberdayaan Desa',
-            'lembaga' => 'Lembaga Kemasyarakatan',
-            'sekretariat' => 'Sekretariat'
-        ];
-        $sectionLabel = $sectionNames[$section] ?? $section;
-        \App\Services\ActivityLogger::log('Mengubah Bidang Tugas', "Memperbarui data bidang tugas: {$sectionLabel}", $bidang, $oldValues, $bidang->fresh()->toArray());
+        $this->bidangTugasService->updateSection($bidang, $section, $request->validated(), $request);
 
         return redirect()->back()->with('message', 'Perubahan bidang tugas berhasil disimpan.');
     }
 }
+
