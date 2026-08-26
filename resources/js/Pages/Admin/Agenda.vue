@@ -4,6 +4,7 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import { useToast } from '@idds/vue';
+import { formatDate } from '@/Utils/formatDate';
 
 const props = defineProps({
     agenda: Object,
@@ -22,7 +23,7 @@ watch([search, statusFilter], ([newSearch, newStatus]) => {
         router.get(
             route('admin.agenda.index'),
             { search: newSearch, status: newStatus === 'Semua Status' ? null : newStatus },
-            { preserveState: true, replace: true }
+            { preserveState: true, replace: true, only: ['agenda', 'filters'] }
         );
     }, 300);
 });
@@ -109,16 +110,6 @@ const deleteItem = (id) => {
             },
         });
     }
-};
-
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(date);
 };
 </script>
 
