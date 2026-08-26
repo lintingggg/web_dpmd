@@ -4,6 +4,7 @@ import { computed, ref, onMounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from '@idds/vue';
 import TipTapEditor from '@/Components/TipTapEditor.vue';
+import { formatDateTime } from '@/Utils/formatDate';
 
 const props = defineProps({
     profil: Object,
@@ -102,14 +103,6 @@ const submit = () => {
         preserveScroll: true
     });
 };
-
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('id-ID', { 
-        year: 'numeric', month: 'short', day: 'numeric', 
-        hour: '2-digit', minute: '2-digit' 
-    });
-};
 </script>
 
 <template>
@@ -137,7 +130,7 @@ const formatDate = (dateString) => {
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#137333] mr-1.5"></span> Published
                             </span>
                         </div>
-                        <p class="text-[12px] font-medium text-slate-500">Terakhir diubah: {{ formatDate(profil?.updated_at) }}</p>
+                        <p class="text-[12px] font-medium text-slate-500">Terakhir diubah: {{ formatDateTime(profil?.updated_at) }}</p>
                     </div>
                 </div>
             </div>
