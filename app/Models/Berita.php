@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 
 class Berita extends Model
@@ -39,5 +40,24 @@ class Berita extends Model
     public function getThumbnailUrlAttribute()
     {
         return $this->thumbnail ? asset('storage/' . $this->thumbnail) : null;
+    }
+
+    public function scopeFilter(Builder $query, array $filters): void
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where('judul', 'like', '%' . $search . '%');
+        });
+
+        $query->when($filters['status'] ?? null, function ($query, $status) {
+            if ($status === 'publish') {
+                $query->where('is_published', true);
+            } elseif ($status === 'draft') {
+                $query->where('is_published', false);
+            }
+        });
+
+        $query->when($filters['tag'] ?? null, function ($query, $tag) {
+            $query->whereJsonContains('tags', $tag);
+        });
     }
 }

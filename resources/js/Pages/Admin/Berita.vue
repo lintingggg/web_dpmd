@@ -4,19 +4,13 @@ import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import TipTapEditor from '@/Components/TipTapEditor.vue';
+import { formatDate } from '@/Utils/formatDate';
 
 const props = defineProps({
     berita: Object,
     filters: Object,
     available_tags: Array,
 });
-
-// Format date helper
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
-};
 
 // Search & Filter State
 const search = ref(props.filters?.search || '');
@@ -30,7 +24,7 @@ watch([search, statusFilter, tagFilter], ([newSearch, newStatus, newTag]) => {
         router.get(
             route('admin.berita'),
             { search: newSearch, status: newStatus, tag: newTag },
-            { preserveState: true, preserveScroll: true, replace: true }
+            { preserveState: true, preserveScroll: true, replace: true, only: ['berita', 'filters', 'available_tags'] }
         );
     }, 300);
 });

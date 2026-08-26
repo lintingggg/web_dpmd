@@ -5,38 +5,26 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Berita;
+use App\Http\Requests\StoreBeritaRequest;
+use App\Http\Requests\UpdateBeritaRequest;
+use App\Services\BeritaService;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Mews\Purifier\Facades\Purifier;
-use Illuminate\Support\Facades\Auth;
 
 class BeritaController extends Controller
 {
+    public function __construct(protected BeritaService $beritaService) {}
+
     public function index(Request $request)
     {
-        $query = Berita::query();
+        Gate::authorize('viewAny', Berita::class);
 
-        if ($request->filled('search')) {
-            $query->where('judul', 'like', '%' . $request->search . '%');
-        }
+        $berita = Berita::query()
+            ->filter($request->only(['search', 'status', 'tag']))
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
-        if ($request->filled('status')) {
-            if ($request->status === 'publish') {
-                $query->where('is_published', true);
-            } elseif ($request->status === 'draft') {
-                $query->where('is_published', false);
-            }
-        }
-
-        if ($request->filled('tag')) {
-            $query->whereJsonContains('tags', $request->tag);
-        }
-
-        $berita = $query->latest()->paginate(5)->withQueryString();
-
-        // Get all unique tags for the filter dropdown
         $allTags = Berita::whereNotNull('tags')
             ->pluck('tags')
             ->flatten()
@@ -52,108 +40,31 @@ class BeritaController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreBeritaRequest $request)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:500',
-            'konten' => 'required|string',
-            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:1024', // Max 1MB
-            'tags' => 'nullable|array',
-            'tags.*' => 'string|max:50',
-            'is_published' => 'boolean',
-        ]);
+        Gate::authorize('create', Berita::class);
 
-        DB::beginTransaction();
-        try {
-            if ($request->hasFile('thumbnail')) {
-                $path = $request->file('thumbnail')->store('berita', 'public');
-                $validated['thumbnail'] = $path;
-            }
+        $this->beritaService->store($request->validated());
 
-            // Slug deduplication
-            $slug = Str::slug($validated['judul']);
-            $count = Berita::withTrashed()->where('slug', 'like', $slug . '%')->count();
-            $validated['slug'] = $count ? "{$slug}-{$count}" : $slug;
-
-            // Sanitize konten
-            $validated['konten'] = Purifier::clean($validated['konten'], 'berita');
-
-            // Set penulis, user_id and published_at
-            $validated['penulis'] = Auth::user()?->name ?? 'Admin';
-            $validated['user_id'] = Auth::id();
-            
-            $validated['is_published'] = $request->boolean('is_published');
-            if ($validated['is_published']) {
-                $validated['published_at'] = now();
-            }
-
-            $berita = Berita::create($validated);
-            \App\Services\ActivityLogger::log('Membuat Berita', "Membuat berita baru: {$berita->judul}", $berita, null, $berita->toArray());
-            DB::commit();
-
-            return redirect()->back()->with('message', 'Berita berhasil ditambahkan');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (isset($path)) Storage::disk('public')->delete($path);
-            throw $e;
-        }
+        return redirect()->back()->with('message', 'Berita berhasil ditambahkan');
     }
 
-    public function update(Request $request, Berita $berita)
+    public function update(UpdateBeritaRequest $request, Berita $berita)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:500',
-            'konten' => 'required|string',
-            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:1024',
-            'tags' => 'nullable|array',
-            'tags.*' => 'string|max:50',
-            'is_published' => 'boolean',
-        ]);
+        Gate::authorize('update', $berita);
 
-        DB::beginTransaction();
-        try {
-            if ($request->hasFile('thumbnail')) {
-                if ($berita->thumbnail && Storage::disk('public')->exists($berita->thumbnail)) {
-                    Storage::disk('public')->delete($berita->thumbnail);
-                }
-                $path = $request->file('thumbnail')->store('berita', 'public');
-                $validated['thumbnail'] = $path;
-            } else {
-                unset($validated['thumbnail']);
-            }
+        $this->beritaService->update($berita, $request->validated());
 
-            $validated['konten'] = Purifier::clean($validated['konten'], 'berita');
-
-            $validated['is_published'] = $request->boolean('is_published');
-            if ($validated['is_published'] && !$berita->published_at) {
-                $validated['published_at'] = now();
-            }
-
-            $oldValues = $berita->toArray();
-            $berita->update($validated);
-            \App\Services\ActivityLogger::log('Mengubah Berita', "Mengubah data berita: {$berita->judul}", $berita, $oldValues, $berita->fresh()->toArray());
-            DB::commit();
-
-            return redirect()->back()->with('message', 'Berita berhasil diperbarui');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (isset($path)) Storage::disk('public')->delete($path);
-            throw $e;
-        }
+        return redirect()->back()->with('message', 'Berita berhasil diperbarui');
     }
 
     public function destroy(Berita $berita)
     {
-        DB::beginTransaction();
-        try {
-            $oldValues = $berita->toArray();
-            $berita->delete(); // Soft delete, thumbnail is NOT deleted
-            \App\Services\ActivityLogger::log('Menghapus Berita', "Menghapus berita: {$berita->judul}", $berita, $oldValues, null);
-            DB::commit();
-            return redirect()->back()->with('message', 'Berita berhasil dihapus');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        Gate::authorize('delete', $berita);
+
+        $this->beritaService->delete($berita);
+
+        return redirect()->back()->with('message', 'Berita berhasil dihapus');
     }
 }
+
