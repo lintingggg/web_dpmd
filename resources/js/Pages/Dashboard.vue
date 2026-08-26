@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { computed } from 'vue';
+import { formatDate, formatDateTime } from '@/Utils/formatDate';
 
 const props = defineProps({
     totalBerita: Number,
@@ -23,13 +24,6 @@ const getBarHeight = (count) => {
     const percentage = (count / maxVisitorCount.value) * 100;
     if (count === 0) return '8px';
     return `${Math.max(percentage, 12)}%`;
-};
-
-// Format date helper
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
 
 // Helper for icons based on type for recent activities
@@ -225,7 +219,7 @@ const getTypeIcon = (type) => {
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="text-sm font-bold text-slate-900 truncate">{{ activity.description }}</h4>
-                                <p class="text-xs text-slate-500 mt-0.5 font-medium">{{ activity.subject_type?.split('\\').pop() || 'Sistem' }} • {{ formatDate(activity.created_at) }}</p>
+                                <p class="text-xs text-slate-500 mt-0.5 font-medium">{{ activity.subject_type?.split('\\').pop() || 'Sistem' }} • {{ formatDateTime(activity.created_at) }}</p>
                             </div>
                             <div class="flex items-center gap-4">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold bg-[#1e56a0] text-white shadow-sm uppercase tracking-wider">

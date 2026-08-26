@@ -42,7 +42,15 @@ class DashboardController extends Controller
                                 ->take(3)
                                 ->get();
 
-        // Query visitor stats for the last 7 days
+        // Query visitor stats for the last 7 days optimized to a single query
+        $startDate = now()->subDays(6)->toDateString();
+        $endDate = now()->toDateString();
+        
+        $visitorCounts = \App\Models\VisitorLog::whereBetween('visit_date', [$startDate, $endDate])
+            ->selectRaw('visit_date, count(*) as count')
+            ->groupBy('visit_date')
+            ->pluck('count', 'visit_date');
+
         $visitorStats = [];
         $dayLabels = [
             'Monday' => 'Sen',
@@ -60,7 +68,7 @@ class DashboardController extends Controller
             $englishDay = $date->format('l');
             $label = $dayLabels[$englishDay] ?? substr($englishDay, 0, 3);
             
-            $count = \App\Models\VisitorLog::where('visit_date', $dateString)->count();
+            $count = $visitorCounts[$dateString] ?? 0;
             
             $visitorStats[] = [
                 'label' => $label,
