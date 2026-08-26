@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import { formatDate } from '@/Utils/formatDate';
 
 const props = defineProps({
     album: Object,
@@ -39,7 +40,8 @@ watch([search, statusFilter], ([newSearch, newStatus]) => {
         }, {
             preserveState: true,
             preserveScroll: true,
-            replace: true
+            replace: true,
+            only: ['galeri', 'filters']
         });
     }, 300);
 });
@@ -132,15 +134,6 @@ const deleteGaleri = () => {
     });
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    });
-};
 </script>
 
 <template>

@@ -7,13 +7,19 @@ use Illuminate\Http\Request;
 use App\Models\Galeri;
 use App\Models\Album;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use App\Services\GaleriService;
+use App\Http\Requests\StoreGaleriRequest;
+use App\Http\Requests\UpdateGaleriRequest;
+use Illuminate\Support\Facades\Gate;
 
 class GaleriController extends Controller
 {
+    public function __construct(protected GaleriService $galeriService) {}
+
     public function index(Request $request, Album $album)
     {
+        Gate::authorize('viewAny', Galeri::class);
+
         $query = $album->galeris();
 
         if ($request->filled('search')) {
@@ -37,125 +43,30 @@ class GaleriController extends Controller
         ]);
     }
 
-    public function store(Request $request, Album $album)
+    public function store(StoreGaleriRequest $request, Album $album)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:500',
-            'deskripsi' => 'nullable|string',
-            'tanggal_kegiatan' => 'nullable|date',
-            'is_published' => 'boolean',
-            'tipe' => 'required|in:foto,video',
-            'foto' => $request->tipe === 'video' 
-                ? ($request->boolean('is_published') ? 'required|string|max:2000' : 'nullable|string|max:2000')
-                : [
-                    $request->boolean('is_published') ? 'required' : 'nullable',
-                    'file', 'mimes:jpg,jpeg,png,webp', 'max:1024'
-                ],
-        ]);
+        Gate::authorize('create', Galeri::class);
 
-        DB::beginTransaction();
-        try {
-            if ($request->tipe === 'foto' && $request->hasFile('foto')) {
-                $path = $request->file('foto')->store('galeri', 'public');
-                $validated['foto'] = $path;
-            } elseif ($request->tipe === 'video' && $request->filled('foto')) {
-                $videoUrl = $request->foto;
-                if (preg_match('/src=["\']([^"\']+)["\']/', $videoUrl, $matches)) {
-                    $videoUrl = $matches[1];
-                }
-                $validated['foto'] = $videoUrl;
-            }
+        $this->galeriService->storeGaleri($album, $request->validated(), $request);
 
-            $validated['is_published'] = $request->boolean('is_published');
-            $validated['album_id'] = $album->id;
-
-            $galeri = Galeri::create($validated);
-            \App\Services\ActivityLogger::log('Membuat Galeri', "Membuat item galeri baru: {$galeri->judul}", $galeri, null, $galeri->toArray());
-            DB::commit();
-
-            return redirect()->back()->with('message', 'Media berhasil ditambahkan ke album');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (isset($path)) Storage::disk('public')->delete($path);
-            throw $e;
-        }
+        return redirect()->back()->with('message', 'Media berhasil ditambahkan ke album');
     }
 
-    public function update(Request $request, Galeri $galeri)
+    public function update(UpdateGaleriRequest $request, Galeri $galeri)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:500',
-            'deskripsi' => 'nullable|string',
-            'tanggal_kegiatan' => 'nullable|date',
-            'is_published' => 'boolean',
-            'tipe' => 'required|in:foto,video',
-            'foto' => $request->tipe === 'video' 
-                ? ($request->boolean('is_published') && !$galeri->foto ? 'required|string|max:2000' : 'nullable|string|max:2000')
-                : [
-                    ($request->boolean('is_published') && !$galeri->foto) ? 'required' : 'nullable',
-                    'file', 'mimes:jpg,jpeg,png,webp', 'max:1024'
-                ],
-        ]);
+        Gate::authorize('update', $galeri);
 
-        DB::beginTransaction();
-        try {
-            $fotoLamaPath = $galeri->foto;
+        $this->galeriService->updateGaleri($galeri, $request->validated(), $request);
 
-            if ($request->tipe === 'foto' && $request->hasFile('foto')) {
-                $newPath = $request->file('foto')->store('galeri', 'public');
-                $validated['foto'] = $newPath;
-            } elseif ($request->tipe === 'video' && $request->filled('foto')) {
-                $videoUrl = $request->foto;
-                if (preg_match('/src=["\']([^"\']+)["\']/', $videoUrl, $matches)) {
-                    $videoUrl = $matches[1];
-                }
-                $validated['foto'] = $videoUrl;
-            } else {
-                unset($validated['foto']);
-            }
-
-            $validated['is_published'] = $request->boolean('is_published');
-
-            $oldValues = $galeri->toArray();
-            $galeri->update($validated);
-            \App\Services\ActivityLogger::log('Mengubah Galeri', "Mengubah data galeri: {$galeri->judul}", $galeri, $oldValues, $galeri->fresh()->toArray());
-
-            // Delete old photo if a new file was uploaded, OR if type changed to video
-            if ($fotoLamaPath && !str_starts_with($fotoLamaPath, 'http')) {
-                if ($request->hasFile('foto') || $request->tipe === 'video') {
-                    if (Storage::disk('public')->exists($fotoLamaPath)) {
-                        Storage::disk('public')->delete($fotoLamaPath);
-                    }
-                }
-            }
-
-            DB::commit();
-
-            return redirect()->back()->with('message', 'Media berhasil diperbarui');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (isset($newPath)) Storage::disk('public')->delete($newPath);
-            throw $e;
-        }
+        return redirect()->back()->with('message', 'Media berhasil diperbarui');
     }
 
     public function destroy(Galeri $galeri)
     {
-        DB::beginTransaction();
-        try {
-            if ($galeri->foto && !str_starts_with($galeri->foto, 'http') && Storage::disk('public')->exists($galeri->foto)) {
-                Storage::disk('public')->delete($galeri->foto);
-            }
+        Gate::authorize('delete', $galeri);
 
-            $oldValues = $galeri->toArray();
-            $galeri->delete();
-            \App\Services\ActivityLogger::log('Menghapus Galeri', "Menghapus item galeri: {$galeri->judul}", $galeri, $oldValues, null);
-            DB::commit();
+        $this->galeriService->deleteGaleri($galeri);
 
-            return redirect()->back()->with('message', 'Media berhasil dihapus');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return redirect()->back()->with('message', 'Media berhasil dihapus');
     }
 }

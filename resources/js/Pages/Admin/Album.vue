@@ -34,7 +34,8 @@ watch([search], ([newSearch]) => {
         }, {
             preserveState: true,
             preserveScroll: true,
-            replace: true
+            replace: true,
+            only: ['albums', 'filters']
         });
     }, 300);
 });
