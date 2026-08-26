@@ -34,7 +34,12 @@ watch([activeTab, search, tahunFilter, statusFilter], () => {
                 tahun: tahunFilter.value,
                 status: statusFilter.value
             },
-            { preserveState: true, preserveScroll: true, replace: true }
+            { 
+                preserveState: true, 
+                preserveScroll: true, 
+                replace: true,
+                only: ['dokumen', 'filters'] 
+            }
         );
     }, 300);
 });

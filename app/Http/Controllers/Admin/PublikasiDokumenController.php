@@ -6,16 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PublikasiDokumen;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use App\Services\PublikasiDokumenService;
+use App\Http\Requests\StorePublikasiDokumenRequest;
+use App\Http\Requests\UpdatePublikasiDokumenRequest;
+use Illuminate\Support\Facades\Gate;
 
 class PublikasiDokumenController extends Controller
 {
+    public function __construct(protected PublikasiDokumenService $publikasiDokumenService) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', PublikasiDokumen::class);
+
         $query = PublikasiDokumen::query();
 
         if ($request->filled('kategori') && in_array($request->kategori, PublikasiDokumen::CATEGORIES)) {
@@ -49,33 +55,11 @@ class PublikasiDokumenController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePublikasiDokumenRequest $request)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:500',
-            'kategori' => 'required|string|in:' . implode(',', PublikasiDokumen::CATEGORIES),
-            'tahun' => 'required|integer|min:2000|max:2099',
-            'deskripsi' => 'nullable|string|max:1000',
-            'is_published' => 'boolean',
-            'file_dokumen' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120', // 5MB
-        ]);
+        Gate::authorize('create', PublikasiDokumen::class);
 
-        DB::beginTransaction();
-        try {
-            if ($request->hasFile('file_dokumen')) {
-                $path = $request->file('file_dokumen')->store('dokumen', 'public');
-                $validated['file_dokumen'] = $path;
-            }
-            
-            $dok = PublikasiDokumen::create($validated);
-            \App\Services\ActivityLogger::log('Membuat Dokumen', "Mengunggah dokumen publikasi baru: {$dok->judul}", $dok, null, $dok->toArray());
-            
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (isset($path)) Storage::disk('public')->delete($path);
-            throw $e;
-        }
+        $this->publikasiDokumenService->storeDokumen($request->validated(), $request);
 
         return redirect()->back()->with('message', 'Dokumen publikasi berhasil ditambahkan');
     }
@@ -83,42 +67,11 @@ class PublikasiDokumenController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PublikasiDokumen $dokumen)
+    public function update(UpdatePublikasiDokumenRequest $request, PublikasiDokumen $dokumen)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:500',
-            'kategori' => 'required|string|in:' . implode(',', PublikasiDokumen::CATEGORIES),
-            'tahun' => 'required|integer|min:2000|max:2099',
-            'deskripsi' => 'nullable|string|max:1000',
-            'is_published' => 'boolean',
-            'file_dokumen' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120', // 5MB
-        ]);
+        Gate::authorize('update', $dokumen);
 
-        DB::beginTransaction();
-        try {
-            if ($request->hasFile('file_dokumen')) {
-                // Hapus file lama jika ada
-                if ($dokumen->file_dokumen && Storage::disk('public')->exists($dokumen->file_dokumen)) {
-                    Storage::disk('public')->delete($dokumen->file_dokumen);
-                }
-                
-                // Simpan file baru
-                $path = $request->file('file_dokumen')->store('dokumen', 'public');
-                $validated['file_dokumen'] = $path;
-            } else {
-                unset($validated['file_dokumen']);
-            }
-
-            $oldValues = $dokumen->toArray();
-            $dokumen->update($validated);
-            \App\Services\ActivityLogger::log('Mengubah Dokumen', "Mengubah data dokumen: {$dokumen->judul}", $dokumen, $oldValues, $dokumen->fresh()->toArray());
-            
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (isset($path)) Storage::disk('public')->delete($path);
-            throw $e;
-        }
+        $this->publikasiDokumenService->updateDokumen($dokumen, $request->validated(), $request);
 
         return redirect()->back()->with('message', 'Dokumen publikasi berhasil diperbarui');
     }
@@ -128,21 +81,9 @@ class PublikasiDokumenController extends Controller
      */
     public function destroy(PublikasiDokumen $dokumen)
     {
-        DB::beginTransaction();
-        try {
-            if ($dokumen->file_dokumen && Storage::disk('public')->exists($dokumen->file_dokumen)) {
-                Storage::disk('public')->delete($dokumen->file_dokumen);
-            }
-            
-            $oldValues = $dokumen->toArray();
-            $dokumen->delete();
-            \App\Services\ActivityLogger::log('Menghapus Dokumen', "Menghapus dokumen: {$dokumen->judul}", $dokumen, $oldValues, null);
-            
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        Gate::authorize('delete', $dokumen);
+
+        $this->publikasiDokumenService->deleteDokumen($dokumen);
 
         return redirect()->back()->with('message', 'Dokumen publikasi berhasil dihapus');
     }
