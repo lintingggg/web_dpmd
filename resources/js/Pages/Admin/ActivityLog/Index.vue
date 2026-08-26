@@ -3,6 +3,8 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ref, watch } from 'vue';
 
+import { formatDateTime } from '@/Utils/formatDate';
+
 function debounce(fn, wait) {
     let timeout;
     return function (...args) {
@@ -24,20 +26,10 @@ watch(
         router.get(
             route('admin.log-aktivitas'),
             { search: value },
-            { preserveState: true, replace: true }
+            { preserveState: true, replace: true, only: ['logs', 'filters'] }
         );
     }, 300)
 );
-
-const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-};
 
 const getActionColor = (action) => {
     const act = action.toLowerCase();
@@ -91,7 +83,7 @@ const getActionColor = (action) => {
                             <td class="py-4 px-6">
                                 <span class="text-[13px] font-semibold text-slate-700 whitespace-nowrap flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
-                                    {{ formatDate(log.created_at) }}
+                                    {{ formatDateTime(log.created_at) }}
                                 </span>
                             </td>
                             <td class="py-4 px-6">
