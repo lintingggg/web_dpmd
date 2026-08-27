@@ -135,7 +135,7 @@ const submit = () => {
             <div class="p-6 md:p-8 space-y-8">
                 
                 <!-- SAMBUTAN KADIS -->
-                <div v-slot="scope" v-if="currentSection === 'sambutan'" class="space-y-6">
+                <div v-if="currentSection === 'sambutan'" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-[14px] font-bold text-slate-700 mb-2">Nama Kepala Dinas</label>
