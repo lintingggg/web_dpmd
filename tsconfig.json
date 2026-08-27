@@ -9,6 +9,7 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "allowJs": true,
+        "noEmit": true,
         "lib": ["esnext", "dom"],
         "skipLibCheck": true,
         "baseUrl": ".",
