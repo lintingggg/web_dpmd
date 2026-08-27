@@ -46,7 +46,7 @@ defineExpose({
       <div class="relative w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-4 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors min-h-[120px]">
           <span class="material-symbols-outlined text-[24px] text-slate-500 mb-1">{{ icon }}</span>
           <p class="text-[12px] font-medium text-slate-700 mb-1 px-4 truncate max-w-full">
-              <span v-slot="modelValue" v-if="modelValue">{{ modelValue.name || 'File terpilih' }}</span>
+              <span v-if="modelValue">{{ modelValue.name || 'File terpilih' }}</span>
               <span v-else>{{ label }} ({{ maxSizeText }})</span>
           </p>
           <input 
