@@ -4,6 +4,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from '@idds/vue';
 import { ref, watch, computed } from 'vue';
 
+// Import Shared Components
+import FormInputGroup from '@/Components/Form/FormInputGroup.vue';
+import FormTextareaGroup from '@/Components/Form/FormTextareaGroup.vue';
+
 const props = defineProps({
     kontak: Object,
     section: String
@@ -128,7 +132,7 @@ const submit = (tabContext) => {
 
     form.post(route('admin.kontak-medsos.update', postSection), {
         preserveScroll: true,
-        onError: (errors) => {
+        onError: () => {
             toast({
                 state: 'destructive',
                 title: 'Validasi Gagal',
@@ -147,12 +151,37 @@ const submit = (tabContext) => {
         <div class="mb-8">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1">
+                    <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1 pt-4">
                         {{ pageTitle }}
                     </h2>
                     <p class="text-[14px] font-medium text-slate-500">{{ pageDesc }}</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-[#dbe6f7] mb-6 overflow-x-auto whitespace-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+            <Link 
+                :href="route('admin.kontak-medsos', 'kontak')"
+                class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
+                :class="activeTab === 'kontak' ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
+            >
+                Informasi Kontak
+            </Link>
+            <Link 
+                :href="route('admin.kontak-medsos', 'sosmed')"
+                class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
+                :class="activeTab === 'sosmed' ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
+            >
+                Tautan Media Sosial
+            </Link>
+            <Link 
+                :href="route('admin.kontak-medsos', 'embedding')"
+                class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
+                :class="activeTab === 'embed' ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
+            >
+                Widget Beranda (Embed)
+            </Link>
         </div>
 
         <div class="w-full">
@@ -170,45 +199,48 @@ const submit = (tabContext) => {
                 </div>
 
                 <div class="space-y-5">
-                    <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Alamat Kantor</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-3 text-slate-500">location_on</span>
-                            <textarea v-model="form.alamat" rows="2" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Masukkan alamat lengkap..."></textarea>
-                        </div>
-                        <div v-if="form.errors.alamat" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.alamat }}</div>
+                    <FormTextareaGroup 
+                        v-model="form.alamat"
+                        label="Alamat Kantor"
+                        icon="location_on"
+                        rows="2"
+                        placeholder="Masukkan alamat lengkap..."
+                        :error="form.errors.alamat"
+                    />
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormInputGroup 
+                            v-model="form.email"
+                            label="Email Dinas"
+                            icon="mail"
+                            type="email"
+                            placeholder="email@domain.go.id"
+                            :error="form.errors.email"
+                        />
+                        <FormInputGroup 
+                            v-model="form.telepon"
+                            label="Telepon Kantor"
+                            icon="call"
+                            type="tel"
+                            pattern="[\+0-9\s\-\(\)]+"
+                            title="Format: Angka, spasi, +, -, ()"
+                            placeholder="(031) xxx"
+                            :error="form.errors.telepon"
+                        />
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Email Dinas</label>
-                            <div class="relative">
-                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">mail</span>
-                                <input v-model="form.email" type="email" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="email@domain.go.id" />
-                            </div>
-                            <div v-if="form.errors.email" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.email }}</div>
-                        </div>
-                        <div>
-                            <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Telepon Kantor</label>
-                            <div class="relative">
-                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">call</span>
-                                <input v-model="form.telepon" type="tel" pattern="[\+0-9\s\-\(\)]+" title="Format: Angka, spasi, +, -, ()" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="(031) xxx" />
-                            </div>
-                            <div v-if="form.errors.telepon" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.telepon }}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">WhatsApp Layanan</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-slate-500 text-[20px]">forum</span>
-                                </div>
-                                <input v-model="form.whatsapp" type="tel" pattern="[\+0-9\s\-\(\)]+" title="Format: Angka, spasi, +, -, ()" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="081xxx" />
-                            </div>
-                            <div v-if="form.errors.whatsapp" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.whatsapp }}</div>
-                        </div>
+                        <FormInputGroup 
+                            v-model="form.whatsapp"
+                            label="WhatsApp Layanan"
+                            icon="forum"
+                            type="tel"
+                            pattern="[\+0-9\s\-\(\)]+"
+                            title="Format: Angka, spasi, +, -, ()"
+                            placeholder="081xxx"
+                            :error="form.errors.whatsapp"
+                        />
+
                         <div>
                             <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Jam Layanan</label>
                             
@@ -233,18 +265,18 @@ const submit = (tabContext) => {
                                     <input type="time" v-model="jamTutup" class="flex-1 bg-white border border-[#dbe6f7] text-slate-900 text-[13px] font-medium rounded-lg px-2 py-1.5 focus:ring-[#1356a0]" />
                                 </div>
                             </div>
-                            
                             <div v-if="form.errors.jam_kerja" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.jam_kerja }}</div>
                         </div>
                     </div>
                     
                     <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Koordinat Google Maps</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">map</span>
-                            <input v-model="form.koordinat_map" type="text" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="-7.0270059, 112.7483669" />
-                        </div>
-                        <div v-if="form.errors.koordinat_map" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.koordinat_map }}</div>
+                        <FormInputGroup 
+                            v-model="form.koordinat_map"
+                            label="Koordinat Google Maps"
+                            icon="map"
+                            placeholder="-7.0270059, 112.7483669"
+                            :error="form.errors.koordinat_map"
+                        />
                         <p class="text-[12px] text-slate-500 mt-1.5 font-medium">Format: Latitude, Longitude (Contoh: -7.0270059, 112.7483669). Digunakan untuk menampilkan peta di website.</p>
                     </div>
                 </div>
@@ -275,57 +307,57 @@ const submit = (tabContext) => {
                 </div>
 
                 <div class="space-y-5">
-                    <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Facebook URL</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#1877f2]">public</span>
-                            <input v-model="form.facebook_url" type="url" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="https://facebook.com/..." />
-                        </div>
-                        <div v-if="form.errors.facebook_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_url }}</div>
-                    </div>
+                    <FormInputGroup 
+                        v-model="form.facebook_url"
+                        label="Facebook URL"
+                        icon="public"
+                        type="url"
+                        placeholder="https://facebook.com/..."
+                        :error="form.errors.facebook_url"
+                    />
                     
-                    <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Instagram URL</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#e1306c]">photo_camera</span>
-                            <input v-model="form.instagram_url" type="url" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="https://instagram.com/..." />
-                        </div>
-                        <div v-if="form.errors.instagram_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_url }}</div>
-                    </div>
+                    <FormInputGroup 
+                        v-model="form.instagram_url"
+                        label="Instagram URL"
+                        icon="photo_camera"
+                        type="url"
+                        placeholder="https://instagram.com/..."
+                        :error="form.errors.instagram_url"
+                    />
 
-                    <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">YouTube Channel URL</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#ff0000]">play_circle</span>
-                            <input v-model="form.youtube_url" type="url" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="https://youtube.com/..." />
-                        </div>
-                        <div v-if="form.errors.youtube_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_url }}</div>
-                    </div>
+                    <FormInputGroup 
+                        v-model="form.youtube_url"
+                        label="YouTube Channel URL"
+                        icon="play_circle"
+                        type="url"
+                        placeholder="https://youtube.com/..."
+                        :error="form.errors.youtube_url"
+                    />
 
-                    <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">X (Twitter) URL <span class="text-slate-500 font-normal normal-case">(Opsional)</span></label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#000000]">alternate_email</span>
-                            <input v-model="form.twitter_url" type="url" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="https://x.com/..." />
-                        </div>
-                        <div v-if="form.errors.twitter_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_url }}</div>
-                    </div>
+                    <FormInputGroup 
+                        v-model="form.twitter_url"
+                        label="X (Twitter) URL (Opsional)"
+                        icon="alternate_email"
+                        type="url"
+                        placeholder="https://x.com/..."
+                        :error="form.errors.twitter_url"
+                    />
 
-                    <div>
-                        <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">TikTok URL</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#000000]">music_note</span>
-                            <input v-model="form.tiktok_url" type="url" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-medium rounded-xl pl-11 pr-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="https://tiktok.com/@..." />
-                        </div>
-                        <div v-if="form.errors.tiktok_url" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_url }}</div>
-                    </div>
+                    <FormInputGroup 
+                        v-model="form.tiktok_url"
+                        label="TikTok URL"
+                        icon="music_note"
+                        type="url"
+                        placeholder="https://tiktok.com/@..."
+                        :error="form.errors.tiktok_url"
+                    />
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-[#dbe6f7] flex justify-end">
                     <button 
                         @click="submit('sosmed')"
                         :disabled="form.processing"
-                        class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-xl transition-xl active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]"
+                        class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] disabled:opacity-70 text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]"
                     >
                         <span v-if="form.processing" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                         <span v-else class="material-symbols-outlined text-[18px]">save</span>
@@ -350,10 +382,8 @@ const submit = (tabContext) => {
                     <!-- Instagram Embeds -->
                     <div>
                         <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-900 text-[16px]">Instagram</span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <span class="font-bold text-slate-900 text-[16px]">Instagram</span>
+                            <label class="relative inline-flex items-center cursor-pointer select-none">
                                 <input type="checkbox" v-model="form.show_instagram" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1356a0]"></div>
                                 <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
@@ -361,26 +391,30 @@ const submit = (tabContext) => {
                         </div>
                         
                         <div v-show="form.show_instagram" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link Instagram 1</label>
-                                <textarea v-model="form.instagram_embed_1" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed atau link Instagram (https://instagram.com/p/...)"></textarea>
-                                <div v-if="form.errors.instagram_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_embed_1 }}</div>
-                            </div>
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link Instagram 2</label>
-                                <textarea v-model="form.instagram_embed_2" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed atau link Instagram (https://instagram.com/p/...)"></textarea>
-                                <div v-if="form.errors.instagram_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.instagram_embed_2 }}</div>
-                            </div>
+                            <FormTextareaGroup 
+                                v-model="form.instagram_embed_1"
+                                label="Kode Embed / Link Instagram 1"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed atau link Instagram (https://instagram.com/p/...)"
+                                :error="form.errors.instagram_embed_1"
+                            />
+                            <FormTextareaGroup 
+                                v-model="form.instagram_embed_2"
+                                label="Kode Embed / Link Instagram 2"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed atau link Instagram (https://instagram.com/p/...)"
+                                :error="form.errors.instagram_embed_2"
+                            />
                         </div>
                     </div>
 
                     <!-- TikTok Embeds -->
                     <div>
                         <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-900 text-[16px]">TikTok</span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <span class="font-bold text-slate-900 text-[16px]">TikTok</span>
+                            <label class="relative inline-flex items-center cursor-pointer select-none">
                                 <input type="checkbox" v-model="form.show_tiktok" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1356a0]"></div>
                                 <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
@@ -388,26 +422,30 @@ const submit = (tabContext) => {
                         </div>
                         
                         <div v-show="form.show_tiktok" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link TikTok 1</label>
-                                <textarea v-model="form.tiktok_embed_1" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed atau link video/photo TikTok (https://tiktok.com/@.../video/...)"></textarea>
-                                <div v-if="form.errors.tiktok_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_embed_1 }}</div>
-                            </div>
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link TikTok 2</label>
-                                <textarea v-model="form.tiktok_embed_2" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed atau link video/photo TikTok (https://tiktok.com/@.../video/...)"></textarea>
-                                <div v-if="form.errors.tiktok_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tiktok_embed_2 }}</div>
-                            </div>
+                            <FormTextareaGroup 
+                                v-model="form.tiktok_embed_1"
+                                label="Kode Embed / Link TikTok 1"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed atau link video/photo TikTok (https://tiktok.com/@.../video/...)"
+                                :error="form.errors.tiktok_embed_1"
+                            />
+                            <FormTextareaGroup 
+                                v-model="form.tiktok_embed_2"
+                                label="Kode Embed / Link TikTok 2"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed atau link video/photo TikTok (https://tiktok.com/@.../video/...)"
+                                :error="form.errors.tiktok_embed_2"
+                            />
                         </div>
                     </div>
 
                     <!-- YouTube Embeds -->
                     <div>
                         <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-900 text-[16px]">YouTube</span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <span class="font-bold text-slate-900 text-[16px]">YouTube</span>
+                            <label class="relative inline-flex items-center cursor-pointer select-none">
                                 <input type="checkbox" v-model="form.show_youtube" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1356a0]"></div>
                                 <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
@@ -415,26 +453,30 @@ const submit = (tabContext) => {
                         </div>
                         
                         <div v-show="form.show_youtube" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link YouTube 1</label>
-                                <textarea v-model="form.youtube_embed_1" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link (https://youtube.com/...)"></textarea>
-                                <div v-if="form.errors.youtube_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_embed_1 }}</div>
-                            </div>
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link YouTube 2</label>
-                                <textarea v-model="form.youtube_embed_2" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link (https://youtube.com/...)"></textarea>
-                                <div v-if="form.errors.youtube_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.youtube_embed_2 }}</div>
-                            </div>
+                            <FormTextareaGroup 
+                                v-model="form.youtube_embed_1"
+                                label="Kode Embed / Link YouTube 1"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed HTML atau link (https://youtube.com/...)"
+                                :error="form.errors.youtube_embed_1"
+                            />
+                            <FormTextareaGroup 
+                                v-model="form.youtube_embed_2"
+                                label="Kode Embed / Link YouTube 2"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed HTML atau link (https://youtube.com/...)"
+                                :error="form.errors.youtube_embed_2"
+                            />
                         </div>
                     </div>
 
                     <!-- Facebook Embeds -->
                     <div>
                         <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-900 text-[16px]">Facebook</span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <span class="font-bold text-slate-900 text-[16px]">Facebook</span>
+                            <label class="relative inline-flex items-center cursor-pointer select-none">
                                 <input type="checkbox" v-model="form.show_facebook" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1356a0]"></div>
                                 <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
@@ -442,26 +484,30 @@ const submit = (tabContext) => {
                         </div>
                         
                         <div v-show="form.show_facebook" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link Facebook 1</label>
-                                <textarea v-model="form.facebook_embed_1" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link posting Facebook (https://facebook.com/...)"></textarea>
-                                <div v-if="form.errors.facebook_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_embed_1 }}</div>
-                            </div>
-                            <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed / Link Facebook 2</label>
-                                <textarea v-model="form.facebook_embed_2" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed HTML atau link posting Facebook (https://facebook.com/...)"></textarea>
-                                <div v-if="form.errors.facebook_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.facebook_embed_2 }}</div>
-                            </div>
+                            <FormTextareaGroup 
+                                v-model="form.facebook_embed_1"
+                                label="Kode Embed / Link Facebook 1"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed HTML atau link posting Facebook (https://facebook.com/...)"
+                                :error="form.errors.facebook_embed_1"
+                            />
+                            <FormTextareaGroup 
+                                v-model="form.facebook_embed_2"
+                                label="Kode Embed / Link Facebook 2"
+                                rows="4"
+                                font-mono
+                                placeholder="Paste kode embed HTML atau link posting Facebook (https://facebook.com/...)"
+                                :error="form.errors.facebook_embed_2"
+                            />
                         </div>
                     </div>
 
                     <!-- Twitter Embeds -->
                     <div>
                         <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-900 text-[16px]">X (Twitter)</span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <span class="font-bold text-slate-900 text-[16px]">X (Twitter)</span>
+                            <label class="relative inline-flex items-center cursor-pointer select-none">
                                 <input type="checkbox" v-model="form.show_twitter" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1356a0]"></div>
                                 <span class="ml-3 text-sm font-medium text-gray-700">Tampilkan di Beranda</span>
@@ -470,20 +516,29 @@ const submit = (tabContext) => {
                         
                         <div v-show="form.show_twitter" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed X (Twitter) 1</label>
-                                <textarea v-model="form.twitter_embed_1" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed HTML tweet"></textarea>
-                                <div v-if="form.errors.twitter_embed_1" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_1 }}</div>
+                                <FormTextareaGroup 
+                                    v-model="form.twitter_embed_1"
+                                    label="Kode Embed X (Twitter) 1"
+                                    rows="4"
+                                    font-mono
+                                    placeholder="Paste kode embed HTML tweet"
+                                    :error="form.errors.twitter_embed_1"
+                                />
                                 <div v-if="twitterError1" class="text-red-500 text-xs mt-1 font-semibold">Twitter atau X hanya support kode embed, tidak support link yang di copas langsung.</div>
                             </div>
                             <div>
-                                <label class="block text-[13px] font-bold text-slate-700 uppercase tracking-[0.5px] mb-2">Kode Embed X (Twitter) 2</label>
-                                <textarea v-model="form.twitter_embed_2" rows="4" class="w-full bg-[#f5f8fd] border border-[#dbe6f7] text-slate-900 text-[14px] font-mono rounded-xl px-4 py-3 focus:ring-[#1356a0] focus:border-[#1356a0] focus:bg-white transition-colors" placeholder="Paste kode embed HTML tweet"></textarea>
-                                <div v-if="form.errors.twitter_embed_2" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.twitter_embed_2 }}</div>
+                                <FormTextareaGroup 
+                                    v-model="form.twitter_embed_2"
+                                    label="Kode Embed X (Twitter) 2"
+                                    rows="4"
+                                    font-mono
+                                    placeholder="Paste kode embed HTML tweet"
+                                    :error="form.errors.twitter_embed_2"
+                                />
                                 <div v-if="twitterError2" class="text-red-500 text-xs mt-1 font-semibold">Twitter atau X hanya support kode embed, tidak support link yang di copas langsung.</div>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-[#dbe6f7] flex justify-end">
