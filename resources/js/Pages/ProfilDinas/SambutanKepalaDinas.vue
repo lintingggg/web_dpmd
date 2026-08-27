@@ -1,13 +1,14 @@
-<script setup lang="ts">
+<script setup>
 import Navbar from "@/Components/Navbar/Navbar.vue";
-import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Footer from "@/Components/Footer.vue";
+import PageHeader from "@/Components/PageHeader.vue";
+import ProseViewer from "@/Components/ProseViewer.vue";
 import { Head } from '@inertiajs/vue3';
 import { IconHome } from '@tabler/icons-vue';
 
-const props = defineProps<{
-    profil: any;
-}>();
+const props = defineProps({
+    profil: Object
+});
 
 const breadcrumbItems = [
     { label: 'Beranda', href: '/', icon: IconHome },
@@ -21,20 +22,17 @@ const breadcrumbItems = [
 
     <Navbar />
 
-    <section class="page-header">
-        <div class="container">
-            <Breadcrumb :items="breadcrumbItems" class="mb-4 -ml-5" />
-            <h1>Sambutan Kepala Dinas</h1>
-        </div>
-    </section>
+    <main class="container page-content pt-8">
+        <PageHeader 
+            :breadcrumbs="breadcrumbItems"
+            title="Sambutan Kepala Dinas"
+        />
 
-    <main class="container page-content">
-        <div class="content-wrapper">
+        <div class="content-wrapper mt-4">
             <!-- Kolom Kiri: Konten Utama -->
             <div class="main-column">
-                <div class="card content-card" v-if="props.profil.sambutan_teks" v-html="props.profil.sambutan_teks"></div>
-                <div class="card content-card" v-else>
-                    <p>Belum ada data sambutan kepala dinas.</p>
+                <div class="card content-card">
+                    <ProseViewer :html="props.profil.sambutan_teks" placeholder="Belum ada data sambutan kepala dinas." />
                 </div>
             </div>
 
@@ -77,22 +75,6 @@ const breadcrumbItems = [
     padding: 0 20px;
 }
 
-/* Page Header */
-.page-header {
-    background-color: #FFFFFF;
-    padding: 20px 0 30px;
-    border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 30px;
-}
-
-.page-header h1 {
-    font-size: 32px;
-    font-weight: 800;
-    color: #0F172A;
-    margin: 0;
-}
-
-/* Main Layout */
 .page-content {
     margin-bottom: 60px;
 }
@@ -129,18 +111,6 @@ const breadcrumbItems = [
     padding: 40px;
 }
 
-.content-card :deep(p) {
-    font-size: 16px;
-    line-height: 1.8;
-    color: #334155;
-    margin-bottom: 20px;
-    text-align: justify;
-}
-
-.content-card :deep(p:last-child) {
-    margin-bottom: 0;
-}
-
 /* Sidebar Card */
 .sidebar-card {
     padding: 40px 30px;
@@ -156,7 +126,6 @@ const breadcrumbItems = [
     margin-bottom: 28px;
     position: relative;
 }
-
 
 .profile-image {
     width: 180px;
@@ -260,10 +229,6 @@ const breadcrumbItems = [
 @media (max-width: 768px) {
     .content-card {
         padding: 24px;
-    }
-    
-    .page-header h1 {
-        font-size: 28px;
     }
 }
 </style>
