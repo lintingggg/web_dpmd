@@ -1,21 +1,25 @@
-<script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+<script setup>
+import { ref, computed, watch } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
 import Breadcrumb from '@/Components/Breadcrumb.vue';
-import SearchBar from '@/Components/SearchBar.vue';
 import TableDokumen from '@/Components/TableDokumen.vue';
 import UpButton from '@/Components/UpButton.vue';
 import { IconHome } from '@tabler/icons-vue';
 
-const props = defineProps<{
-    dokumenList: any;
-    filters: any;
-    kategoriList?: string[];
-}>();
+// Import Domain Components
+import DokumenSearchHistory from '@/Components/Dokumen/DokumenSearchHistory.vue';
 
-// Breadcrumb: pola yang sama dengan Berita/Index.vue & VisiMisi.vue
+// Import Helpers
+import { formatDokumenCategory } from '@/Utils/helpers';
+
+const props = defineProps({
+    dokumenList: Object,
+    filters: Object,
+    kategoriList: Array
+});
+
 const breadcrumbItems = [
     { label: 'Beranda', href: '/', icon: IconHome },
     { label: 'Publikasi Dokumen' },
@@ -24,21 +28,19 @@ const breadcrumbItems = [
 // --- STATE UTAMA ---
 const activeCategory = ref(props.filters?.kategori || '');
 const searchQuery = ref(props.filters?.search || '');
-const searchHistory = ref<string[]>([]);
-const isDropdownOpen = ref(false);
 
-// Sidebar kategori: "Semua Kategori" + daftar asli dari backend
+// Sidebar kategori
 const categoryList = computed(() => ['Semua', 'perencanaan', 'peraturan', 'lainnya']);
 
-// Mapping data dari backend ke format TableDokumen
+// Mapping data ke TableDokumen
 const dataDokumen = computed(() => {
-    return (props.dokumenList.data || []).map((doc: any, index: number) => {
+    return (props.dokumenList.data || []).map((doc, index) => {
         return {
             id: doc.id,
             no: index + 1 + ((props.dokumenList.current_page - 1) * props.dokumenList.per_page),
             judul: doc.judul,
             deskripsi: doc.deskripsi,
-            kategori: doc.kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (doc.kategori === 'peraturan' ? 'Produk Peraturan' : 'Dokumen Lainnya'),
+            kategori: formatDokumenCategory(doc.kategori),
             tanggal: doc.tahun,
             tahun: doc.tahun,
             link: doc.file_dokumen ? `/storage/${doc.file_dokumen}` : (doc.file_path ? `/storage/${doc.file_path}` : '#'),
@@ -46,10 +48,10 @@ const dataDokumen = computed(() => {
     });
 });
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+let searchTimeout = null;
 
 // --- FETCH DATA KE BACKEND ---
-const fetchFiltered = (page: number | null = null) => {
+const fetchFiltered = (page = null) => {
     router.get('/dokumen-dan-peraturan', {
         kategori: activeCategory.value !== 'Semua' && activeCategory.value !== '' ? activeCategory.value : undefined,
         search: searchQuery.value || undefined,
@@ -64,52 +66,11 @@ watch(searchQuery, () => {
     }, 500);
 });
 
-const pilihKategori = (kategori: string) => {
+const pilihKategori = (kategori) => {
     const value = kategori === 'Semua' ? '' : kategori;
     if (activeCategory.value === value) return;
     activeCategory.value = value;
     fetchFiltered(1);
-};
-
-// --- HISTORY PENCARIAN (maksimal 3) ---
-onMounted(() => {
-    const savedHistory = localStorage.getItem('search_history_dpmd');
-    if (savedHistory) {
-        searchHistory.value = JSON.parse(savedHistory);
-    }
-});
-
-const saveToHistory = () => {
-    const query = searchQuery.value.trim();
-    if (!query) return;
-
-    let history = searchHistory.value.filter(item => item !== query);
-    history.unshift(query);
-
-    if (history.length > 3) {
-        history = history.slice(0, 3);
-    }
-
-    searchHistory.value = history;
-    localStorage.setItem('search_history_dpmd', JSON.stringify(history));
-    isDropdownOpen.value = false;
-};
-
-const selectHistory = (item: string) => {
-    searchQuery.value = item;
-    isDropdownOpen.value = false;
-    fetchFiltered(1);
-};
-
-const deleteHistoryItem = (index: number) => {
-    searchHistory.value.splice(index, 1);
-    localStorage.setItem('search_history_dpmd', JSON.stringify(searchHistory.value));
-};
-
-const handleBlur = () => {
-    setTimeout(() => {
-        isDropdownOpen.value = false;
-    }, 200);
 };
 
 // --- KONTROL PAGINASI BULAT ---
@@ -122,7 +83,7 @@ const pageNumbers = computed(() => {
     return arr;
 });
 
-function gotoPage(page: number) {
+function gotoPage(page) {
     if (page < 1 || page > lastPage.value) return;
     fetchFiltered(page);
 }
@@ -163,45 +124,16 @@ function gotoPage(page: number) {
                                     : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
                             ]"
                         >
-                            {{ kategori === 'Semua' ? 'Semua Kategori' : (kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (kategori === 'peraturan' ? 'Produk Peraturan' : 'Lainnya')) }}
+                            {{ kategori === 'Semua' ? 'Semua Kategori' : formatDokumenCategory(kategori) }}
                         </button>
                     </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="relative w-full mb-5">
-                    <SearchBar
-                        v-model="searchQuery"
-                        placeholder="Cari dokumen..."
-                        @focus="isDropdownOpen = true"
-                        @blur="handleBlur"
-                        @keyup.enter="saveToHistory"
-                    />
-
-                    <div v-if="isDropdownOpen && searchHistory.length > 0" class="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 py-1 text-sm">
-                        <div class="px-3 py-1 text-xs font-semibold text-gray-400 select-none">Pencarian Terakhir</div>
-                        <ul>
-                            <li
-                                v-for="(item, index) in searchHistory"
-                                :key="index"
-                                class="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer text-gray-700 transition-colors"
-                                @mousedown="selectHistory(item)"
-                            >
-                                <div class="flex items-center space-x-2 truncate">
-                                    <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                    </svg>
-                                    <span class="truncate">{{ item }}</span>
-                                </div>
-                                <button @mousedown.stop="deleteHistoryItem(index)" class="text-gray-400 hover:text-red-500 p-1 rounded">
-                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- Domain Component Search dengan History -->
+                <DokumenSearchHistory 
+                    v-model="searchQuery" 
+                    @search="fetchFiltered(1)" 
+                />
 
                 <p class="text-sm text-gray-500 mb-4">
                     Ditemukan <span class="font-semibold text-slate-900">{{ dokumenList.total || 0 }}</span> dokumen
@@ -274,7 +206,7 @@ function gotoPage(page: number) {
                                     'w-full text-left py-2.5 text-sm border-l-2 pl-3 -ml-px transition-colors capitalize'
                                 ]"
                             >
-                                {{ kategori === 'Semua' ? 'Semua Kategori' : (kategori === 'perencanaan' ? 'Dokumen Perencanaan' : (kategori === 'peraturan' ? 'Produk Peraturan' : 'Lainnya')) }}
+                                {{ kategori === 'Semua' ? 'Semua Kategori' : formatDokumenCategory(kategori) }}
                             </button>
                         </li>
                     </ul>

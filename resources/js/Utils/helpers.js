@@ -147,3 +147,9 @@ export const renderEmbed = (input) => {
 
   return extractedUrl;
 };
+
+export const formatDokumenCategory = (kategori) => {
+    if (kategori === 'perencanaan') return 'Dokumen Perencanaan';
+    if (kategori === 'peraturan') return 'Produk Peraturan';
+    return 'Dokumen Lainnya';
+};
