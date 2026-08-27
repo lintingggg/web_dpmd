@@ -153,3 +153,15 @@ export const formatDokumenCategory = (kategori) => {
     if (kategori === 'peraturan') return 'Produk Peraturan';
     return 'Dokumen Lainnya';
 };
+
+export const getMediaUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return '/storage/' + path;
+};
+
+export const getYoutubeThumbnail = (url) => {
+    if (!url) return '';
+    const match = url.match(/\/embed\/([^?]+)/);
+    return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : '';
+};
