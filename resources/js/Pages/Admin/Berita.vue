@@ -1,10 +1,20 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import TipTapEditor from '@/Components/TipTapEditor.vue';
 import { formatDate } from '@/Utils/formatDate';
+
+// Import Shared Components
+import AdminPageHeader from '@/Components/Admin/AdminPageHeader.vue';
+import AdminPagination from '@/Components/Admin/AdminPagination.vue';
+import AdminConfirmDelete from '@/Components/Admin/AdminConfirmDelete.vue';
+import FormToggle from '@/Components/Form/FormToggle.vue';
+import FormFileInput from '@/Components/Form/FormFileInput.vue';
+
+// Import Composables
+import { useDebouncedFilter } from '@/Composables/useDebouncedFilter';
 
 const props = defineProps({
     berita: Object,
@@ -17,23 +27,18 @@ const search = ref(props.filters?.search || '');
 const statusFilter = ref(props.filters?.status || '');
 const tagFilter = ref(props.filters?.tag || '');
 
-let filterTimeout = null;
-watch([search, statusFilter, tagFilter], ([newSearch, newStatus, newTag]) => {
-    if (filterTimeout) clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(() => {
-        router.get(
-            route('admin.berita'),
-            { search: newSearch, status: newStatus, tag: newTag },
-            { preserveState: true, preserveScroll: true, replace: true, only: ['berita', 'filters', 'available_tags'] }
-        );
-    }, 300);
-});
+// Use Composable for Debounced Routing
+useDebouncedFilter(
+    route('admin.berita'),
+    { search, status: statusFilter, tag: tagFilter },
+    { only: ['berita', 'filters', 'available_tags'] }
+);
 
 // Modal Form State
 const isModalOpen = ref(false);
 const isEditing = ref(false);
 const editingId = ref(null);
-const fileInput = ref(null);
+const fileInputRef = ref(null);
 const newTagInput = ref('');
 
 const form = useForm({
@@ -62,7 +67,7 @@ const openModal = (item = null) => {
         form.is_published = true; // Default publish when creating new
     }
     
-    if (fileInput.value) fileInput.value.value = '';
+    if (fileInputRef.value) fileInputRef.value.clearFile();
     isModalOpen.value = true;
 };
 
@@ -70,15 +75,6 @@ const closeModal = () => {
     isModalOpen.value = false;
     form.reset();
     form.clearErrors();
-};
-
-const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        form.thumbnail = file;
-    } else {
-        form.thumbnail = null;
-    }
 };
 
 const addTag = () => {
@@ -154,19 +150,15 @@ const executeDelete = () => {
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1 pt-4">
-                    Berita & Kegiatan
-                </h2>
-                <p class="text-[14px] font-medium text-slate-500">Kelola publikasi berita, artikel, dan dokumentasi kegiatan dinas.</p>
-            </div>
-            
+        <AdminPageHeader 
+            title="Berita & Kegiatan" 
+            description="Kelola publikasi berita, artikel, dan dokumentasi kegiatan dinas."
+        >
             <button @click="openModal()" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Tambah Berita
             </button>
-        </div>
+        </AdminPageHeader>
 
         <!-- Main Content Card -->
         <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
@@ -279,26 +271,13 @@ const executeDelete = () => {
             </div>
 
             <!-- Footer / Pagination -->
-            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]">
-                <p class="text-[13px] font-medium text-slate-500">
-                    Menampilkan <span class="font-bold text-slate-900">{{ berita.from || 0 }}-{{ berita.to || 0 }}</span> dari <span class="font-bold text-slate-900">{{ berita.total }}</span> berita
-                </p>
-                
-                <div class="flex flex-wrap items-center gap-1" v-if="berita.links && berita.links.length > 3">
-                    <Link 
-                        v-for="(link, index) in berita.links" 
-                        :key="index"
-                        :href="link.url || '#'"
-                        class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
-                        :class="[
-                            link.active ? 'bg-[#1356a0] text-white font-bold' : 'text-slate-500 hover:bg-[#dbe6f7]',
-                            !link.url ? 'opacity-50 cursor-not-allowed' : ''
-                        ]"
-                        v-html="link.label"
-                        preserve-scroll
-                    />
-                </div>
-            </div>
+            <AdminPagination 
+                :links="berita.links" 
+                :from="berita.from" 
+                :to="berita.to" 
+                :total="berita.total" 
+                label="berita" 
+            />
             
         </div>
     </AuthenticatedLayout>
@@ -326,22 +305,14 @@ const executeDelete = () => {
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Thumbnail -->
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Thumbnail (Opsional)</label>
-                        <div class="relative w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-4 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors min-h-[120px]">
-                            <span class="material-symbols-outlined text-[24px] text-slate-500 mb-1">image</span>
-                            <p class="text-[12px] font-medium text-slate-700 mb-1">
-                                <span v-if="form.thumbnail">{{ form.thumbnail.name }}</span>
-                                <span v-else>Pilih gambar (Maks 1MB)</span>
-                            </p>
-                            <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                        </div>
-                        <div v-if="form.errors.thumbnail" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.thumbnail }}</div>
-                        <div v-if="isEditing" class="mt-2 text-[12px] font-semibold text-slate-700 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">info</span>
-                            <span>Biarkan kosong jika tidak ingin mengubah thumbnail.</span>
-                        </div>
-                    </div>
+                    <FormFileInput 
+                        ref="fileInputRef"
+                        v-model="form.thumbnail" 
+                        label="Pilih gambar" 
+                        max-size-text="Maks 1MB" 
+                        :error="form.errors.thumbnail"
+                        :info-text="isEditing ? 'Biarkan kosong jika tidak ingin mengubah thumbnail.' : ''"
+                    />
 
                     <!-- Tags -->
                     <div>
@@ -366,7 +337,7 @@ const executeDelete = () => {
                     </div>
                 </div>
 
-                <!-- Konten Rich Text -->
+                <!-- Rich Text Editor -->
                 <div>
                     <label class="block text-[14px] font-bold text-slate-700 mb-2">Konten Berita <span class="text-red-500">*</span></label>
                     <TipTapEditor v-model="form.konten" />
@@ -374,19 +345,11 @@ const executeDelete = () => {
                 </div>
 
                 <!-- Publish Toggle -->
-                <div class="pt-2">
-                    <label class="flex items-center gap-3 cursor-pointer group w-max">
-                        <div class="relative flex items-center">
-                            <input type="checkbox" v-model="form.is_published" class="peer sr-only">
-                            <div class="w-11 h-6 bg-[#c7dafa] rounded-full peer-checked:bg-[#1356a0] transition-colors duration-200 ease-in-out"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform duration-200 ease-in-out shadow-sm"></div>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[14px] font-bold text-slate-900 leading-none mb-1">Publikasikan Berita</span>
-                            <span class="text-[12px] text-slate-500 leading-none">Berita akan tampil di website publik</span>
-                        </div>
-                    </label>
-                </div>
+                <FormToggle 
+                    v-model="form.is_published"
+                    title="Publikasikan Berita"
+                    description="Berita akan tampil di website publik"
+                />
 
                 <!-- Actions -->
                 <div class="pt-6 border-t border-[#dbe6f7] flex justify-end gap-3">
@@ -466,24 +429,12 @@ const executeDelete = () => {
     </Modal>
 
     <!-- Delete Confirmation Modal -->
-    <Modal :show="isDeleteModalOpen" @close="isDeleteModalOpen = false" maxWidth="sm">
-        <div class="p-6 text-center">
-            <div class="w-16 h-16 rounded-full bg-[#ffebee] flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-[32px] text-[#d32f2f]">warning</span>
-            </div>
-            <h3 class="text-[20px] font-bold text-slate-900 mb-2">Hapus Berita?</h3>
-            <p class="text-[14px] text-slate-500 mb-6">
-                Apakah Anda yakin ingin menghapus berita <span class="font-bold text-slate-900">"{{ itemToDelete?.judul }}"</span>? Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div class="flex justify-center gap-3">
-                <button @click="isDeleteModalOpen = false" class="px-5 py-2.5 rounded-full border border-[#c7dafa] bg-white text-slate-700 font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
-                    Batal
-                </button>
-                <button @click="executeDelete" class="px-5 py-2.5 rounded-full bg-[#d32f2f] text-white font-bold text-[14px] hover:bg-[#b71c1c] shadow-[0_4px_12px_rgba(211,47,47,0.2)] transition-all active:scale-95">
-                    Ya, Hapus
-                </button>
-            </div>
-        </div>
-    </Modal>
+    <AdminConfirmDelete 
+        :show="isDeleteModalOpen" 
+        title="Hapus Berita?"
+        :message="`Apakah Anda yakin ingin menghapus berita <span class='font-bold text-slate-900'>\&quot;${itemToDelete?.judul}\&quot;</span>? Tindakan ini tidak dapat dibatalkan.`"
+        @close="isDeleteModalOpen = false"
+        @confirm="executeDelete"
+    />
 
 </template>

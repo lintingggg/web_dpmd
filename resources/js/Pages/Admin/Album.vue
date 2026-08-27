@@ -1,8 +1,18 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
+
+// Import Shared Components
+import AdminPageHeader from '@/Components/Admin/AdminPageHeader.vue';
+import AdminPagination from '@/Components/Admin/AdminPagination.vue';
+import AdminConfirmDelete from '@/Components/Admin/AdminConfirmDelete.vue';
+import FormToggle from '@/Components/Form/FormToggle.vue';
+import FormFileInput from '@/Components/Form/FormFileInput.vue';
+
+// Import Composables
+import { useDebouncedFilter } from '@/Composables/useDebouncedFilter';
 
 const props = defineProps({
     albums: Object,
@@ -14,7 +24,7 @@ const isDeleteModalOpen = ref(false);
 const isEditing = ref(false);
 const editingId = ref(null);
 const detailItem = ref(null);
-const fileInput = ref(null);
+const fileInputRef = ref(null);
 
 const search = ref(props.filters.search || '');
 
@@ -25,20 +35,12 @@ const form = useForm({
     is_published: false,
 });
 
-let filterTimeout = null;
-watch([search], ([newSearch]) => {
-    if (filterTimeout) clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(() => {
-        router.get(route('admin.album'), {
-            search: newSearch,
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
-            only: ['albums', 'filters']
-        });
-    }, 300);
-});
+// Use Composable for Debounced Routing
+useDebouncedFilter(
+    route('admin.album'),
+    { search },
+    { only: ['albums', 'filters'] }
+);
 
 const openModal = (item = null) => {
     isEditing.value = !!item;
@@ -58,7 +60,7 @@ const openModal = (item = null) => {
         form.is_published = false;
     }
     
-    if (fileInput.value) fileInput.value.value = '';
+    if (fileInputRef.value) fileInputRef.value.clearFile();
     isModalOpen.value = true;
 };
 
@@ -68,13 +70,8 @@ const closeModal = () => {
     form.clearErrors();
 };
 
-const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        form.cover = file;
-    } else {
-        form.cover = null;
-    }
+const handleFileUpload = (file) => {
+    form.cover = file;
 };
 
 const submitForm = () => {
@@ -118,19 +115,15 @@ const goToGaleri = (albumId) => {
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1 pt-4">
-                    Album Kegiatan
-                </h2>
-                <p class="text-[14px] font-medium text-slate-500">Kelola album untuk dokumentasi kegiatan DPMD Bangkalan.</p>
-            </div>
-            
+        <AdminPageHeader 
+            title="Album Kegiatan" 
+            description="Kelola album untuk dokumentasi kegiatan DPMD Bangkalan."
+        >
             <button @click="openModal()" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Buat Album Baru
             </button>
-        </div>
+        </AdminPageHeader>
 
         <!-- Main Content Wrapper -->
         <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
@@ -147,76 +140,63 @@ const goToGaleri = (albumId) => {
             <div class="p-6 md:p-8 bg-white">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             
-            <div v-for="item in albums.data" :key="item.id" class="bg-white rounded-[20px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden group hover:shadow-[0_8px_30px_rgba(15,23,42,0.08)] transition-all flex flex-col">
-                <!-- Cover Image -->
-                <div class="relative aspect-[4/3] bg-[#f0f1f1] overflow-hidden cursor-pointer" @click="goToGaleri(item.id)">
-                    <img v-if="item.cover" :src="`/storage/${item.cover}`" alt="Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div v-else class="w-full h-full flex flex-col items-center justify-center text-[#9499a3]">
-                        <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">folder</span>
-                        <span class="text-[12px] font-bold">Belum ada cover</span>
-                    </div>
-                    
-                    <!-- Overlay Actions -->
-                    <div class="absolute inset-0 bg-[#0f172a]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
-                        <button @click.stop="goToGaleri(item.id)" class="w-10 h-10 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center transition-colors shadow-lg" title="Buka Album">
-                            <span class="material-symbols-outlined text-[20px]">visibility</span>
-                        </button>
-                        <button @click.stop="openModal(item)" class="w-10 h-10 rounded-full bg-white text-[#0f172a] hover:bg-[#e3e5e7] flex items-center justify-center transition-colors shadow-lg" title="Edit">
-                            <span class="material-symbols-outlined text-[20px]">edit</span>
-                        </button>
-                        <button @click.stop="confirmDelete(item)" class="w-10 h-10 rounded-full bg-[#ba1a1a] text-white hover:bg-[#93000a] flex items-center justify-center transition-colors shadow-lg" title="Hapus">
-                            <span class="material-symbols-outlined text-[20px]">delete</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Info -->
-                <div class="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span v-if="item.is_published" class="w-2 h-2 rounded-full bg-[#137333]" title="Published"></span>
-                            <span v-else class="w-2 h-2 rounded-full bg-[#9499a3]" title="Draft"></span>
+                    <div v-for="item in albums.data" :key="item.id" class="bg-white rounded-[20px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-[#e3e5e7] overflow-hidden group hover:shadow-[0_8px_30px_rgba(15,23,42,0.08)] transition-all flex flex-col">
+                        <!-- Cover Image -->
+                        <div class="relative aspect-[4/3] bg-[#f0f1f1] overflow-hidden cursor-pointer" @click="goToGaleri(item.id)">
+                            <img v-if="item.cover" :src="`/storage/${item.cover}`" alt="Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div v-else class="w-full h-full flex flex-col items-center justify-center text-[#9499a3]">
+                                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">folder</span>
+                                <span class="text-[12px] font-bold">Belum ada cover</span>
+                            </div>
+                            
+                            <!-- Overlay Actions -->
+                            <div class="absolute inset-0 bg-[#0f172a]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
+                                <button @click.stop="goToGaleri(item.id)" class="w-10 h-10 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center transition-colors shadow-lg" title="Buka Album">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                                <button @click.stop="openModal(item)" class="w-10 h-10 rounded-full bg-white text-[#0f172a] hover:bg-[#e3e5e7] flex items-center justify-center transition-colors shadow-lg" title="Edit">
+                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                </button>
+                                <button @click.stop="confirmDelete(item)" class="w-10 h-10 rounded-full bg-[#ba1a1a] text-white hover:bg-[#93000a] flex items-center justify-center transition-colors shadow-lg" title="Hapus">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </div>
                         </div>
-                        <h3 class="text-[15px] font-bold text-[#0f172a] leading-snug line-clamp-2 transition-colors cursor-pointer hover:text-blue-600" @click="goToGaleri(item.id)">
-                            {{ item.nama }}
-                        </h3>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Add New Card (Ghost Card) -->
-            <div @click="openModal()" class="border-2 border-dashed border-[#dbe6f7] rounded-[20px] bg-[#f5f8fd]/50 hover:bg-[#f5f8fd] transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[250px] group">
-                <div class="w-16 h-16 rounded-full bg-white border border-[#dbe6f7] shadow-sm flex items-center justify-center text-[#1356a0] mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-[28px]">add</span>
-                </div>
-                <h3 class="text-[15px] font-bold text-slate-900 mb-1">Buat Album Baru</h3>
-                <p class="text-[13px] text-slate-500">Kelompokkan foto & video</p>
-            </div>
+                        <!-- Info -->
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span v-if="item.is_published" class="w-2 h-2 rounded-full bg-[#137333]" title="Published"></span>
+                                    <span v-else class="w-2 h-2 rounded-full bg-[#9499a3]" title="Draft"></span>
+                                </div>
+                                <h3 class="text-[15px] font-bold text-[#0f172a] leading-snug line-clamp-2 transition-colors cursor-pointer hover:text-blue-600" @click="goToGaleri(item.id)">
+                                    {{ item.nama }}
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add New Card (Ghost Card) -->
+                    <div @click="openModal()" class="border-2 border-dashed border-[#dbe6f7] rounded-[20px] bg-[#f5f8fd]/50 hover:bg-[#f5f8fd] transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[250px] group">
+                        <div class="w-16 h-16 rounded-full bg-white border border-[#dbe6f7] shadow-sm flex items-center justify-center text-[#1356a0] mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[28px]">add</span>
+                        </div>
+                        <h3 class="text-[15px] font-bold text-slate-900 mb-1">Buat Album Baru</h3>
+                        <p class="text-[13px] text-slate-500">Kelompokkan foto & video</p>
+                    </div>
 
                 </div>
             </div>
 
             <!-- Footer / Pagination -->
-            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]">
-                <p class="text-[13px] font-medium text-slate-500">
-                    Menampilkan <span class="font-bold text-slate-900">{{ albums.from || 0 }}-{{ albums.to || 0 }}</span> dari <span class="font-bold text-slate-900">{{ albums.total }}</span> album
-                </p>
-                
-                <div class="flex flex-wrap items-center gap-1" v-if="albums.links && albums.links.length > 3">
-                    <Link 
-                        v-for="(link, index) in albums.links" 
-                        :key="index"
-                        :href="link.url || '#'"
-                        class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
-                        :class="[
-                            link.active ? 'bg-[#1356a0] text-white font-bold' : 'text-slate-500 hover:bg-[#dbe6f7]',
-                            !link.url ? 'opacity-50 cursor-not-allowed' : ''
-                        ]"
-                        v-html="link.label"
-                        preserve-scroll
-                    />
-                </div>
-            </div>
+            <AdminPagination 
+                :links="albums.links" 
+                :from="albums.from" 
+                :to="albums.to" 
+                :total="albums.total" 
+                label="album" 
+            />
         </div>
     </AuthenticatedLayout>
 
@@ -240,7 +220,7 @@ const goToGaleri = (albumId) => {
                     <div v-if="form.errors.nama" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.nama }}</div>
                 </div>
 
-                <!-- Foto -->
+                <!-- Foto / Cover -->
                 <div>
                     <label class="block text-[14px] font-bold text-[#373f50] mb-2">Cover Album</label>
                     <div class="flex flex-col md:flex-row gap-4 items-start">
@@ -249,16 +229,16 @@ const goToGaleri = (albumId) => {
                             <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] font-bold text-center py-1">Tersimpan</div>
                         </div>
 
-                        <div class="relative w-full flex-1 border-2 border-dashed border-[#c8cbd0] bg-[#f9f9f9] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#f0f1f1] transition-colors min-h-[128px]">
-                            <span class="material-symbols-outlined text-[32px] text-[#646a79] mb-2">image</span>
-                            <p class="text-[13px] font-medium text-[#373f50] mb-1">
-                                <span v-if="form.cover">{{ form.cover.name }}</span>
-                                <span v-else>Pilih file cover (Maks 5MB)</span>
-                            </p>
-                            <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                        </div>
+                        <FormFileInput 
+                            ref="fileInputRef"
+                            v-model="form.cover"
+                            @update:modelValue="handleFileUpload"
+                            label="Pilih file cover"
+                            maxSizeText="Maks 5MB"
+                            :error="form.errors.cover"
+                            class="flex-grow w-full"
+                        />
                     </div>
-                    <div v-if="form.errors.cover" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.cover }}</div>
                 </div>
 
                 <!-- Deskripsi -->
@@ -269,19 +249,11 @@ const goToGaleri = (albumId) => {
                 </div>
 
                 <!-- Publish Toggle -->
-                <div class="pt-2">
-                    <label class="flex items-center gap-3 cursor-pointer group w-max">
-                        <div class="relative flex items-center">
-                            <input type="checkbox" v-model="form.is_published" class="peer sr-only">
-                            <div class="w-11 h-6 bg-[#c8cbd0] rounded-full peer-checked:bg-[#0f172a] transition-colors duration-200 ease-in-out"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform duration-200 ease-in-out shadow-sm"></div>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[14px] font-bold text-[#0f172a] leading-none mb-1">Publikasikan</span>
-                            <span class="text-[12px] text-[#646a79] leading-none">Album akan tampil di website publik</span>
-                        </div>
-                    </label>
-                </div>
+                <FormToggle 
+                    v-model="form.is_published"
+                    title="Publikasikan"
+                    description="Album akan tampil di website publik"
+                />
 
                 <!-- Actions -->
                 <div class="pt-6 border-t border-[#e3e5e7] flex justify-end gap-3">
@@ -289,7 +261,6 @@ const goToGaleri = (albumId) => {
                         Batal
                     </button>
                     <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i v-if="form.processing" class="fa-solid fa-circle-notch fa-spin text-[18px] mr-2"></i>
                         {{ form.processing ? 'Menyimpan...' : 'Simpan Album' }}
                     </button>
                 </div>
@@ -297,26 +268,12 @@ const goToGaleri = (albumId) => {
         </div>
     </Modal>
 
-    <!-- Modal Konfirmasi Hapus -->
-    <Modal :show="isDeleteModalOpen" @close="isDeleteModalOpen = false" maxWidth="md">
-        <div class="p-6 md:p-8 text-center">
-            <div class="w-16 h-16 rounded-full bg-[#fce8e8] text-[#ba1a1a] flex items-center justify-center mx-auto mb-6">
-                <span class="material-symbols-outlined text-[32px]">delete_forever</span>
-            </div>
-            
-            <h3 class="text-[24px] font-bold text-[#0f172a] leading-tight mb-3">Hapus Album?</h3>
-            <p class="text-[15px] text-[#646a79] mb-8">
-                Tindakan ini akan menghapus album <span class="font-bold text-[#0f172a]">"{{ detailItem?.nama }}"</span> beserta semua foto dan video di dalamnya secara permanen. Tindakan ini tidak dapat dibatalkan.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button @click="isDeleteModalOpen = false" class="px-6 py-3 rounded-full border border-[#c8cbd0] bg-white text-[#373f50] font-bold text-[14px] hover:bg-[#f0f1f1] transition-all active:scale-95">
-                    Batal
-                </button>
-                <button @click="deleteAlbum" class="px-6 py-3 rounded-full bg-[#ba1a1a] text-white font-bold text-[14px] hover:bg-[#93000a] transition-all active:scale-95 shadow-[0_4px_12px_rgba(186,26,26,0.2)]">
-                    Ya, Hapus Permanen
-                </button>
-            </div>
-        </div>
-    </Modal>
+    <!-- Delete Confirmation Modal -->
+    <AdminConfirmDelete 
+        :show="isDeleteModalOpen" 
+        title="Hapus Album?"
+        :message="`Tindakan ini akan menghapus album <span class='font-bold text-slate-900'>\&quot;${detailItem?.nama}\&quot;</span> beserta semua foto dan video di dalamnya secara permanen. Tindakan ini tidak dapat dibatalkan.`"
+        @close="isDeleteModalOpen = false"
+        @confirm="deleteAlbum"
+    />
 </template>

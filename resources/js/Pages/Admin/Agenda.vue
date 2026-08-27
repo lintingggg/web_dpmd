@@ -1,10 +1,19 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import { useToast } from '@idds/vue';
 import { formatDate } from '@/Utils/formatDate';
+
+// Import Shared Components
+import AdminPageHeader from '@/Components/Admin/AdminPageHeader.vue';
+import AdminPagination from '@/Components/Admin/AdminPagination.vue';
+import AdminConfirmDelete from '@/Components/Admin/AdminConfirmDelete.vue';
+import FormToggle from '@/Components/Form/FormToggle.vue';
+
+// Import Composables
+import { useDebouncedFilter } from '@/Composables/useDebouncedFilter';
 
 const props = defineProps({
     agenda: Object,
@@ -16,17 +25,12 @@ const { toast } = useToast();
 const search = ref(props.filters?.search || '');
 const statusFilter = ref(props.filters?.status || 'Semua Status');
 
-let filterTimeout = null;
-watch([search, statusFilter], ([newSearch, newStatus]) => {
-    if (filterTimeout) clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(() => {
-        router.get(
-            route('admin.agenda.index'),
-            { search: newSearch, status: newStatus === 'Semua Status' ? null : newStatus },
-            { preserveState: true, replace: true, only: ['agenda', 'filters'] }
-        );
-    }, 300);
-});
+// Use Composable for Debounced Routing
+useDebouncedFilter(
+    route('admin.agenda.index'),
+    { search, status: ref(statusFilter.value === 'Semua Status' ? null : statusFilter) },
+    { only: ['agenda', 'filters'] }
+);
 
 const isModalOpen = ref(false);
 const isEditing = ref(false);
@@ -58,7 +62,7 @@ const openEditModal = (item) => {
     form.waktu_mulai = item.waktu_mulai ? item.waktu_mulai.substring(0, 5) : '';
     form.waktu_selesai = item.waktu_selesai ? item.waktu_selesai.substring(0, 5) : '';
     form.lokasi = item.lokasi || '';
-    form.is_published = item.is_published;
+    form.is_published = !!item.is_published;
     form.clearErrors();
     isModalOpen.value = true;
 };
@@ -101,11 +105,22 @@ const submit = () => {
     }
 };
 
-const deleteItem = (id) => {
-    if (confirm('Apakah Anda yakin ingin menghapus agenda ini?')) {
-        router.delete(route('admin.agenda.destroy', id), {
+// Modal Delete State
+const isDeleteModalOpen = ref(false);
+const itemToDelete = ref(null);
+
+const confirmDelete = (item) => {
+    itemToDelete.value = item;
+    isDeleteModalOpen.value = true;
+};
+
+const executeDelete = () => {
+    if (itemToDelete.value) {
+        router.delete(route('admin.agenda.destroy', itemToDelete.value.id), {
             preserveScroll: true,
             onSuccess: () => {
+                isDeleteModalOpen.value = false;
+                itemToDelete.value = null;
                 toast.success('Agenda berhasil dihapus!');
             },
         });
@@ -118,19 +133,15 @@ const deleteItem = (id) => {
 
     <AuthenticatedLayout>
         <!-- Page Header Top -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-                <h2 class="text-[32px] leading-[40px] tracking-[-0.45px] font-bold text-slate-900 mb-1 pt-4">
-                    Agenda Acara
-                </h2>
-                <p class="text-[14px] font-medium text-slate-500">Kelola jadwal kegiatan dan acara yang tampil di portal publik.</p>
-            </div>
-            
+        <AdminPageHeader 
+            title="Agenda Acara" 
+            description="Kelola jadwal kegiatan dan acara yang tampil di portal publik."
+        >
             <button @click="openModal" class="bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-[0_4px_16px_rgba(19,86,160,0.3)]">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Tambah Agenda
             </button>
-        </div>
+        </AdminPageHeader>
 
         <!-- Main Content -->
         <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
@@ -204,7 +215,7 @@ const deleteItem = (id) => {
                                     <button @click="openEditModal(item)" class="w-8 h-8 rounded-full hover:bg-[#dbe6f7] text-slate-500 flex items-center justify-center transition-colors" title="Edit">
                                         <span class="material-symbols-outlined text-[18px]">edit</span>
                                     </button>
-                                    <button @click="deleteItem(item.id)" class="w-8 h-8 rounded-full hover:bg-[#ffebee] text-[#d32f2f] flex items-center justify-center transition-colors" title="Hapus">
+                                    <button @click="confirmDelete(item)" class="w-8 h-8 rounded-full hover:bg-[#ffebee] text-[#d32f2f] flex items-center justify-center transition-colors" title="Hapus">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                     </button>
                                 </div>
@@ -222,28 +233,14 @@ const deleteItem = (id) => {
             </div>
 
             <!-- Footer / Pagination -->
-            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]">
-                <p class="text-[13px] font-medium text-slate-500">
-                    Menampilkan <span class="font-bold text-slate-900">{{ agenda.from || 0 }}-{{ agenda.to || 0 }}</span> dari <span class="font-bold text-slate-900">{{ agenda.total || agenda.data.length }}</span> agenda
-                </p>
-                
-                <div class="flex flex-wrap items-center gap-1" v-if="agenda.links && agenda.links.length > 3">
-                    <Link
-                        v-for="(link, p) in agenda.links"
-                        :key="p"
-                        :href="link.url || '#'"
-                        class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
-                        :class="[
-                            link.active ? 'bg-[#1356a0] text-white font-bold' : 'text-slate-500 hover:bg-[#dbe6f7]',
-                            !link.url ? 'opacity-50 cursor-not-allowed' : ''
-                        ]"
-                        v-html="link.label"
-                        preserve-scroll
-                    />
-                </div>
-            </div>
+            <AdminPagination 
+                :links="agenda.links" 
+                :from="agenda.from" 
+                :to="agenda.to" 
+                :total="agenda.total || agenda.data.length" 
+                label="agenda" 
+            />
         </div>
-
 
         <!-- Form Modal -->
         <Modal :show="isModalOpen" @close="closeModal">
@@ -297,32 +294,33 @@ const deleteItem = (id) => {
                         <div v-if="form.errors.deskripsi" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.deskripsi }}</div>
                     </div>
 
-                    <div class="bg-[#f5f8fd] border border-[#dbe6f7] rounded-xl p-4 mt-2">
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative">
-                                <input type="checkbox" v-model="form.is_published" class="peer sr-only">
-                                <div class="w-11 h-6 bg-[#c7dafa] rounded-full peer-checked:bg-[#1356a0] transition-colors duration-200 ease-in-out"></div>
-                                <div class="absolute left-[2px] top-[2px] bg-white w-5 h-5 rounded-full shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></div>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[14px] font-bold text-slate-900 leading-none mb-1 group-hover:text-slate-700 transition-colors">Tampilkan ke Publik</span>
-                                <span class="text-[12px] text-slate-500 leading-none">Aktifkan agar agenda ini tampil di halaman website</span>
-                            </div>
-                        </label>
-                    </div>
+                    <!-- Publish Toggle -->
+                    <FormToggle 
+                        v-model="form.is_published"
+                        title="Tampilkan ke Publik"
+                        description="Aktifkan agar agenda ini tampil di halaman website"
+                    />
 
                     <div class="pt-6 border-t border-[#dbe6f7] flex justify-end gap-3">
                         <button type="button" @click="closeModal" class="px-6 py-2.5 rounded-full border border-[#c7dafa] bg-white text-slate-700 font-bold text-[14px] hover:bg-[#eaf1fb] transition-all active:scale-95">
                             Batal
                         </button>
                         <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white font-bold text-[14px] shadow-[0_4px_16px_rgba(19,86,160,0.3)] transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
-                            <i v-if="form.processing" class="fa-solid fa-circle-notch fa-spin text-[18px]"></i>
                             {{ form.processing ? 'Menyimpan...' : 'Simpan Agenda' }}
                         </button>
                     </div>
                 </form>
             </div>
         </Modal>
+
+        <!-- Delete Confirmation Modal -->
+        <AdminConfirmDelete 
+            :show="isDeleteModalOpen" 
+            title="Hapus Agenda?"
+            :message="`Apakah Anda yakin ingin menghapus agenda <span class='font-bold text-slate-900'>\&quot;${itemToDelete?.judul}\&quot;</span>? Tindakan ini tidak dapat dibatalkan.`"
+            @close="isDeleteModalOpen = false"
+            @confirm="executeDelete"
+        />
 
     </AuthenticatedLayout>
 </template>
