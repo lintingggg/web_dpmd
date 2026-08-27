@@ -1,17 +1,14 @@
 <script setup>
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref, watch } from 'vue';
-
+import { ref } from 'vue';
 import { formatDateTime } from '@/Utils/formatDate';
 
-function debounce(fn, wait) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn.apply(this, args), wait);
-    };
-}
+// Import Shared Components
+import AdminPagination from '@/Components/Admin/AdminPagination.vue';
+
+// Import Composables
+import { useDebouncedFilter } from '@/Composables/useDebouncedFilter';
 
 const props = defineProps({
     logs: Object,
@@ -20,15 +17,11 @@ const props = defineProps({
 
 const search = ref(props.filters.search || '');
 
-watch(
-    search,
-    debounce((value) => {
-        router.get(
-            route('admin.log-aktivitas'),
-            { search: value },
-            { preserveState: true, replace: true, only: ['logs', 'filters'] }
-        );
-    }, 300)
+// Use Composable for Debounced Search
+useDebouncedFilter(
+    route('admin.log-aktivitas'),
+    { search },
+    { only: ['logs', 'filters'] }
 );
 
 const getActionColor = (action) => {
@@ -129,26 +122,13 @@ const getActionColor = (action) => {
             </div>
 
             <!-- Pagination -->
-            <div class="p-6 md:px-8 border-t border-[#dbe6f7] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#f5f8fd]" v-if="logs.last_page > 1">
-                <p class="text-[13px] font-medium text-slate-500">
-                    Menampilkan <span class="font-bold text-slate-900">{{ logs.from }}</span> hingga <span class="font-bold text-slate-900">{{ logs.to }}</span> dari <span class="font-bold text-slate-900">{{ logs.total }}</span> log
-                </p>
-                <div class="flex flex-wrap items-center gap-1">
-                    <Link
-                        v-for="(link, index) in logs.links"
-                        :key="index"
-                        :href="link.url || '#'"
-                        v-html="link.label"
-                        class="min-w-[32px] px-3 py-1.5 flex items-center justify-center rounded-lg font-medium text-[13px] transition-colors whitespace-nowrap"
-                        :class="[
-                            link.active 
-                                ? 'bg-[#1356a0] text-white font-bold' 
-                                : 'text-slate-500 hover:bg-[#dbe6f7]',
-                            !link.url && 'opacity-50 cursor-not-allowed'
-                        ]"
-                    />
-                </div>
-            </div>
+            <AdminPagination 
+                :links="logs.links" 
+                :from="logs.from" 
+                :to="logs.to" 
+                :total="logs.total" 
+                label="log" 
+            />
         </div>
     </AuthenticatedLayout>
 </template>

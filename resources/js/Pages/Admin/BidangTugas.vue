@@ -1,9 +1,15 @@
 <script setup>
-import { Head, usePage, useForm, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, useForm, Link } from '@inertiajs/vue3';
+import { computed, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import TipTapEditor from '@/Components/TipTapEditor.vue';
 import { formatDateTime } from '@/Utils/formatDate';
+
+// Import Shared Components
+import FormEditorGroup from '@/Components/Form/FormEditorGroup.vue';
+import FormImageUpload from '@/Components/Form/FormImageUpload.vue';
+
+// Import Composables
+import { useImagePreview } from '@/Composables/useImagePreview';
 
 const props = defineProps({
     bidangTugas: Object,
@@ -32,27 +38,27 @@ const form = useForm({
     sekretariat_konten: props.bidangTugas?.sekretariat_konten || '',
 });
 
-const imagePreview = ref(
+// Image Preview
+const { previewUrl: imagePreview, updatePreview } = useImagePreview(
     props.bidangTugas?.[currentSection.value + '_gambar'] 
     ? `/storage/${props.bidangTugas[currentSection.value + '_gambar']}` 
     : 'https://placehold.co/600x400/c8cbd0/ffffff?text=Ilustrasi+Bidang'
 );
 
-const handleFileUpload = (e, field) => {
-    const file = e.target.files[0];
-    if (!file) return;
+watch(currentSection, (newSection) => {
+    const originalImage = props.bidangTugas?.[newSection + '_gambar'];
+    if (form[newSection + '_gambar']) {
+        updatePreview(form[newSection + '_gambar']);
+    } else if (originalImage) {
+        imagePreview.value = `/storage/${originalImage}`;
+    } else {
+        imagePreview.value = 'https://placehold.co/600x400/c8cbd0/ffffff?text=Ilustrasi+Bidang';
+    }
+});
 
-    form[field] = file;
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        imagePreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-};
-
-const triggerFileInput = (id) => {
-    document.getElementById(id).click();
+const handleFileUpload = (file) => {
+    form[currentSection.value + '_gambar'] = file;
+    updatePreview(file);
 };
 
 const submit = () => {
@@ -61,7 +67,6 @@ const submit = () => {
         preserveScroll: true
     });
 };
-
 </script>
 
 <template>
@@ -73,6 +78,19 @@ const submit = () => {
                 Kelola Bidang Tugas
             </h2>
             <p class="text-[14px] font-medium text-slate-500">Kelola uraian tugas, fungsi, dan layanan untuk masing-masing bidang/sekretariat DPMD.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-[#dbe6f7] mb-6 overflow-x-auto whitespace-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+            <Link 
+                v-for="(title, key) in sectionTitles" 
+                :key="key"
+                :href="route('admin.bidang-tugas', key)"
+                class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
+                :class="currentSection === key ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
+            >
+                {{ title }}
+            </Link>
         </div>
 
         <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
@@ -96,37 +114,21 @@ const submit = () => {
             <div class="p-6 md:p-8 space-y-8">
                 
                 <!-- Photo Upload -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="block text-[14px] font-bold text-slate-700">
-                            Gambar Ilustrasi / Struktur Bidang
-                        </label>
-                        <span class="text-[12px] font-medium text-slate-500">Format Landscape direkomendasikan (Max 2MB)</span>
-                    </div>
-                    
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="w-full md:w-48 h-32 rounded-xl border border-[#dbe6f7] bg-[#f5f8fd] overflow-hidden flex-shrink-0 relative group">
-                            <img :src="imagePreview" alt="Preview" class="w-full h-full object-cover" />
-                        </div>
-                        
-                        <div @click="triggerFileInput(currentSection + '_gambar_input')" class="flex-1 border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
-                            <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">cloud_upload</span>
-                            <p class="text-[14px] font-medium text-slate-600 mb-1">
-                                <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau seret foto kesini
-                            </p>
-                            <p class="text-[12px] text-slate-400">JPG, PNG format</p>
-                            <input type="file" :id="currentSection + '_gambar_input'" class="hidden" accept="image/jpeg,image/png" @change="e => handleFileUpload(e, currentSection + '_gambar')" />
-                        </div>
-                    </div>
-                    <div v-if="form.errors[`${currentSection}_gambar`]" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors[`${currentSection}_gambar`] }}</div>
-                </div>
+                <FormImageUpload 
+                    :preview-url="imagePreview"
+                    label="Gambar Ilustrasi / Struktur Bidang"
+                    aspect-ratio="aspect-video"
+                    max-size-text="Format Landscape direkomendasikan (Max 2MB)"
+                    :error="form.errors[`${currentSection}_gambar`]"
+                    @change="handleFileUpload"
+                />
 
                 <!-- WYSIWYG Editor -->
-                <div>
-                    <label class="block text-[14px] font-bold text-slate-700 mb-2">Uraian Tugas Pokok, Fungsi, dan Layanan</label>
-                    <TipTapEditor v-model="form[currentSection + '_konten']" />
-                    <div v-if="form.errors[`${currentSection}_konten`]" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors[`${currentSection}_konten`] }}</div>
-                </div>
+                <FormEditorGroup 
+                    v-model="form[currentSection + '_konten']"
+                    label="Uraian Tugas Pokok, Fungsi, dan Layanan"
+                    :error="form.errors[`${currentSection}_konten`]"
+                />
 
             </div>
 

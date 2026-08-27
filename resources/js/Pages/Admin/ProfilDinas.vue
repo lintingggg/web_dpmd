@@ -1,10 +1,16 @@
 <script setup>
-import { Head, usePage, useForm, Link } from '@inertiajs/vue3';
-import { computed, ref, onMounted } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { useToast } from '@idds/vue';
-import TipTapEditor from '@/Components/TipTapEditor.vue';
 import { formatDateTime } from '@/Utils/formatDate';
+
+// Import Shared Components
+import FormEditorGroup from '@/Components/Form/FormEditorGroup.vue';
+import FormImageUpload from '@/Components/Form/FormImageUpload.vue';
+import FormDocumentUpload from '@/Components/Form/FormDocumentUpload.vue';
+
+// Import Composables
+import { useImagePreview } from '@/Composables/useImagePreview';
 
 const props = defineProps({
     profil: Object,
@@ -56,46 +62,23 @@ const form = useForm({
     motto_teks: props.profil?.motto_teks || '',
 });
 
-// Photo Previews
-const fotoKadisPreview = ref(props.profil?.kadis_foto ? `/storage/${props.profil.kadis_foto}` : 'https://ui-avatars.com/api/?name=Kadis&background=c8cbd0&color=ffffff&size=128');
-const strukturPreview = ref(props.profil?.struktur_gambar ? `/storage/${props.profil.struktur_gambar}` : 'https://placehold.co/400x300/c8cbd0/ffffff?text=Bagan+Struktur');
-const maklumatDokumenName = ref(props.profil?.maklumat_dokumen ? 'Dokumen Tersimpan: ' + props.profil.maklumat_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
-const tupoksiDokumenName = ref(props.profil?.tupoksi_dokumen ? 'Dokumen Tersimpan: ' + props.profil.tupoksi_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
-const kodeEtikDokumenName = ref(props.profil?.kode_etik_dokumen ? 'Dokumen Tersimpan: ' + props.profil.kode_etik_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah');
+// Image Previews
+const { previewUrl: fotoKadisPreview, updatePreview: updateFotoKadis } = useImagePreview(
+    props.profil?.kadis_foto ? `/storage/${props.profil.kadis_foto}` : 'https://ui-avatars.com/api/?name=Kadis&background=c8cbd0&color=ffffff&size=128'
+);
+const { previewUrl: strukturPreview, updatePreview: updateStruktur } = useImagePreview(
+    props.profil?.struktur_gambar ? `/storage/${props.profil.struktur_gambar}` : 'https://placehold.co/400x300/c8cbd0/ffffff?text=Bagan+Struktur'
+);
 
-const handleFileUpload = (e, field) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    form[field] = file;
-    
-    if (field === 'maklumat_dokumen') {
-        maklumatDokumenName.value = file.name;
-        return;
-    }
-    if (field === 'tupoksi_dokumen') {
-        tupoksiDokumenName.value = file.name;
-        return;
-    }
-    if (field === 'kode_etik_dokumen') {
-        kodeEtikDokumenName.value = file.name;
-        return;
-    }
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        if (field === 'kadis_foto') fotoKadisPreview.value = e.target.result;
-        if (field === 'struktur_gambar') strukturPreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
+const handleFotoKadis = (file) => {
+    form.kadis_foto = file;
+    updateFotoKadis(file);
 };
 
-const triggerFileInput = (id) => {
-    document.getElementById(id).click();
+const handleStrukturGambar = (file) => {
+    form.struktur_gambar = file;
+    updateStruktur(file);
 };
-
-const { toast } = useToast();
 
 const submit = () => {
     form.post(route('admin.profil-dinas.update', currentSection.value), {
@@ -115,6 +98,19 @@ const submit = () => {
                 Profil & Informasi
             </h2>
             <p class="text-[14px] font-medium text-slate-500">Kelola konten inti yang mendeskripsikan identitas, struktur, dan sejarah DPMD Kabupaten Bangkalan kepada publik.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-[#dbe6f7] mb-6 overflow-x-auto whitespace-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+            <Link 
+                v-for="(title, key) in sectionTitles" 
+                :key="key"
+                :href="route('admin.profil-dinas', key)"
+                class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
+                :class="currentSection === key ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
+            >
+                {{ title }}
+            </Link>
         </div>
 
         <!-- Main Content Card -->
@@ -139,7 +135,7 @@ const submit = () => {
             <div class="p-6 md:p-8 space-y-8">
                 
                 <!-- SAMBUTAN KADIS -->
-                <div v-if="currentSection === 'sambutan'" class="space-y-6">
+                <div v-slot="scope" v-if="currentSection === 'sambutan'" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-[14px] font-bold text-slate-700 mb-2">Nama Kepala Dinas</label>
@@ -154,167 +150,109 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-slate-700">Foto Profil Kepala Dinas</label>
-                            <span class="text-[12px] font-medium text-slate-500">Rekomendasi rasio 1:1 (Max 2MB)</span>
-                        </div>
-                        
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="w-full md:w-32 h-32 rounded-xl border border-[#dbe6f7] bg-[#f5f8fd] overflow-hidden flex-shrink-0 relative group">
-                                <img :src="fotoKadisPreview" alt="Preview" class="w-full h-full object-cover" />
-                            </div>
-                            <div @click="triggerFileInput('kadis_foto_input')" class="flex-1 border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">cloud_upload</span>
-                                <p class="text-[14px] font-medium text-slate-600 mb-1">
-                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti foto
-                                </p>
-                                <p class="text-[12px] text-slate-400">JPG, PNG format</p>
-                                <input type="file" id="kadis_foto_input" class="hidden" accept="image/jpeg,image/png" @change="e => handleFileUpload(e, 'kadis_foto')" />
-                            </div>
-                        </div>
-                        <div v-if="form.errors.kadis_foto" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kadis_foto }}</div>
-                    </div>
+                    <FormImageUpload 
+                        :preview-url="fotoKadisPreview"
+                        label="Foto Profil Kepala Dinas"
+                        aspect-ratio="aspect-square"
+                        max-size-text="Rekomendasi rasio 1:1 (Max 2MB)"
+                        :error="form.errors.kadis_foto"
+                        @change="handleFotoKadis"
+                    />
 
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Sambutan</label>
-                        <TipTapEditor v-model="form.sambutan_teks" />
-                        <div v-if="form.errors.sambutan_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.sambutan_teks }}</div>
-                    </div>
+                    <FormEditorGroup 
+                        v-model="form.sambutan_teks"
+                        label="Teks Sambutan"
+                        :error="form.errors.sambutan_teks"
+                    />
                 </div>
 
                 <!-- VISI DAN MISI -->
                 <div v-if="currentSection === 'visi-misi'" class="space-y-6">
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Visi</label>
-                        <TipTapEditor v-model="form.visi_teks" />
-                        <div v-if="form.errors.visi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.visi_teks }}</div>
-                    </div>
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Misi</label>
-                        <TipTapEditor v-model="form.misi_teks" />
-                        <div v-if="form.errors.misi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.misi_teks }}</div>
-                    </div>
+                    <FormEditorGroup 
+                        v-model="form.visi_teks"
+                        label="Teks Visi"
+                        :error="form.errors.visi_teks"
+                    />
+                    <FormEditorGroup 
+                        v-model="form.misi_teks"
+                        label="Teks Misi"
+                        :error="form.errors.misi_teks"
+                    />
                 </div>
 
                 <!-- TUPOKSI -->
                 <div v-if="currentSection === 'tupoksi'" class="space-y-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-slate-700">Dokumen Tugas Pokok & Fungsi</label>
-                            <span class="text-[12px] font-medium text-slate-500">Hanya format PDF (Max 10MB)</span>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div @click="triggerFileInput('tupoksi_dokumen_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">upload_file</span>
-                                <p class="text-[14px] font-medium text-slate-600 mb-1">
-                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
-                                </p>
-                                <p class="text-[12px] text-slate-400 font-bold text-[#1356a0] mt-2">{{ tupoksiDokumenName }}</p>
-                                <input type="file" id="tupoksi_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'tupoksi_dokumen')" />
-                            </div>
-                        </div>
-                        <div v-if="form.errors.tupoksi_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tupoksi_dokumen }}</div>
-                    </div>
+                    <FormDocumentUpload 
+                        v-model="form.tupoksi_dokumen"
+                        label="Dokumen Tugas Pokok & Fungsi"
+                        :error="form.errors.tupoksi_dokumen"
+                        :info-text="profil?.tupoksi_dokumen ? 'Dokumen Tersimpan: ' + profil.tupoksi_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah'"
+                    />
 
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Tugas Pokok & Fungsi (Teks)</label>
-                        <TipTapEditor v-model="form.tupoksi_teks" />
-                        <div v-if="form.errors.tupoksi_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.tupoksi_teks }}</div>
-                    </div>
+                    <FormEditorGroup 
+                        v-model="form.tupoksi_teks"
+                        label="Tugas Pokok & Fungsi (Teks)"
+                        :error="form.errors.tupoksi_teks"
+                    />
                 </div>
 
                 <!-- STRUKTUR -->
                 <div v-if="currentSection === 'struktur'" class="space-y-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-slate-700">Bagan Struktur Organisasi</label>
-                            <span class="text-[12px] font-medium text-slate-500">Format Landscape direkomendasikan (Max 5MB)</span>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div class="w-full h-auto rounded-xl border border-[#dbe6f7] bg-[#f5f8fd] overflow-hidden flex-shrink-0 relative group">
-                                <img :src="strukturPreview" alt="Preview" class="w-full h-auto object-cover" />
-                            </div>
-                            <div @click="triggerFileInput('struktur_gambar_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">cloud_upload</span>
-                                <p class="text-[14px] font-medium text-slate-600 mb-1">
-                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti bagan
-                                </p>
-                                <p class="text-[12px] text-slate-400">JPG, PNG format</p>
-                                <input type="file" id="struktur_gambar_input" class="hidden" accept="image/jpeg,image/png" @change="e => handleFileUpload(e, 'struktur_gambar')" />
-                            </div>
-                        </div>
-                        <div v-if="form.errors.struktur_gambar" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.struktur_gambar }}</div>
-                    </div>
+                    <FormImageUpload 
+                        :preview-url="strukturPreview"
+                        label="Bagan Struktur Organisasi"
+                        aspect-ratio="aspect-video"
+                        max-size-text="Format Landscape direkomendasikan (Max 5MB)"
+                        :error="form.errors.struktur_gambar"
+                        @change="handleStrukturGambar"
+                    />
 
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Keterangan Struktur (Opsional)</label>
-                        <TipTapEditor v-model="form.struktur_keterangan" />
-                        <div v-if="form.errors.struktur_keterangan" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.struktur_keterangan }}</div>
-                    </div>
+                    <FormEditorGroup 
+                        v-model="form.struktur_keterangan"
+                        label="Keterangan Struktur (Opsional)"
+                        :error="form.errors.struktur_keterangan"
+                    />
                 </div>
 
                 <!-- KODE ETIK -->
-                <div v-else-if="currentSection === 'kode-etik'" class="space-y-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-slate-700">Dokumen Kode Etik Pelayanan</label>
-                            <span class="text-[12px] font-medium text-slate-500">Hanya format PDF (Max 10MB)</span>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div @click="triggerFileInput('kode_etik_dokumen_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">upload_file</span>
-                                <p class="text-[14px] font-medium text-slate-600 mb-1">
-                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
-                                </p>
-                                <p class="text-[12px] text-slate-400 font-bold text-[#1356a0] mt-2">{{ kodeEtikDokumenName }}</p>
-                                <input type="file" id="kode_etik_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'kode_etik_dokumen')" />
-                            </div>
-                        </div>
-                        <div v-if="form.errors.kode_etik_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kode_etik_dokumen }}</div>
-                    </div>
+                <div v-if="currentSection === 'kode-etik'" class="space-y-6">
+                    <FormDocumentUpload 
+                        v-model="form.kode_etik_dokumen"
+                        label="Dokumen Kode Etik Pelayanan"
+                        :error="form.errors.kode_etik_dokumen"
+                        :info-text="profil?.kode_etik_dokumen ? 'Dokumen Tersimpan: ' + profil.kode_etik_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah'"
+                    />
 
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Kode Etik Pelayanan (Teks)</label>
-                        <TipTapEditor v-model="form.kode_etik_teks" />
-                        <div v-if="form.errors.kode_etik_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.kode_etik_teks }}</div>
-                    </div>
+                    <FormEditorGroup 
+                        v-model="form.kode_etik_teks"
+                        label="Kode Etik Pelayanan (Teks)"
+                        :error="form.errors.kode_etik_teks"
+                    />
                 </div>
 
                 <!-- MAKLUMAT -->
-                <div v-else-if="currentSection === 'maklumat'" class="space-y-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-[14px] font-bold text-slate-700">Dokumen Maklumat Pelayanan</label>
-                            <span class="text-[12px] font-medium text-slate-500">Hanya format PDF (Max 10MB)</span>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div @click="triggerFileInput('maklumat_dokumen_input')" class="w-full border-2 border-dashed border-[#c7dafa] bg-[#f5f8fd] rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-[#eaf1fb] transition-colors cursor-pointer group">
-                                <span class="material-symbols-outlined text-[32px] text-slate-500 mb-2 group-hover:text-[#1356a0] transition-colors">upload_file</span>
-                                <p class="text-[14px] font-medium text-slate-600 mb-1">
-                                    <span class="text-[#1356a0] font-bold hover:underline">Klik untuk unggah</span> atau ganti dokumen PDF
-                                </p>
-                                <p class="text-[12px] text-slate-400 font-bold text-[#1356a0] mt-2">{{ maklumatDokumenName }}</p>
-                                <input type="file" id="maklumat_dokumen_input" class="hidden" accept="application/pdf" @change="e => handleFileUpload(e, 'maklumat_dokumen')" />
-                            </div>
-                        </div>
-                        <div v-if="form.errors.maklumat_dokumen" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.maklumat_dokumen }}</div>
-                    </div>
+                <div v-if="currentSection === 'maklumat'" class="space-y-6">
+                    <FormDocumentUpload 
+                        v-model="form.maklumat_dokumen"
+                        label="Dokumen Maklumat Pelayanan"
+                        :error="form.errors.maklumat_dokumen"
+                        :info-text="profil?.maklumat_dokumen ? 'Dokumen Tersimpan: ' + profil.maklumat_dokumen.split('/').pop() : 'Belum ada dokumen PDF diunggah'"
+                    />
 
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Teks Maklumat Pelayanan</label>
-                        <TipTapEditor v-model="form.maklumat_teks" />
-                        <div v-if="form.errors.maklumat_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.maklumat_teks }}</div>
-                    </div>
+                    <FormEditorGroup 
+                        v-model="form.maklumat_teks"
+                        label="Teks Maklumat Pelayanan"
+                        :error="form.errors.maklumat_teks"
+                    />
                 </div>
 
                 <!-- MOTTO -->
-                <div v-else-if="currentSection === 'motto'" class="space-y-6">
-                    <div>
-                        <label class="block text-[14px] font-bold text-slate-700 mb-2">Motto Pelayanan</label>
-                        <TipTapEditor v-model="form.motto_teks" />
-                        <div v-if="form.errors.motto_teks" class="text-red-500 text-xs mt-1 font-semibold">{{ form.errors.motto_teks }}</div>
-                    </div>
+                <div v-if="currentSection === 'motto'" class="space-y-6">
+                    <FormEditorGroup 
+                        v-model="form.motto_teks"
+                        label="Motto Pelayanan"
+                        :error="form.errors.motto_teks"
+                    />
                 </div>
 
             </div>
