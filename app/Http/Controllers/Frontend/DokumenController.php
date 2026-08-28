@@ -15,7 +15,42 @@ class DokumenController extends Controller
         
         // Cek kategori filter dari query string
         if ($request->has('kategori') && $request->kategori !== '') {
-            $query->where('kategori', $request->kategori);
+            $k = strtolower($request->kategori);
+
+            // Map dropdown keys to actual kategori or keyword filters
+            if (in_array($k, [PublikasiDokumen::CATEGORY_PERENCANAAN, PublikasiDokumen::CATEGORY_PERATURAN, PublikasiDokumen::CATEGORY_LAINNYA])) {
+                $query->where('kategori', $k);
+            } else {
+                // Special dropdown items mapped to perencanaan with optional keyword narrowing
+                switch ($k) {
+                    case 'lakip':
+                        $query->where('kategori', PublikasiDokumen::CATEGORY_PERENCANAAN)
+                              ->where('judul', 'like', '%LAKIP%');
+                        break;
+                    case 'perjanjian-kinerja':
+                    case 'perjanjian_kinerja':
+                        $query->where('kategori', PublikasiDokumen::CATEGORY_PERENCANAAN)
+                              ->where('judul', 'like', '%Perjanjian Kinerja%');
+                        break;
+                    case 'sakip':
+                        $query->where('kategori', PublikasiDokumen::CATEGORY_PERENCANAAN)
+                              ->where('judul', 'like', '%SAKIP%');
+                        break;
+                    case 'transparansi-apbd':
+                    case 'transparansi_apbd':
+                        $query->where('kategori', PublikasiDokumen::CATEGORY_PERENCANAAN)
+                              ->where(function($q) {
+                                  $q->where('judul', 'like', '%Transparansi%')
+                                    ->orWhere('judul', 'like', '%APBD%');
+                              });
+                        break;
+                    case 'perencanaan':
+                    default:
+                        // Fallback to perencanaan
+                        $query->where('kategori', PublikasiDokumen::CATEGORY_PERENCANAAN);
+                        break;
+                }
+            }
         }
         
         // Cek search dari query string

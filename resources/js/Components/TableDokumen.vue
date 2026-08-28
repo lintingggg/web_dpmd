@@ -37,7 +37,6 @@ defineEmits(['lihatDetail']);
                     <thead>
                         <tr class="bg-slate-50 border-b border-[#dbe6f7]">
                             <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Judul Dokumen</th>
-                            <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
                             <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider w-24">Tahun</th>
                             <th class="py-3.5 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-wider w-56 text-right">Aksi</th>
                         </tr>
@@ -51,11 +50,6 @@ defineEmits(['lihatDetail']);
                             <td class="py-4 px-6">
                                 <span class="block text-sm font-bold text-slate-900 leading-snug">{{ row.judul }}</span>
                                 <span v-if="row.deskripsi" class="block text-xs font-medium text-slate-400 mt-1 line-clamp-2">{{ row.deskripsi }}</span>
-                            </td>
-                            <td class="py-4 px-6 whitespace-nowrap">
-                                <span class="inline-flex px-3 py-1 bg-[#f5f8fd] border border-[#dbe6f7] rounded-full text-[11px] font-bold text-slate-700">
-                                    {{ row.kategori }}
-                                </span>
                             </td>
                             <td class="py-4 px-6 whitespace-nowrap text-sm font-semibold text-slate-500">{{ row.tahun }}</td>
                             <td class="py-4 px-6">
@@ -89,11 +83,8 @@ defineEmits(['lihatDetail']);
                     :key="row.id ?? idx"
                     class="bg-white border border-[#dbe6f7] rounded-2xl p-5 shadow-sm space-y-4"
                 >
-                    <!-- Header: Category & Year -->
+                    <!-- Header: Year -->
                     <div class="flex justify-between items-center gap-2">
-                        <span class="inline-flex px-2.5 py-0.5 bg-[#f5f8fd] border border-[#dbe6f7] rounded-full text-[10px] font-bold text-slate-600">
-                            {{ row.kategori }}
-                        </span>
                         <span class="text-xs font-bold text-slate-400">{{ row.tahun }}</span>
                     </div>
 

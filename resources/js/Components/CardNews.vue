@@ -13,7 +13,7 @@
 
     <!-- Konten -->
     <div class="flex flex-col shrink-0 p-5">
-      <h3 class="text-base font-bold line-clamp-2 min-h-[3rem] text-neutral-900 mb-1.5">
+      <h3 class="text-sm md:text-base font-bold line-clamp-2 min-h-[2.4rem] md:min-h-[3rem] text-neutral-900 mb-1.5 leading-snug">
         {{ title }}
       </h3>
 

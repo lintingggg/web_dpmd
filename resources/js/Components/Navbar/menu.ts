@@ -75,7 +75,13 @@ export const menu: NavItem[] = [
 
     {
         label: "Dokumen",
-        href: "/dokumen-dan-peraturan",
+        children: [
+            { label: "Data Perencanaan", href: "/dokumen-dan-peraturan?kategori=perencanaan" },
+            { label: "LAKIP", href: "/dokumen-dan-peraturan?kategori=lakip" },
+            { label: "Perjanjian Kinerja", href: "/dokumen-dan-peraturan?kategori=perjanjian-kinerja" },
+            { label: "SAKIP", href: "/dokumen-dan-peraturan?kategori=sakip" },
+            { label: "Transparansi APBD", href: "/dokumen-dan-peraturan?kategori=transparansi-apbd" },
+        ],
     },
     
     {

@@ -11,13 +11,9 @@ import { IconHome } from '@tabler/icons-vue';
 // Import Domain Components
 import DokumenSearchHistory from '@/Components/Dokumen/DokumenSearchHistory.vue';
 
-// Import Helpers
-import { formatDokumenCategory } from '@/Utils/helpers';
-
 const props = defineProps({
     dokumenList: Object,
     filters: Object,
-    kategoriList: Array
 });
 
 const breadcrumbItems = [
@@ -29,9 +25,6 @@ const breadcrumbItems = [
 const activeCategory = ref(props.filters?.kategori || '');
 const searchQuery = ref(props.filters?.search || '');
 
-// Sidebar kategori
-const categoryList = computed(() => ['Semua', 'perencanaan', 'peraturan', 'lainnya']);
-
 // Mapping data ke TableDokumen
 const dataDokumen = computed(() => {
     return (props.dokumenList.data || []).map((doc, index) => {
@@ -40,7 +33,6 @@ const dataDokumen = computed(() => {
             no: index + 1 + ((props.dokumenList.current_page - 1) * props.dokumenList.per_page),
             judul: doc.judul,
             deskripsi: doc.deskripsi,
-            kategori: formatDokumenCategory(doc.kategori),
             tanggal: doc.tahun,
             tahun: doc.tahun,
             link: doc.file_dokumen ? `/storage/${doc.file_dokumen}` : (doc.file_path ? `/storage/${doc.file_path}` : '#'),
@@ -65,13 +57,6 @@ watch(searchQuery, () => {
         fetchFiltered(1);
     }, 500);
 });
-
-const pilihKategori = (kategori) => {
-    const value = kategori === 'Semua' ? '' : kategori;
-    if (activeCategory.value === value) return;
-    activeCategory.value = value;
-    fetchFiltered(1);
-};
 
 // --- KONTROL PAGINASI BULAT ---
 const currentPage = computed(() => props.dokumenList.current_page || 1);
@@ -109,25 +94,6 @@ function gotoPage(page) {
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             <div class="lg:col-span-3">
 
-                <!-- Mobile Category Pills (Horizontal Scroll) -->
-                <div class="lg:hidden mb-6 overflow-x-auto whitespace-nowrap pb-2 -mx-4 px-4 scrollbar-hide">
-                    <div class="flex gap-2">
-                        <button
-                            v-for="kategori in categoryList"
-                            :key="kategori"
-                            type="button"
-                            @click="pilihKategori(kategori)"
-                            class="px-4 py-2 text-xs font-bold rounded-full border transition-all duration-150"
-                            :class="[
-                                (activeCategory === kategori || (activeCategory === '' && kategori === 'Semua'))
-                                    ? 'bg-[#1356a0] text-white border-[#1356a0] shadow-sm'
-                                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                            ]"
-                        >
-                            {{ kategori === 'Semua' ? 'Semua Kategori' : formatDokumenCategory(kategori) }}
-                        </button>
-                    </div>
-                </div>
 
                 <!-- Domain Component Search dengan History -->
                 <DokumenSearchHistory 
@@ -188,30 +154,6 @@ function gotoPage(page) {
                 </div>
             </div>
 
-            <!-- Sidebar (Desktop only) -->
-            <aside class="hidden lg:block lg:col-span-1">
-                <div class="lg:sticky lg:top-24 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <h2 class="text-sm font-bold tracking-wide text-slate-800 uppercase mb-3">
-                        Kategori
-                    </h2>
-                    <ul class="flex flex-col">
-                        <li v-for="kategori in categoryList" :key="kategori">
-                            <button
-                                type="button"
-                                @click="pilihKategori(kategori)"
-                                :class="[
-                                    (activeCategory === kategori || (activeCategory === '' && kategori === 'Semua'))
-                                        ? 'text-[#2563eb] font-semibold border-[#2563eb]'
-                                        : 'text-slate-600 border-transparent hover:text-slate-900',
-                                    'w-full text-left py-2.5 text-sm border-l-2 pl-3 -ml-px transition-colors capitalize'
-                                ]"
-                            >
-                                {{ kategori === 'Semua' ? 'Semua Kategori' : formatDokumenCategory(kategori) }}
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </aside>
         </div>
     </main>
 
