@@ -57,7 +57,7 @@ defineEmits(['lihatDetail']);
                                     <a
                                         :href="row.link"
                                         :download="row.judul + '.pdf'"
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#1356a0] to-[#528be6] hover:from-[#103973] hover:to-[#1356a0] text-white rounded-full text-xs font-bold transition-all active:scale-95 shadow-sm"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-bold transition-all active:scale-95 shadow-sm"
                                     >
                                         <span class="material-symbols-outlined text-[15px]">download</span>
                                         Unduh
@@ -99,7 +99,7 @@ defineEmits(['lihatDetail']);
                         <a
                             :href="row.link"
                             :download="row.judul + '.pdf'"
-                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-gradient-to-r from-[#1356a0] to-[#528be6] text-white rounded-xl text-xs font-bold active:scale-95 shadow-sm"
+                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors active:scale-95 shadow-sm"
                         >
                             <span class="material-symbols-outlined text-[15px]">download</span>
                             Unduh PDF
