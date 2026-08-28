@@ -46,17 +46,10 @@ function isParentActive(children?: { href: string }[]) {
 
 <template>
     <nav class="hidden lg:flex items-center gap-2">
-
-        <template
-            v-for="item in menu"
-            :key="item.label"
-        >
-
+        <template v-for="item in menu" :key="item.label">
             <!-- MENU BIASA -->
-
-            <div class="relative">
+            <div v-if="!item.children" class="relative">
                 <Link
-                    v-if="!item.children"
                     :href="item.href!"
                     class="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
                     :class="[
@@ -70,32 +63,26 @@ function isParentActive(children?: { href: string }[]) {
                         :size="16"
                         class="shrink-0"
                     />
-
                     {{ item.label }}
-
                 </Link>
 
                 <span
-                    v-if="!item.children && isActive(item.href)"
+                    v-if="isActive(item.href)"
                     class="menu-underline"
                 ></span>
             </div>
 
             <!-- DROPDOWN -->
-
             <div
-                v-if="item.children"
+                v-else
                 class="relative"
-
-                @mouseenter="activeDropdown=item.label"
-
-                @mouseleave="activeDropdown=null"
+                @mouseenter="activeDropdown = item.label"
+                @mouseleave="activeDropdown = null"
             >
-
                 <button
                     class="flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
                     :class="[
-                        isParentActive(item.children) || activeDropdown===item.label
+                        isParentActive(item.children) || activeDropdown === item.label
                             ? 'bg-white text-[#0F172A] shadow-lg shadow-black/30 ring-1 ring-black/5'
                             : 'text-white hover:bg-white hover:text-[#0F172A] hover:shadow-lg hover:shadow-black/30'
                     ]"
@@ -105,17 +92,14 @@ function isParentActive(children?: { href: string }[]) {
                         :size="16"
                         class="shrink-0"
                     />
-
                     {{ item.label }}
-
                     <IconChevronDown
                         :size="14"
                         class="transition-transform duration-200 opacity-80"
                         :class="{
-                            'rotate-180':activeDropdown===item.label
+                            'rotate-180': activeDropdown === item.label
                         }"
                     />
-
                 </button>
 
                 <span
@@ -124,40 +108,29 @@ function isParentActive(children?: { href: string }[]) {
                 ></span>
 
                 <transition name="dropdown">
-
                     <NavbarMegaMenu
-                        v-if="activeDropdown===item.label"
+                        v-if="activeDropdown === item.label"
                         :items="item.children"
                     />
-
                 </transition>
-
             </div>
-
         </template>
-
     </nav>
 </template>
 
 <style scoped>
-
 .dropdown-enter-active,
-.dropdown-leave-active{
-
-transition:.18s ease;
-
+.dropdown-leave-active {
+    transition: 0.18s ease;
 }
 
 .dropdown-enter-from,
-.dropdown-leave-to{
-
-opacity:0;
-
-transform:translateY(10px);
-
+.dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
 }
 
-.menu-underline{
+.menu-underline {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -167,5 +140,4 @@ transform:translateY(10px);
     border-radius: 2px;
     background-color: #ffffff;
 }
-
 </style>
