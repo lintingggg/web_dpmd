@@ -24,19 +24,25 @@ class PublikasiDokumen extends Model
     ];
 
     // Konstanta Kategori
-    public const CATEGORY_PERENCANAAN = 'perencanaan';
-    public const CATEGORY_PERATURAN = 'peraturan';
-    public const CATEGORY_LAINNYA = 'lainnya';
+    public const CATEGORY_PERENCANAAN = 'Data Perencanaan';
+    public const CATEGORY_LAKIP = 'LAKIP';
+    public const CATEGORY_PERJANJIAN_KINERJA = 'Perjanjian Kinerja';
+    public const CATEGORY_SAKIP = 'SAKIP';
+    public const CATEGORY_TRANSPARANSI_APBD = 'Transparansi APBD';
 
     public const CATEGORIES = [
         self::CATEGORY_PERENCANAAN,
-        self::CATEGORY_PERATURAN,
-        self::CATEGORY_LAINNYA,
+        self::CATEGORY_LAKIP,
+        self::CATEGORY_PERJANJIAN_KINERJA,
+        self::CATEGORY_SAKIP,
+        self::CATEGORY_TRANSPARANSI_APBD,
     ];
 
     public const CATEGORY_LABELS = [
-        self::CATEGORY_PERENCANAAN => 'Dokumen Perencanaan',
-        self::CATEGORY_PERATURAN => 'Produk Peraturan',
-        self::CATEGORY_LAINNYA => 'Dokumen Lainnya',
+        self::CATEGORY_PERENCANAAN => 'Data Perencanaan',
+        self::CATEGORY_LAKIP => 'LAKIP',
+        self::CATEGORY_PERJANJIAN_KINERJA => 'Perjanjian Kinerja',
+        self::CATEGORY_SAKIP => 'SAKIP',
+        self::CATEGORY_TRANSPARANSI_APBD => 'Transparansi APBD',
     ];
 }

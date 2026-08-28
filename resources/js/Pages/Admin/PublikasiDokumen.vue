@@ -23,7 +23,7 @@ const props = defineProps({
 
 const { toast } = useToast();
 
-const activeTab = ref(props.filters?.kategori || 'perencanaan');
+const activeTab = ref(props.filters?.kategori || 'Data Perencanaan');
 const search = ref(props.filters?.search || '');
 const tahunFilter = ref(props.filters?.tahun || '');
 const statusFilter = ref(props.filters?.status || '');
@@ -53,7 +53,7 @@ const fileSizeError = ref(false);
 
 const form = useForm({
     judul: '',
-    kategori: 'perencanaan',
+    kategori: 'Data Perencanaan',
     tahun: currentYear,
     deskripsi: '',
     is_published: true,
