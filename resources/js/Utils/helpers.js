@@ -36,6 +36,18 @@ export const formatDate = (dateString) => {
   return `${tanggal} • ${jam.replace(':', '.')}`;
 };
 
+export const formatDateTime = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(date);
+};
+
 export const formatFullDate = (dateStr) => {
     if (!dateStr) return '';
     return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateStr));
