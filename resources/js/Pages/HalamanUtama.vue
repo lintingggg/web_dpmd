@@ -28,19 +28,32 @@ const page = usePage();
 const kontak = computed(() => page.props.kontak || {});
 
 onMounted(() => {
-  // Load Google reCAPTCHA script
-  if (!document.getElementById('recaptcha-script')) {
-    const script = document.createElement('script');
-    script.id = 'recaptcha-script';
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-
   nextTick(() => {
     // Initialize GSAP animations
     initHomeAnimations();
+
+    // Lazy-load reCAPTCHA hanya saat user mendekati section kontak
+    // Ini menghemat load time untuk user yang tidak scroll ke bawah
+    const contactSection = document.querySelector('#kontak');
+    if (contactSection) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            if (!document.getElementById('recaptcha-script')) {
+              const script = document.createElement('script');
+              script.id = 'recaptcha-script';
+              script.src = 'https://www.google.com/recaptcha/api.js';
+              script.async = true;
+              script.defer = true;
+              document.head.appendChild(script);
+            }
+            observer.disconnect(); // Hanya load sekali
+          }
+        },
+        { rootMargin: '200px' } // Preload 200px sebelum section masuk viewport
+      );
+      observer.observe(contactSection);
+    }
   });
 });
 </script>

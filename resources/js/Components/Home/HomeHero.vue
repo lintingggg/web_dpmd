@@ -26,17 +26,53 @@ const props = defineProps({
           
           <!-- Image 1 (Left/Back) -->
           <div class="absolute left-[0%] top-[15%] w-2/5 aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-[#FFFFFF] hero-img-1 z-0 -rotate-6">
-            <img :src="props.pengaturanBeranda?.hero_image_1 ? '/storage/' + props.pengaturanBeranda.hero_image_1 : '/assets/Pengukuhan TP. PKK Kecamatan Kabupaten Bangkalan.jpg.jpeg'" alt="Kegiatan 1" class="w-full h-full object-cover" />
+            <picture>
+              <source
+                :srcset="props.pengaturanBeranda?.hero_image_1 ? '/storage/' + props.pengaturanBeranda.hero_image_1 : '/assets/hero-pengukuhan.webp'"
+                type="image/webp"
+              >
+              <img
+                :src="props.pengaturanBeranda?.hero_image_1 ? '/storage/' + props.pengaturanBeranda.hero_image_1 : '/assets/Pengukuhan TP. PKK Kecamatan Kabupaten Bangkalan.jpg.jpeg'"
+                alt="Kegiatan DPMD Bangkalan"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                width="400" height="500"
+              />
+            </picture>
           </div>
 
           <!-- Image 2 (Right/Back) -->
           <div class="absolute right-[0%] top-[30%] w-2/5 aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-[#FFFFFF] hero-img-2 z-0 rotate-6">
-            <img :src="props.pengaturanBeranda?.hero_image_2 ? '/storage/' + props.pengaturanBeranda.hero_image_2 : '/assets/PKK Mengikuti Seminar Bagi Perempuan Dalam Menghadapi Era Digital.jpg.jpeg'" alt="Kegiatan 2" class="w-full h-full object-cover" />
+            <picture>
+              <source
+                :srcset="props.pengaturanBeranda?.hero_image_2 ? '/storage/' + props.pengaturanBeranda.hero_image_2 : '/assets/hero-seminar.webp'"
+                type="image/webp"
+              >
+              <img
+                :src="props.pengaturanBeranda?.hero_image_2 ? '/storage/' + props.pengaturanBeranda.hero_image_2 : '/assets/PKK Mengikuti Seminar Bagi Perempuan Dalam Menghadapi Era Digital.jpg.jpeg'"
+                alt="Kegiatan seminar perempuan DPMD Bangkalan"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                width="400" height="500"
+              />
+            </picture>
           </div>
 
           <!-- Image 3 (Center/Front) -->
           <div class="relative w-1/2 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFFFF] hero-img-3 z-10 translate-y-[-10%]">
-            <img :src="props.pengaturanBeranda?.hero_image_3 ? '/storage/' + props.pengaturanBeranda.hero_image_3 : '/assets/Rapat Pleno PKK.jpg.jpeg'" alt="Kegiatan 3" class="w-full h-full object-cover" />
+            <picture>
+              <source
+                :srcset="props.pengaturanBeranda?.hero_image_3 ? '/storage/' + props.pengaturanBeranda.hero_image_3 : '/assets/hero-rapat.webp'"
+                type="image/webp"
+              >
+              <img
+                :src="props.pengaturanBeranda?.hero_image_3 ? '/storage/' + props.pengaturanBeranda.hero_image_3 : '/assets/Rapat Pleno PKK.jpg.jpeg'"
+                alt="Rapat Pleno PKK DPMD Bangkalan"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                width="400" height="500"
+              />
+            </picture>
           </div>
 
         </div>

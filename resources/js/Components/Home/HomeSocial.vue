@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { 
   IconBrandInstagram, 
   IconBrandTiktok, 
@@ -49,52 +49,56 @@ watch(socialTabs, (newTabs) => {
   }
 }, { immediate: true });
 
+const sdkLoaded = { twitter: false, facebook: false };
+
+function loadTwitterSDK() {
+  if (sdkLoaded.twitter || document.getElementById('twitter-wjs')) {
+    sdkLoaded.twitter = true;
+    return;
+  }
+  const script = document.createElement('script');
+  script.id = 'twitter-wjs';
+  script.src = 'https://platform.twitter.com/widgets.js';
+  script.async = true;
+  script.onload = () => {
+    sdkLoaded.twitter = true;
+    if (window.twttr) window.twttr.widgets.load();
+  };
+  document.body.appendChild(script);
+}
+
+function loadFacebookSDK() {
+  if (sdkLoaded.facebook || document.getElementById('facebook-jssdk')) {
+    sdkLoaded.facebook = true;
+    // Parse jika SDK sudah ada tapi tab baru diklik
+    setTimeout(() => {
+      if (window.FB && window.FB.XFBML) window.FB.XFBML.parse();
+    }, 100);
+    return;
+  }
+  const script = document.createElement('script');
+  script.id = 'facebook-jssdk';
+  script.src = 'https://connect.facebook.net/id_ID/sdk.js#xfbml=1&version=v17.0';
+  script.async = true;
+  script.defer = true;
+  script.crossOrigin = 'anonymous';
+  script.onload = () => {
+    sdkLoaded.facebook = true;
+    if (window.FB && window.FB.XFBML) window.FB.XFBML.parse();
+  };
+  document.body.appendChild(script);
+}
+
 watch(activeSocialTab, (newTab) => {
   if (newTab === 'twitter') {
+    loadTwitterSDK();
+    // Jika sudah terload, render ulang
     setTimeout(() => {
-      if (window.twttr && window.twttr.widgets) {
-        window.twttr.widgets.load();
-      }
+      if (window.twttr && window.twttr.widgets) window.twttr.widgets.load();
     }, 100);
   }
   if (newTab === 'facebook') {
-    setTimeout(() => {
-      if (window.FB && window.FB.XFBML) {
-        window.FB.XFBML.parse();
-      }
-    }, 100);
-  }
-});
-
-onMounted(() => {
-  // Load Twitter SDK if not loaded
-  if (!document.getElementById('twitter-wjs')) {
-    const script = document.createElement('script');
-    script.id = 'twitter-wjs';
-    script.src = 'https://platform.twitter.com/widgets.js';
-    script.async = true;
-    script.onload = () => {
-      if (activeSocialTab.value === 'twitter' && window.twttr) {
-        window.twttr.widgets.load();
-      }
-    };
-    document.body.appendChild(script);
-  }
-
-  // Load Facebook SDK if not loaded
-  if (!document.getElementById('facebook-jssdk')) {
-    const script = document.createElement('script');
-    script.id = 'facebook-jssdk';
-    script.src = 'https://connect.facebook.net/id_ID/sdk.js#xfbml=1&version=v17.0';
-    script.async = true;
-    script.defer = true;
-    script.crossOrigin = 'anonymous';
-    script.onload = () => {
-      if (activeSocialTab.value === 'facebook' && window.FB) {
-        window.FB.XFBML.parse();
-      }
-    };
-    document.body.appendChild(script);
+    loadFacebookSDK();
   }
 });
 </script>

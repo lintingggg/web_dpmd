@@ -7,7 +7,14 @@ import { Link } from '@inertiajs/vue3';
 <div class="flex items-center gap-4">
 
     <Link href="/" class="flex items-center justify-center shrink-0">
-        <img src="/assets/Logo-kabupaten-Bangkalan.png" alt="Logo DPMD Bangkalan" class="h-16 w-auto object-contain" />
+        <picture>
+            <source srcset="/assets/logo-kabupaten.webp" type="image/webp">
+            <img src="/assets/Logo-kabupaten-Bangkalan.jpg"
+                 alt="Logo DPMD Bangkalan"
+                 class="h-16 w-auto object-contain"
+                 width="64" height="64"
+                 fetchpriority="high" />
+        </picture>
     </Link>
 
     <div>

@@ -41,7 +41,10 @@ const getTypeIcon = (type) => {
 </script>
 
 <template>
-    <Head title="Dashboard Admin" />
+    <Head title="Dashboard Admin">
+        <!-- Font Awesome hanya untuk halaman Admin -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    </Head>
 
     <AuthenticatedLayout>
         <div class="max-w-7xl mx-auto space-y-6 lg:space-y-8 mt-8">
