@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, Head } from '@inertiajs/vue3';
 import '@idds/vue/index.css';
 
 const showingNavigationDropdown = ref(false);
@@ -54,6 +54,10 @@ const handleDropdownClick = (dropdownType) => {
 </script>
 
 <template>
+    <Head>
+        <!-- Font Awesome hanya untuk halaman Admin -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    </Head>
     <div class="bg-[#f8fafc] font-sans text-slate-900 antialiased flex h-screen overflow-hidden">
         
         <!-- SideNavBar -->
