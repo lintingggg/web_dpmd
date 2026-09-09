@@ -1,3 +1,4 @@
+# Deployment Web DPMD
 
 Catatan:
 
@@ -8,8 +9,6 @@ Catatan:
 - Laravel Sail hanya digunakan untuk development.
     
 - Panduan ini ditujukan untuk Ubuntu 24.04 LTS.
-    
-- Cocok untuk VPS minimal 1 vCPU / 1 GB RAM + 2 GB SWAP.
     
 
 1. REQUIREMENT SOFTWARE
