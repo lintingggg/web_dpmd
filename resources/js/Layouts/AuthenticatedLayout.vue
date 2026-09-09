@@ -87,7 +87,7 @@ const handleDropdownClick = (dropdownType) => {
                 <!-- SECTION 1: DASHBOARD & MONITORING -->
                 <p v-show="!isSidebarCollapsed" class="px-4 text-[10px] font-bold text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Dashboard & Monitoring</p>
                 <div class="space-y-1.5 mb-6">
-                    <Link :href="route('dashboard')" 
+                    <Link :preserve-state="false" :href="route('dashboard')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/dashboard') || $page.url === '/dashboard' ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -102,7 +102,7 @@ const handleDropdownClick = (dropdownType) => {
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Dashboard</span>
                     </Link>
 
-                    <Link :href="route('admin.log-aktivitas')" 
+                    <Link :preserve-state="false" :href="route('admin.log-aktivitas')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/admin/log-aktivitas') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -121,7 +121,7 @@ const handleDropdownClick = (dropdownType) => {
                 <!-- SECTION 2: KONTEN PUBLIK -->
                 <p v-show="!isSidebarCollapsed" class="px-4 text-[10px] font-bold text-slate-400 mb-3 whitespace-nowrap uppercase tracking-wider">Konten Publik</p>
                 <div class="space-y-1.5 mb-6">
-                    <Link :href="route('admin.pengaturan-beranda')" 
+                    <Link :preserve-state="false" :href="route('admin.pengaturan-beranda')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/admin/pengaturan-beranda') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -136,7 +136,7 @@ const handleDropdownClick = (dropdownType) => {
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Banner Utama</span>
                     </Link>
 
-                    <Link :href="route('admin.berita')" 
+                    <Link :preserve-state="false" :href="route('admin.berita')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/admin/berita') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -151,7 +151,7 @@ const handleDropdownClick = (dropdownType) => {
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Berita</span>
                     </Link>
 
-                    <Link :href="route('admin.agenda.index')" 
+                    <Link :preserve-state="false" :href="route('admin.agenda.index')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/admin/agenda') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -166,7 +166,7 @@ const handleDropdownClick = (dropdownType) => {
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Agenda Acara</span>
                     </Link>
                     
-                    <Link :href="route('admin.album')" 
+                    <Link :preserve-state="false" :href="route('admin.album')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/admin/album') || $page.url.startsWith('/admin/galeri') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -181,7 +181,7 @@ const handleDropdownClick = (dropdownType) => {
                         <span v-show="!isSidebarCollapsed" class="whitespace-nowrap transition-opacity">Galeri Dokumentasi</span>
                     </Link>
 
-                    <Link :href="route('admin.publikasi-dokumen')" 
+                    <Link :preserve-state="false" :href="route('admin.publikasi-dokumen')" 
                         class="flex items-center gap-3 rounded-xl font-bold transition-colors group relative outline-none"
                         :class="[
                             $page.url.startsWith('/admin/publikasi-dokumen') ? 'bg-[#f0f4f8] text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-[#f0f4f8] font-medium',
@@ -218,13 +218,13 @@ const handleDropdownClick = (dropdownType) => {
                         </button>
                         
                         <div v-show="!isSidebarCollapsed && profilDinasOpen" class="pl-14 pr-3 space-y-1 mt-1 mb-2">
-                            <Link :href="route('admin.profil-dinas', { section: 'sambutan' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('sambutan') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Sambutan Kadis</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'visi-misi' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('visi-misi') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Visi & Misi</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'tupoksi' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('tupoksi') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Tugas Pokok & Fungsi</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'struktur' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('struktur') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Struktur Organisasi</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'kode-etik' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kode-etik') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Kode Etik Pelayanan</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'maklumat' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('maklumat') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Maklumat Pelayanan</Link>
-                            <Link :href="route('admin.profil-dinas', { section: 'motto' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('motto') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Motto Pelayanan</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'sambutan' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('sambutan') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Sambutan Kadis</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'visi-misi' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('visi-misi') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Visi & Misi</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'tupoksi' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('tupoksi') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Tugas Pokok & Fungsi</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'struktur' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('struktur') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Struktur Organisasi</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'kode-etik' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kode-etik') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Kode Etik Pelayanan</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'maklumat' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('maklumat') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Maklumat Pelayanan</Link>
+                            <Link :preserve-state="false" :href="route('admin.profil-dinas', { section: 'motto' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('motto') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Motto Pelayanan</Link>
                         </div>
                     </div>
                     
@@ -246,10 +246,10 @@ const handleDropdownClick = (dropdownType) => {
                         </button>
                         
                         <div v-show="!isSidebarCollapsed && bidangTugasOpen" class="pl-14 pr-3 space-y-1 mt-1 mb-2">
-                            <Link :href="route('admin.bidang-tugas', { section: 'pemdes' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('pemdes') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pemerintahan Desa</Link>
-                            <Link :href="route('admin.bidang-tugas', { section: 'pemberdayaan' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('pemberdayaan') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pemberdayaan Desa</Link>
-                            <Link :href="route('admin.bidang-tugas', { section: 'lembaga' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('lembaga') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Lembaga Kemasyarakatan</Link>
-                            <Link :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('sekretariat') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Sekretariat</Link>
+                            <Link :preserve-state="false" :href="route('admin.bidang-tugas', { section: 'pemdes' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('pemdes') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pemerintahan Desa</Link>
+                            <Link :preserve-state="false" :href="route('admin.bidang-tugas', { section: 'pemberdayaan' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('pemberdayaan') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pemberdayaan Desa</Link>
+                            <Link :preserve-state="false" :href="route('admin.bidang-tugas', { section: 'lembaga' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('lembaga') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Lembaga Kemasyarakatan</Link>
+                            <Link :preserve-state="false" :href="route('admin.bidang-tugas', { section: 'sekretariat' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('sekretariat') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Sekretariat</Link>
                         </div>
                     </div>
                 </div>
@@ -275,13 +275,13 @@ const handleDropdownClick = (dropdownType) => {
                         </button>
                         
                         <div v-show="!isSidebarCollapsed && kontakMedsosOpen" class="pl-14 pr-3 space-y-1 mt-1 mb-2">
-                            <Link :href="route('admin.kontak-medsos', { section: 'kontak' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/kontak') || $page.url === '/admin/kontak-medsos' ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Informasi Kontak</Link>
-                            <Link :href="route('admin.kontak-medsos', { section: 'sosmed' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/sosmed') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Tautan Sosmed</Link>
-                            <Link :href="route('admin.kontak-medsos', { section: 'embedding' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/embedding') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pengaturan Embedding</Link>
+                            <Link :preserve-state="false" :href="route('admin.kontak-medsos', { section: 'kontak' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/kontak') || $page.url === '/admin/kontak-medsos' ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Informasi Kontak</Link>
+                            <Link :preserve-state="false" :href="route('admin.kontak-medsos', { section: 'sosmed' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/sosmed') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Tautan Sosmed</Link>
+                            <Link :preserve-state="false" :href="route('admin.kontak-medsos', { section: 'embedding' })" class="block text-sm font-semibold py-2 px-3 rounded-xl transition-all" :class="$page.url.includes('kontak-medsos/embedding') ? 'bg-slate-100 text-[#103973]' : 'text-slate-500 hover:text-[#103973] hover:bg-slate-50'">Pengaturan Embedding</Link>
                         </div>
                     </div>
                     
-                    <Link :href="route('logout')" method="post" as="button" 
+                    <Link :preserve-state="false" :href="route('logout')" method="post" as="button" 
                         class="w-full flex items-center gap-3 rounded-xl font-medium transition-colors group mt-2 relative outline-none"
                         :class="[
                             isSidebarCollapsed ? 'p-3 justify-center text-slate-400 hover:text-rose-600' : 'px-4 py-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50'
@@ -346,7 +346,7 @@ const handleDropdownClick = (dropdownType) => {
                     <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
                     
                     <!-- User Profile (Text on left, Image on right) -->
-                    <Link :href="route('profile.edit')" class="flex items-center gap-3 cursor-pointer group outline-none">
+                    <Link :preserve-state="false" :href="route('profile.edit')" class="flex items-center gap-3 cursor-pointer group outline-none">
                         <div class="hidden sm:block text-right">
                             <p class="text-sm font-bold text-slate-900 leading-tight group-hover:text-[#1e56a0] transition-colors">{{ $page.props.auth.user.name }}</p>
                             <p class="text-[11px] text-slate-500 font-medium capitalize mt-0.5">{{ $page.props.auth.user.role }}</p>

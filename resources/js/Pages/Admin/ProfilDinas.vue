@@ -105,6 +105,7 @@ const submit = () => {
             <Link 
                 v-for="(title, key) in sectionTitles" 
                 :key="key"
+                :preserve-state="false"
                 :href="route('admin.profil-dinas', key)"
                 class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
                 :class="currentSection === key ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"

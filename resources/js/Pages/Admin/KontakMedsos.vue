@@ -163,6 +163,7 @@ const submit = (tabContext) => {
         <div class="flex border-b border-[#dbe6f7] mb-6 overflow-x-auto whitespace-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
             <Link 
                 :href="route('admin.kontak-medsos', 'kontak')"
+                :preserve-state="false"
                 class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
                 :class="activeTab === 'kontak' ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
             >
@@ -170,6 +171,7 @@ const submit = (tabContext) => {
             </Link>
             <Link 
                 :href="route('admin.kontak-medsos', 'sosmed')"
+                :preserve-state="false"
                 class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
                 :class="activeTab === 'sosmed' ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
             >
@@ -177,6 +179,7 @@ const submit = (tabContext) => {
             </Link>
             <Link 
                 :href="route('admin.kontak-medsos', 'embedding')"
+                :preserve-state="false"
                 class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
                 :class="activeTab === 'embed' ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
             >
