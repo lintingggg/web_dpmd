@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Models\PengaturanKontak;
 use App\Models\User;
 
-class KontakMedsosPolicy
+class PengaturanKontakPolicy
 {
     public function viewAny(User $user): bool
     {
