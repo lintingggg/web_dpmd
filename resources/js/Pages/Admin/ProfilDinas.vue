@@ -100,19 +100,6 @@ const submit = () => {
             <p class="text-[14px] font-medium text-slate-500">Kelola konten inti yang mendeskripsikan identitas, struktur, dan sejarah DPMD Kabupaten Bangkalan kepada publik.</p>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="flex border-b border-[#dbe6f7] mb-6 overflow-x-auto whitespace-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
-            <Link 
-                v-for="(title, key) in sectionTitles" 
-                :key="key"
-                :preserve-state="false"
-                :href="route('admin.profil-dinas', key)"
-                class="py-3 px-6 text-[14px] font-bold border-b-2 transition-all"
-                :class="currentSection === key ? 'border-[#1356a0] text-[#1356a0]' : 'border-transparent text-slate-500 hover:text-slate-900'"
-            >
-                {{ title }}
-            </Link>
-        </div>
 
         <!-- Main Content Card -->
         <div class="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(16,57,115,0.06)] border border-[#dbe6f7] overflow-hidden">
